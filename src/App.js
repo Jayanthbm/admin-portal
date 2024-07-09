@@ -32,6 +32,7 @@ const App = () => {
           path={PATHS.USER_RECORD_CONFIG}
           element={<UserRecordConfigScreen />}
         />
+        <Route path="*" element={<Checker />} />
       </Routes>
     </>
   );
