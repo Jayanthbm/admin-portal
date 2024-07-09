@@ -9,10 +9,10 @@ export const API_ENDPOINTS = {
 };
 
 export const PATHS = {
-  ROOT: "/",
-  LOGIN: "/login",
-  DASHBOARD: "/dashboard",
-  DOCTORS: "/doctors",
-  SPECIALITIES: "/specialities",
-  USER_RECORD_CONFIG: "/user-record-config",
+  ROOT: "/admin-portal",
+  LOGIN: "/admin-portal/login",
+  DASHBOARD: "/admin-portal/dashboard",
+  DOCTORS: "/admin-portal/doctors",
+  SPECIALITIES: "/admin-portal/specialities",
+  USER_RECORD_CONFIG: "/admin-portal/user-record-config",
 };

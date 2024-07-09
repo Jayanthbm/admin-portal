@@ -27,7 +27,7 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "s3deploy": "npm run predeploy && cd build && aws s3 sync . s3://adminportalreact/"
+    "s3deploy": "npm run predeploy && cd build && aws s3 sync . s3://adminportal.jbm/"
   },
   "eslintConfig": {
     "extends": [
