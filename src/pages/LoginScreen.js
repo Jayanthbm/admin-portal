@@ -70,6 +70,7 @@ const LoginScreen = () => {
       setSnackbarMessage(result.message);
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
+      setIsLoggedIn(true);
     }
   };
 

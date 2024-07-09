@@ -25,13 +25,18 @@ const App = () => {
   return (
     <>
       <AppHeader />
-      <div className="body-container">
-        <div
-          className="left-menu"
-          style={isLoggedIn ? { display: "block" } : { display: "none" }}
-        >
-          <LeftMenu />
-        </div>
+      <div
+        className="body-container"
+        style={{
+          justifyContent: isLoggedIn ? "flex-start" : "space-around",
+          marginRight: isLoggedIn ? "0px" : "240px",
+        }}
+      >
+        {isLoggedIn && (
+          <div className="left-menu">
+            <LeftMenu />
+          </div>
+        )}
         <div className="main-content">
           <Routes>
             <Route path="/" element={<Checker />} />

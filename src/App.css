@@ -23,4 +23,7 @@
   .main-content {
     margin-left: 0;
   }
+  .body-container{
+    margin-right: 0 !important;
+  }
 }
