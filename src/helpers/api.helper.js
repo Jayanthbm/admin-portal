@@ -40,15 +40,18 @@ api.interceptors.response.use(
           },
           { withCredentials: true } // Adjust if needed for your backend
         );
-        setToken(TOKEN_KEY, data.token);
-        setToken(REFRESH_KEY, data.refreshToken);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+        let accessToken = data.data.accessToken;
+        setToken(TOKEN_KEY, accessToken);
+        let refreshToken = data.data.refreshToken;
+        setToken(REFRESH_KEY, refreshToken);
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (err) {
         return Promise.reject(err);
       }
     }
-
     return Promise.reject(error);
   }
 );
@@ -59,7 +62,7 @@ export const get = async (url, params = {}) => {
     const response = await api.get(url, { params });
     return response.data;
   } catch (error) {
-    throw error;
+    return error.response.data;
   }
 };
 
@@ -68,7 +71,7 @@ export const post = async (url, data) => {
     const response = await api.post(url, data);
     return response.data;
   } catch (error) {
-    throw error;
+    return error.response.data;
   }
 };
 
@@ -77,7 +80,7 @@ export const put = async (url, data) => {
     const response = await api.put(url, data);
     return response.data;
   } catch (error) {
-    throw error;
+    return error.response.data;
   }
 };
 
@@ -86,6 +89,6 @@ export const del = async (url) => {
     const response = await api.delete(url);
     return response.data;
   } catch (error) {
-    throw error;
+    return error.response.data;
   }
 };

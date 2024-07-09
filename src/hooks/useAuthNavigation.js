@@ -13,7 +13,7 @@ function useAuthNavigation(isLoggedIn, currentPath) {
     } else {
       navigate(PATHS.LOGIN);
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, navigate, currentPath]);
 
   return navigate;
 }

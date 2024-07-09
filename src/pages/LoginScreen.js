@@ -1,17 +1,21 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
+import MuiAlert from "@mui/material/Alert";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
+import Link from "@mui/material/Link";
+import Snackbar from "@mui/material/Snackbar";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { message } from "antd";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
+import { API_ENDPOINTS, PATHS, REFRESH_KEY, TOKEN_KEY } from "../constants";
+import AuthContext from "../context/auth.context";
+import { post } from "../helpers/api.helper";
+import { setToken } from "../helpers/auth.helper";
+import useAuthNavigation from "../hooks/useAuthNavigation";
 
 function Copyright(props) {
   return (
@@ -33,13 +37,40 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function LoginScreen() {
-  const handleSubmit = (event) => {
+const LoginScreen = () => {
+  const { isLoggedIn, setIsLoggedIn } = React.useContext(AuthContext);
+  const navigate = useAuthNavigation(isLoggedIn);
+
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = React.useState("success");
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const _email = data.get("email");
-    const _password = data.get("password");
-    message.success("Login Success");
+    const email = data.get("email");
+    const password = data.get("password");
+    const result = await post(API_ENDPOINTS.login, { email, password });
+    if (result.status === 200) {
+      setSnackbarMessage(result.message);
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+      setToken(TOKEN_KEY, result.data.accessToken);
+      setToken(REFRESH_KEY, result.data.refreshToken);
+      setIsLoggedIn(true);
+      navigate(PATHS.DASHBOARD);
+    } else {
+      setSnackbarMessage(result.message);
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
   };
 
   return (
@@ -86,10 +117,6 @@ export default function LoginScreen() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
@@ -101,7 +128,22 @@ export default function LoginScreen() {
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={2000}
+          onClose={handleSnackbarClose}
+        >
+          <MuiAlert
+            onClose={handleSnackbarClose}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </MuiAlert>
+        </Snackbar>
       </Container>
     </ThemeProvider>
   );
-}
+};
+
+export default LoginScreen;

@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:4000";
+export const BASE_URL = "http://localhost:4000/api";
 
 export const TOKEN_KEY = "accessToken";
 export const REFRESH_KEY = "refreshToken";
@@ -15,4 +15,5 @@ export const PATHS = {
   DOCTORS: "/doctors",
   SPECIALITIES: "/specialities",
   USER_RECORD_CONFIG: "/user-record-config",
+  ADMINS: "/admins",
 };

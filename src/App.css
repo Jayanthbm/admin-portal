@@ -1,14 +1,26 @@
-.app-header {
+.body-container {
   display: flex;
-  height: 60px;
-  color: #000;
-  font-size: 20px;
-  font-weight: 600;
-  z-index: 1;
-  position: sticky;
-  background: #ffffff;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  align-items: center;
+  flex-direction: row;
+}
+
+.left-menu {
+  margin-top: 90px;
+  flex-shrink: 0;
+  position: fixed;
+  top:20px
+}
+
+.main-content {
+  margin-left: 240px;
+  display: block;
+}
+
+@media screen and (max-width: 700px) {
+  .left-menu {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
 }
