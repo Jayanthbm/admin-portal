@@ -19,23 +19,7 @@ import { post } from "../helpers/api.helper";
 import { setToken } from "../helpers/auth.helper";
 import useAuthNavigation from "../hooks/useAuthNavigation";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="#">
-        Project XYZ
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+
 
 const defaultTheme = createTheme();
 
@@ -130,7 +114,7 @@ const LoginScreen = () => {
             </Button>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+
         <Snackbar
           open={snackbarOpen}
           autoHideDuration={2000}

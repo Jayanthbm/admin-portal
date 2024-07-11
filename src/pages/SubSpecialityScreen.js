@@ -1,5 +1,3 @@
-// src/pages/SubSpecialityScreen.js
-
 import CategoryIcon from "@mui/icons-material/Category";
 import { Box } from "@mui/material";
 import React, { useContext } from "react";
@@ -10,12 +8,18 @@ import PageTitle from "../components/PageTitle";
 import { PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import useAuthNavigation from "../hooks/useAuthNavigation";
+
 const SubSpecialityScreen = () => {
   const { isLoggedIn } = useContext(AuthContext);
   const { id } = useParams();
-  const { state } = useLocation();
-  console.log("state", state);
-  const naviagte = useAuthNavigation(isLoggedIn, PATHS.SPECIALITIES + "/" + id);
+  const location = useLocation();
+  const state = location.state;
+  const navigate = useAuthNavigation(
+    isLoggedIn,
+    PATHS.SPECIALITIES + "/" + id,
+    state
+  );
+
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <PageTitle title="Sub Specialities" />
@@ -23,11 +27,11 @@ const SubSpecialityScreen = () => {
         paths={[
           {
             navigation: PATHS.SPECIALITIES,
-            title: "Specalities",
+            title: "Specialities",
             icon: <CategoryIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
           },
           {
-            title: "Sub Specalities",
+            title: state?.title || "Sub Specialities",
             icon: <></>,
           },
         ]}

@@ -3,6 +3,8 @@
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import SettingsIcon from "@mui/icons-material/Settings";
+import CategoryIcon from "@mui/icons-material/Category";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import {
   Drawer,
   List,
@@ -29,7 +31,7 @@ const LeftMenu = () => {
     },
     {
       text: "Admins",
-      icon: <SettingsIcon />,
+      icon: <AdminPanelSettingsIcon />,
       path: PATHS.ADMINS,
     },
   ];

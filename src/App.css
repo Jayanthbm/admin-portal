@@ -30,3 +30,15 @@
     margin-right: 0 !important;
   }
 }
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #f1f1f1;
+  /* Change this to your preferred color */
+  color: #000;
+  /* Change this to your preferred text color */
+  padding: 10px 0;
+  text-align: center;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}

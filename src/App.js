@@ -15,6 +15,7 @@ import LoginScreen from "./pages/LoginScreen";
 import SpecialitiesScreen from "./pages/SpecialitiesScreen";
 import SubSpecialityScreen from "./pages/SubSpecialityScreen";
 import UserRecordConfigScreen from "./pages/UserRecordConfigScreen";
+import MyFooter from "./components/MyFooter";
 
 const Checker = () => {
   const navigate = useNavigate();
@@ -61,6 +62,7 @@ const App = () => {
           </Routes>
         </div>
       </div>
+      <MyFooter />
     </>
   );
 };
