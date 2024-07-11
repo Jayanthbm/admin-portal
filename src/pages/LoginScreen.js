@@ -1,62 +1,57 @@
 // src/pages/LoginScreen.js
 
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import MuiAlert from "@mui/material/Alert";
+import LoginIcon from "@mui/icons-material/Login";
+import LoadingButton from "@mui/lab/LoadingButton";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
-import Link from "@mui/material/Link";
-import Snackbar from "@mui/material/Snackbar";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
+import React, { useContext, useState } from "react";
+import EmailInput from "../components/EmailInput";
+import PasswordInput from "../components/PasswordInput";
 import { API_ENDPOINTS, PATHS, REFRESH_KEY, TOKEN_KEY } from "../constants";
 import AuthContext from "../context/auth.context";
+import { useSnackbar } from "../context/snackbar.context";
 import { post } from "../helpers/api.helper";
 import { setToken } from "../helpers/auth.helper";
 import useAuthNavigation from "../hooks/useAuthNavigation";
 
-
-
 const defaultTheme = createTheme();
 
 const LoginScreen = () => {
-  const { isLoggedIn, setIsLoggedIn } = React.useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const navigate = useAuthNavigation(isLoggedIn);
 
-  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-  const [snackbarMessage, setSnackbarMessage] = React.useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = React.useState("success");
+  const showSnackbar = useSnackbar();
 
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
-    const result = await post(API_ENDPOINTS.login, { email, password });
-    if (result.status === 200) {
-      setSnackbarMessage(result.message);
-      setSnackbarSeverity("success");
-      setSnackbarOpen(true);
-      setToken(TOKEN_KEY, result.data.accessToken);
-      setToken(REFRESH_KEY, result.data.refreshToken);
-      setIsLoggedIn(true);
-      navigate(PATHS.DASHBOARD);
-    } else {
-      setSnackbarMessage(result.message);
-      setSnackbarSeverity("error");
-      setSnackbarOpen(true);
-      setIsLoggedIn(true);
+  const [validEmail, setValidEmail] = useState(false);
+  const [validPassword, setValidPassword] = useState(false);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    try {
+      const result = await post(API_ENDPOINTS.LOGIN, { email, password });
+      if (result.status === 200) {
+        showSnackbar(result.message, "success");
+        setToken(TOKEN_KEY, result.data.accessToken);
+        setToken(REFRESH_KEY, result.data.refreshToken);
+        setIsLoggedIn(true);
+        navigate(PATHS.DASHBOARD);
+      } else {
+        showSnackbar(result.message, "error");
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      showSnackbar(error.message, "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,56 +73,39 @@ const LoginScreen = () => {
           <Typography component="h1" variant="h5">
             Admin Login
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+          <Box sx={{ mt: 1 }}>
+            <EmailInput
               id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              validationPassed={setValidEmail}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
+
+            <PasswordInput
               id="password"
-              autoComplete="current-password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              validationPassed={setValidPassword}
             />
-            <Button
+            <LoadingButton
               type="submit"
               fullWidth
               variant="contained"
+              loading={loading}
+              loadingPosition="start"
               sx={{ mt: 3, mb: 2 }}
+              startIcon={<LoginIcon />}
+              disabled={validEmail && validPassword ? false : true}
+              onClick={handleLogin}
             >
               Sign In
-            </Button>
+            </LoadingButton>
           </Box>
         </Box>
-
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={2000}
-          onClose={handleSnackbarClose}
-        >
-          <MuiAlert
-            onClose={handleSnackbarClose}
-            severity={snackbarSeverity}
-            sx={{ width: "100%" }}
-          >
-            {snackbarMessage}
-          </MuiAlert>
-        </Snackbar>
       </Container>
     </ThemeProvider>
   );

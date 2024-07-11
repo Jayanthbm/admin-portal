@@ -6,8 +6,13 @@ export const TOKEN_KEY = "accessToken";
 export const REFRESH_KEY = "refreshToken";
 
 export const API_ENDPOINTS = {
-  login: "/auth/admin-login",
-  refreshToken: "/auth/admin-token",
+  LOGIN: "/auth/admin-login",
+  REFRESHTOKEN: "/auth/admin-token",
+  DASHBOARD: "/admin/dashboard",
+  ALLADMINS: "/admin/all-admins",
+  ADDADMIN: "/admin/add",
+  UPDATEADMIN: "/admin/update",
+  DELETEADMIN: "/admin/delete",
 };
 
 export const PATHS = {

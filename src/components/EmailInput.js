@@ -4,7 +4,7 @@ import { TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { validateEmail } from "../helpers/validation.helper";
 
-const EmailInput = ({ value, onChange }) => {
+const EmailInput = ({ value, onChange, id, label, validationPassed }) => {
   const [error, setError] = useState(false);
   const [helperText, setHelperText] = useState("");
   const [focused, setFocused] = useState(false);
@@ -13,18 +13,22 @@ const EmailInput = ({ value, onChange }) => {
       if (!value) {
         setError(true);
         setHelperText("Please enter an email address");
+        validationPassed(false);
       } else if (!validateEmail(value)) {
         setError(true);
         setHelperText("Please enter a valid email address");
+        validationPassed(false);
       } else {
         setError(false);
         setHelperText("");
+        validationPassed(true);
       }
     }
-  }, [value]);
+  }, [value, focused, validationPassed]);
   return (
     <TextField
-      label="Email"
+      id={id}
+      label={label ? label : "Email"}
       type="email"
       fullWidth
       required
@@ -32,7 +36,7 @@ const EmailInput = ({ value, onChange }) => {
       value={value}
       onChange={onChange}
       placeholder="Enter your email"
-      helprafceerText={helperText}
+      helperText={helperText}
       error={error}
       onFocus={() => {
         setFocused(true);

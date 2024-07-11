@@ -10,7 +10,7 @@ import useAuthNavigation from "../hooks/useAuthNavigation";
 import SettingsIcon from "@mui/icons-material/Settings";
 const UserRecordConfigScreen = () => {
   const { isLoggedIn } = useContext(AuthContext);
-  const naviagte = useAuthNavigation(isLoggedIn, PATHS.USER_RECORD_CONFIG);
+  const navigate = useAuthNavigation(isLoggedIn, PATHS.USER_RECORD_CONFIG);
   return (
     <>
       <Box sx={{ flexGrow: 1, p: 3 }}>

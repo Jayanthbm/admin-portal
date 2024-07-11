@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { PATHS } from "../constants";
 
 const CustomBreadCrumb = ({ paths }) => {
-  const naviagte = useNavigate();
+  const navigate = useNavigate();
   return (
     <div role="presentation">
       <Breadcrumbs aria-label="breadcrumb">
@@ -15,7 +15,7 @@ const CustomBreadCrumb = ({ paths }) => {
           underline="hover"
           sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
           color="inherit"
-          onClick={() => naviagte(PATHS.DASHBOARD)}
+          onClick={() => navigate(PATHS.DASHBOARD)}
         >
           <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
           Home
@@ -30,7 +30,7 @@ const CustomBreadCrumb = ({ paths }) => {
               cursor: path?.navigation ? "pointer" : "default",
             }}
             color="inherit"
-            onClick={() => naviagte(path?.navigation)}
+            onClick={() => navigate(path?.navigation)}
           >
             {path.icon} {path?.title}
           </Link>

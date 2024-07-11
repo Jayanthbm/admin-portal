@@ -35,7 +35,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          `${BASE_URL}${API_ENDPOINTS.refreshToken}`,
+          `${BASE_URL}${API_ENDPOINTS.REFRESHTOKEN}`,
           {
             refreshToken: getToken(REFRESH_KEY),
           },
@@ -86,6 +86,19 @@ export const post = async (url, data) => {
   }
 };
 
+export const patch = async (url, data) => {
+  try {
+    const response = await api.patch(url, data);
+    return response.data;
+  } catch (error) {
+    let errorMessage = error?.response?.data
+      ? error?.response?.data
+      : {
+          message: "Server Error",
+        };
+    return errorMessage;
+  }
+};
 export const put = async (url, data) => {
   try {
     const response = await api.put(url, data);

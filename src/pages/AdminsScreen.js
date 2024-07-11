@@ -1,9 +1,12 @@
 // src/pages/AdminsScreen.js
 
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Button,
@@ -27,14 +30,14 @@ import AddButton from "../components/AddButton";
 import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import EmailInput from "../components/EmailInput";
 import MyModal from "../components/MyModal";
+import PageLoader from "../components/PageLoader";
 import PageTitle from "../components/PageTitle";
 import PasswordInput from "../components/PasswordInput";
-import { PATHS } from "../constants";
+import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
-import useAuthNavigation from "../hooks/useAuthNavigation";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import PageLoader from "../components/PageLoader";
 import { useSnackbar } from "../context/snackbar.context";
+import { del, get, patch, post } from "../helpers/api.helper";
+import useAuthNavigation from "../hooks/useAuthNavigation";
 const AdminsScreen = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
@@ -45,25 +48,27 @@ const AdminsScreen = () => {
   const [admins, setAdmins] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
-  const [newAdmin, setNewAdmin] = useState({
-    email: "",
-    name: "",
-    password: "",
-  });
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [newAdminName, setNewAdminName] = useState("");
+  const [newAdminPassword, setNewAdminPassword] = useState("");
+  const [validNewAdminEmail, setValidNewAdminEmail] = useState(false);
+  const [validNewAdminPassword, setValidNewAdminPassword] = useState(false);
+
+  const fetchAdmins = async () => {
+    setLoading(true);
+    try {
+      const response = await get(API_ENDPOINTS.ALLADMINS);
+      const data = response.data;
+      setAdmins(data);
+    } catch (error) {
+      console.error("Error fetching admins:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Fetch initial data from API
-    const fetchAdmins = async () => {
-      try {
-        // Replace with actual API call
-        const response = await fetch("/api/admins");
-        const data = await response.json();
-        setAdmins(data);
-      } catch (error) {
-        console.error("Error fetching admins:", error);
-      }
-    };
-
     fetchAdmins();
   }, []);
 
@@ -71,44 +76,28 @@ const AdminsScreen = () => {
   const handleClose = () => {
     setOpen(false);
     setEditMode(null);
-    setNewAdmin({
-      email: "",
-      name: "",
-      password: "",
-    });
+    setNewAdminEmail("");
+    setNewAdminName("");
+    setNewAdminPassword("");
+    setValidNewAdminEmail(false);
+    setValidNewAdminPassword(false);
   };
 
   const handleAddAdmin = async () => {
-    // Validate email and password
-    if (!newAdmin.email || !newAdmin.password) {
-      showSnackbar("Email and password are required.", "error");
-      return;
-    }
-
-    // Simple email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(newAdmin.email)) {
-      showSnackbar("Invalid email format.", "error");
-      return;
-    }
-
     try {
-      // Placeholder for API call to add admin
-      // await api.addAdmin(newAdmin);
-      const id = admins.length + 1;
-      setAdmins([
-        ...admins,
-        {
-          ...newAdmin,
-          id,
-          createdAt: new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-          disabled: false,
-        },
-      ]);
-      setNewAdmin({ email: "", name: "", password: "" });
-      handleClose();
-      showSnackbar("Admin added successfully!", "success");
+      const result = await post(API_ENDPOINTS.ADDADMIN, {
+        email: newAdminEmail,
+        name: newAdminName,
+        password: newAdminPassword,
+      });
+      if (result.status === 201) {
+        showSnackbar(result.message, "success");
+        await fetchAdmins();
+        handleClose();
+      } else {
+        showSnackbar(result.message, "error");
+        handleClose();
+      }
     } catch (error) {
       console.error("Error adding admin:", error);
       showSnackbar("Failed to add admin.", "error");
@@ -123,8 +112,18 @@ const AdminsScreen = () => {
 
   const updateAdmin = async (id) => {
     try {
-      // Placeholder for API call to update admin
-      // await api.updateAdmin(id, { name: admins.find(admin => admin.id === id).name });
+      let admin = admins.find((admin) => admin.id === id);
+      const result = await patch(API_ENDPOINTS.UPDATEADMIN + `/${id}`, {
+        name: admin.name,
+        enabled: admin.enabled === 1 ? true : false,
+      });
+      if (result.status === 200) {
+        showSnackbar(result.message, "success");
+        await fetchAdmins();
+      } else {
+        showSnackbar(result.message, "error");
+        await fetchAdmins();
+      }
       setEditMode(null);
     } catch (error) {
       console.error("Error updating admin:", error);
@@ -139,9 +138,13 @@ const AdminsScreen = () => {
     const { id } = confirmDelete;
     setConfirmDelete({ open: false, id: null });
     try {
-      // Placeholder for API call to delete admin
-      // await api.deleteAdmin(id);
-      setAdmins(admins.filter((admin) => admin.id !== id));
+      const result = await del(API_ENDPOINTS.DELETEADMIN + `/${id}`);
+      if (result.status === 200) {
+        showSnackbar(result.message, "success");
+        await fetchAdmins();
+      } else {
+        showSnackbar(result.message, "error");
+      }
     } catch (error) {
       console.error("Error deleting admin:", error);
     }
@@ -149,13 +152,17 @@ const AdminsScreen = () => {
 
   const disableEnableAdmin = async (id) => {
     try {
-      // Placeholder for API call to disable/enable admin
-      // await api.disableEnableAdmin(id);
-      setAdmins(
-        admins.map((admin) =>
-          admin.id === id ? { ...admin, disabled: !admin.disabled } : admin
-        )
-      );
+      let admin = admins.find((admin) => admin.id === id);
+      const result = await patch(API_ENDPOINTS.UPDATEADMIN + `/${id}`, {
+        name: admin.name,
+        enabled: admin.enabled === 1 ? false : true,
+      });
+      if (result.status === 200) {
+        showSnackbar(result.message, "success");
+        await fetchAdmins();
+      } else {
+        showSnackbar(result.message, "error");
+      }
     } catch (error) {
       console.error("Error disabling/enabling admin:", error);
     }
@@ -184,7 +191,6 @@ const AdminsScreen = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Created At</TableCell>
-                <TableCell>Last Login</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -206,23 +212,22 @@ const AdminsScreen = () => {
                     )}
                   </TableCell>
                   <TableCell>{admin.email}</TableCell>
-                  <TableCell>{admin.createdAt}</TableCell>
-                  <TableCell>{admin.lastLogin}</TableCell>
+                  <TableCell>{admin.created_at}</TableCell>
                   <TableCell>
-                    {admin.disabled ? (
+                    {admin.enabled === 0 ? (
                       <Chip color="error" label="Disabled" />
                     ) : (
                       <Chip color="success" label="Active" />
                     )}
                   </TableCell>
                   <TableCell>
-                    <Tooltip title={admin.disabled ? "Enable" : "Disable"}>
+                    <Tooltip title={admin.enabled === 0 ? "Enable" : "Disable"}>
                       <IconButton
-                        color={admin.disabled ? "success" : "warning"}
+                        color={admin.enabled === 0 ? "success" : "warning"}
                         sx={{ borderRadius: "50%" }}
                         onClick={() => disableEnableAdmin(admin.id)}
                       >
-                        {admin.disabled ? <CheckIcon /> : <BlockIcon />}
+                        {admin.enabled === 0 ? <CheckIcon /> : <BlockIcon />}
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete">
@@ -272,37 +277,39 @@ const AdminsScreen = () => {
             Add Admin
           </Typography>
           <EmailInput
-            value={newAdmin.email}
-            onChange={(e) =>
-              setNewAdmin({ ...newAdmin, email: e.target.value })
-            }
+            value={newAdminEmail}
+            onChange={(e) => setNewAdminEmail(e.target.value)}
+            validationPassed={setValidNewAdminEmail}
           />
 
           <TextField
             label="Name"
             fullWidth
             margin="normal"
-            value={newAdmin.name}
-            onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+            value={newAdminName}
+            onChange={(e) => setNewAdminName(e.target.value)}
           />
           <PasswordInput
-            value={newAdmin.password}
-            minLength={8}
-            onChange={(e) =>
-              setNewAdmin({ ...newAdmin, password: e.target.value })
-            }
+            value={newAdminPassword}
+            minLength={6}
+            onChange={(e) => setNewAdminPassword(e.target.value)}
+            validationPassed={setValidNewAdminPassword}
           />
           <Box mt={2} display="flex" justifyContent="space-between">
             <Button onClick={handleClose} variant="outlined">
               Close
             </Button>
-            <Button
+            <LoadingButton
+              loading={loading}
+              loadingPosition="start"
+              startIcon={<SaveIcon />}
               onClick={handleAddAdmin}
               variant="contained"
               color="primary"
+              disabled={!validNewAdminEmail || !validNewAdminPassword}
             >
               Save
-            </Button>
+            </LoadingButton>
           </Box>
         </MyModal>
 

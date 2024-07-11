@@ -10,7 +10,7 @@ import AuthContext from "../context/auth.context";
 import useAuthNavigation from "../hooks/useAuthNavigation";
 const DoctorsScreen = () => {
   const { isLoggedIn } = useContext(AuthContext);
-  const naviagte = useAuthNavigation(isLoggedIn, PATHS.DOCTORS);
+  const navigate = useAuthNavigation(isLoggedIn, PATHS.DOCTORS);
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <PageTitle title="Doctors" />
