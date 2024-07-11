@@ -1,3 +1,5 @@
+// src/App.js
+
 import React, { useContext, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
@@ -11,6 +13,7 @@ import DoctorsScreen from "./pages/DoctorsScreen";
 import HomeScreen from "./pages/HomeScreen";
 import LoginScreen from "./pages/LoginScreen";
 import SpecialitiesScreen from "./pages/SpecialitiesScreen";
+import SubSpecialityScreen from "./pages/SubSpecialityScreen";
 import UserRecordConfigScreen from "./pages/UserRecordConfigScreen";
 
 const Checker = () => {
@@ -45,6 +48,10 @@ const App = () => {
             <Route path={PATHS.DASHBOARD} element={<DashboardScreen />} />
             <Route path={PATHS.DOCTORS} element={<DoctorsScreen />} />
             <Route path={PATHS.SPECIALITIES} element={<SpecialitiesScreen />} />
+            <Route
+              path={PATHS.SPECIALITIES + "/:id"}
+              element={<SubSpecialityScreen />}
+            />
             <Route
               path={PATHS.USER_RECORD_CONFIG}
               element={<UserRecordConfigScreen />}

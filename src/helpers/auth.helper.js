@@ -1,4 +1,4 @@
-// auth.helper.js
+// src/helpers/auth.helper.js
 
 export const setToken = (key, token) => {
   if (token) {

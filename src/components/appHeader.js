@@ -1,3 +1,5 @@
+// src/components/appHeader.js
+
 import AdbIcon from "@mui/icons-material/Adb";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";

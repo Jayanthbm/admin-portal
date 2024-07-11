@@ -1,64 +1,172 @@
-import React, { useContext } from "react";
-import { PATHS } from "../constants";
-import AuthContext from "../context/auth.context";
-import useAuthNavigation from "../hooks/useAuthNavigation";
+// src/pages/AdminsScreen.js
+
+import BlockIcon from "@mui/icons-material/Block";
+import CheckIcon from "@mui/icons-material/Check";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
-  Typography,
+  Button,
+  Chip,
+  IconButton,
+  Pagination,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
+  TextField,
   Tooltip,
-  Chip,
-  Pagination,
-  Stack,
+  Typography,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import CheckIcon from "@mui/icons-material/Check";
-import BlockIcon from "@mui/icons-material/Block";
+import React, { useContext, useEffect, useState } from "react";
+import AddButton from "../components/AddButton";
+import CustomBreadCrumb from "../components/CustomBreadCrumb";
+import EmailInput from "../components/EmailInput";
+import MyModal from "../components/MyModal";
+import PageTitle from "../components/PageTitle";
+import PasswordInput from "../components/PasswordInput";
+import { PATHS } from "../constants";
+import AuthContext from "../context/auth.context";
+import useAuthNavigation from "../hooks/useAuthNavigation";
 
 const AdminsScreen = () => {
   const { isLoggedIn } = useContext(AuthContext);
-  const naviagte = useAuthNavigation(isLoggedIn, PATHS.ADMINS);
+  const navigate = useAuthNavigation(isLoggedIn, PATHS.ADMINS);
+  const [open, setOpen] = useState(false);
+  const [editMode, setEditMode] = useState(null);
+  const [admins, setAdmins] = useState([]);
+  const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
-  const sampleAdmins = [
-    {
-      id: 1,
-      name: "Admin 1",
-      email: "admin1@me.com",
-      createdAt: "2021-01-01",
-      disabled: false,
-      lastLogin: "2021-01-01",
-    },
-    {
-      id: 2,
-      name: "Admin 2",
-      email: "admin2@me.com",
-      createdAt: "2021-01-01",
-      disabled: true,
-      lastLogin: "2021-01-01",
-    },
-    {
-      id: 3,
-      name: "Admin 3",
-      email: "admin3@me.com",
-      createdAt: "2021-01-01",
-      disabled: false,
-      lastLogin: "2021-01-01",
-    },
-  ];
+  const [newAdmin, setNewAdmin] = useState({
+    email: "",
+    name: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    // Fetch initial data from API
+    const fetchAdmins = async () => {
+      try {
+        // Replace with actual API call
+        const response = await fetch("/api/admins");
+        const data = await response.json();
+        setAdmins(data);
+      } catch (error) {
+        console.error("Error fetching admins:", error);
+      }
+    };
+
+    fetchAdmins();
+  }, []);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    setEditMode(null);
+    setNewAdmin({
+      email: "",
+      name: "",
+      password: "",
+    });
+  };
+
+  const handleAddAdmin = async () => {
+    // Validate email and password
+    if (!newAdmin.email || !newAdmin.password) {
+      alert("Email and Password are required.");
+      return;
+    }
+
+    // Simple email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newAdmin.email)) {
+      alert("Invalid email format.");
+      return;
+    }
+
+    try {
+      // Placeholder for API call to add admin
+      // await api.addAdmin(newAdmin);
+      const id = admins.length + 1;
+      setAdmins([
+        ...admins,
+        {
+          ...newAdmin,
+          id,
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
+          disabled: false,
+        },
+      ]);
+      setNewAdmin({ email: "", name: "", password: "" });
+      handleClose();
+    } catch (error) {
+      console.error("Error adding admin:", error);
+    }
+  };
+
+  const handleEditChange = (id, name) => {
+    setAdmins(
+      admins.map((admin) => (admin.id === id ? { ...admin, name } : admin))
+    );
+  };
+
+  const updateAdmin = async (id) => {
+    try {
+      // Placeholder for API call to update admin
+      // await api.updateAdmin(id, { name: admins.find(admin => admin.id === id).name });
+      setEditMode(null);
+    } catch (error) {
+      console.error("Error updating admin:", error);
+    }
+  };
+
+  const confirmDeleteAdmin = (id) => {
+    setConfirmDelete({ open: true, id });
+  };
+
+  const deleteAdmin = async () => {
+    const { id } = confirmDelete;
+    setConfirmDelete({ open: false, id: null });
+    try {
+      // Placeholder for API call to delete admin
+      // await api.deleteAdmin(id);
+      setAdmins(admins.filter((admin) => admin.id !== id));
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+    }
+  };
+
+  const disableEnableAdmin = async (id) => {
+    try {
+      // Placeholder for API call to disable/enable admin
+      // await api.disableEnableAdmin(id);
+      setAdmins(
+        admins.map((admin) =>
+          admin.id === id ? { ...admin, disabled: !admin.disabled } : admin
+        )
+      );
+    } catch (error) {
+      console.error("Error disabling/enabling admin:", error);
+    }
+  };
 
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Admins
-      </Typography>
+      <PageTitle title="Admins" />
+      <CustomBreadCrumb
+        paths={[
+          {
+            title: "Admins",
+            icon: <></>,
+          },
+        ]}
+      />
+      <AddButton onClick={handleOpen} title="Add Admin" />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -72,9 +180,21 @@ const AdminsScreen = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sampleAdmins.map((admin) => (
+            {admins.map((admin) => (
               <TableRow key={admin.id}>
-                <TableCell>{admin.name}</TableCell>
+                <TableCell>
+                  {editMode === admin.id ? (
+                    <TextField
+                      value={admin.name}
+                      onChange={(e) =>
+                        handleEditChange(admin.id, e.target.value)
+                      }
+                      size="small"
+                    />
+                  ) : (
+                    admin.name
+                  )}
+                </TableCell>
                 <TableCell>{admin.email}</TableCell>
                 <TableCell>{admin.createdAt}</TableCell>
                 <TableCell>{admin.lastLogin}</TableCell>
@@ -90,18 +210,34 @@ const AdminsScreen = () => {
                     <IconButton
                       color={admin.disabled ? "success" : "warning"}
                       sx={{ borderRadius: "50%" }}
+                      onClick={() => disableEnableAdmin(admin.id)}
                     >
                       {admin.disabled ? <CheckIcon /> : <BlockIcon />}
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Delete">
-                    <IconButton color="error" sx={{ borderRadius: "50%" }}>
+                    <IconButton
+                      color="error"
+                      sx={{ borderRadius: "50%" }}
+                      onClick={() => confirmDeleteAdmin(admin.id)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Edit">
-                    <IconButton color="primary" sx={{ borderRadius: "50%" }}>
-                      <EditIcon />
+                    <IconButton
+                      color="primary"
+                      sx={{ borderRadius: "50%" }}
+                      onClick={() => {
+                        if (editMode === admin.id) {
+                          setEditMode(null);
+                          updateAdmin(admin.id);
+                        } else {
+                          setEditMode(admin.id);
+                        }
+                      }}
+                    >
+                      {editMode === admin.id ? <CheckIcon /> : <EditIcon />}
                     </IconButton>
                   </Tooltip>
                 </TableCell>
@@ -114,13 +250,66 @@ const AdminsScreen = () => {
       <Stack spacing={2} mt={2} direction="row" justifyContent="center">
         <Pagination
           count={1}
-          page="1"
+          page={1}
           onChange={(e, page) => console.log("page", page)}
           variant="outlined"
           shape="rounded"
           size="large"
         />
       </Stack>
+      <MyModal open={open} handleClose={handleClose}>
+        <Typography variant="h6" gutterBottom>
+          Add Admin
+        </Typography>
+        <EmailInput
+          value={newAdmin.email}
+          onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+        />
+
+        <TextField
+          label="Name"
+          fullWidth
+          margin="normal"
+          value={newAdmin.name}
+          onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+        />
+        <PasswordInput
+          value={newAdmin.password}
+          minLength={8}
+          onChange={(e) =>
+            setNewAdmin({ ...newAdmin, password: e.target.value })
+          }
+        />
+        <Box mt={2} display="flex" justifyContent="space-between">
+          <Button onClick={handleClose} variant="outlined">
+            Close
+          </Button>
+          <Button onClick={handleAddAdmin} variant="contained" color="primary">
+            Save
+          </Button>
+        </Box>
+      </MyModal>
+
+      <MyModal
+        open={confirmDelete.open}
+        handleClose={() => setConfirmDelete({ open: false, id: null })}
+      >
+        <Typography variant="h6" gutterBottom>
+          Confirm Deletion
+        </Typography>
+        <Typography>Are you sure you want to delete this admin?</Typography>
+        <Box mt={2} display="flex" justifyContent="space-between">
+          <Button
+            onClick={() => setConfirmDelete({ open: false, id: null })}
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button onClick={deleteAdmin} variant="contained" color="error">
+            Delete
+          </Button>
+        </Box>
+      </MyModal>
     </Box>
   );
 };

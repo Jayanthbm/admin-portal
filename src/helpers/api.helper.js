@@ -1,4 +1,5 @@
-//api.helper.js
+// src/helpers/api.helper.js
+
 import axios from "axios";
 import { API_ENDPOINTS, BASE_URL, REFRESH_KEY, TOKEN_KEY } from "../constants";
 import { getToken, setToken } from "./auth.helper";

@@ -1,4 +1,5 @@
-// AuthContext.js
+// src/context/auth.context.js
+
 import React, { createContext, useEffect, useState } from "react";
 import { REFRESH_KEY, TOKEN_KEY } from "../constants";
 import { removeToken } from "../helpers/auth.helper";

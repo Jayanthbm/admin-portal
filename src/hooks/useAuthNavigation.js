@@ -1,4 +1,5 @@
 // src/hooks/useAuthNavigation.js
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PATHS } from "../constants";

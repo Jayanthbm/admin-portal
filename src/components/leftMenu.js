@@ -1,4 +1,5 @@
-import CategoryIcon from "@mui/icons-material/Category";
+// src/components/leftMenu.js
+
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
 import SettingsIcon from "@mui/icons-material/Settings";
