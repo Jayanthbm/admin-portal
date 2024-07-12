@@ -38,6 +38,8 @@ import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";
 import { del, get, patch, post } from "../helpers/api.helper";
 import useAuthNavigation from "../hooks/useAuthNavigation";
+import { addItem, getItems, updateItem } from "../helpers/api.handler";
+import { getItemById } from "../helpers/util.helper";
 const AdminsScreen = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
@@ -54,22 +56,19 @@ const AdminsScreen = () => {
   const [validNewAdminEmail, setValidNewAdminEmail] = useState(false);
   const [validNewAdminPassword, setValidNewAdminPassword] = useState(false);
 
-  const fetchAdmins = async () => {
-    setLoading(true);
-    try {
-      const response = await get(API_ENDPOINTS.ALLADMINS);
-      const data = response.data;
-      setAdmins(data);
-    } catch (error) {
-      console.error("Error fetching admins:", error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchItems = async () => {
+    return await getItems({
+      url: API_ENDPOINTS.ALLADMINS,
+      loadingFunction: setLoading,
+      snackBarFunction: null,
+      dataSetterState: setAdmins,
+      commonFunction: () => {},
+    });
   };
 
   useEffect(() => {
     // Fetch initial data from API
-    fetchAdmins();
+    fetchItems();
   }, []);
 
   const handleOpen = () => setOpen(true);
@@ -83,25 +82,21 @@ const AdminsScreen = () => {
     setValidNewAdminPassword(false);
   };
 
-  const handleAddAdmin = async () => {
-    try {
-      const result = await post(API_ENDPOINTS.ADDADMIN, {
+  const handleAdd = async () => {
+    return await addItem({
+      url: API_ENDPOINTS.ADDADMIN,
+      data: {
         email: newAdminEmail,
         name: newAdminName,
         password: newAdminPassword,
-      });
-      if (result.status === 201) {
-        showSnackbar(result.message, "success");
-        await fetchAdmins();
+      },
+      loadingFunction: setLoading,
+      snackBarFunction: showSnackbar,
+      reloadData: fetchItems,
+      commonFunction: () => {
         handleClose();
-      } else {
-        showSnackbar(result.message, "error");
-        handleClose();
-      }
-    } catch (error) {
-      console.error("Error adding admin:", error);
-      showSnackbar("Failed to add admin.", "error");
-    }
+      },
+    });
   };
 
   const handleEditChange = (id, name) => {
@@ -110,27 +105,25 @@ const AdminsScreen = () => {
     );
   };
 
-  const updateAdmin = async (id) => {
-    try {
-      let admin = admins.find((admin) => admin.id === id);
-      const result = await patch(API_ENDPOINTS.UPDATEADMIN + `/${id}`, {
-        name: admin.name,
-        enabled: admin.enabled === 1 ? true : false,
-      });
-      if (result.status === 200) {
-        showSnackbar(result.message, "success");
-        await fetchAdmins();
-      } else {
-        showSnackbar(result.message, "error");
-        await fetchAdmins();
-      }
-      setEditMode(null);
-    } catch (error) {
-      console.error("Error updating admin:", error);
-    }
+  const handleUpdate = async (id) => {
+    const item = getItemById(admins, id);
+    return await updateItem({
+      url: API_ENDPOINTS.UPDATEADMIN + `/${item.id}`,
+      data: {
+        name: item.name,
+        enabled: item.enabled === 1 ? true : false,
+      },
+      loadingFunction: setLoading,
+      snackBarFunction: showSnackbar,
+      reloadData: fetchItems,
+      commonFunction: () => {
+        handleClose();
+        setEditMode(null);
+      },
+    });
   };
 
-  const confirmDeleteAdmin = (id) => {
+  const confirmDeleteModal = (id) => {
     setConfirmDelete({ open: true, id });
   };
 
@@ -141,7 +134,8 @@ const AdminsScreen = () => {
       const result = await del(API_ENDPOINTS.DELETEADMIN + `/${id}`);
       if (result.status === 200) {
         showSnackbar(result.message, "success");
-        await fetchAdmins();
+        await fetchItems();
+        setConfirmDelete({ open: false, id: null });
       } else {
         showSnackbar(result.message, "error");
       }
@@ -159,7 +153,7 @@ const AdminsScreen = () => {
       });
       if (result.status === 200) {
         showSnackbar(result.message, "success");
-        await fetchAdmins();
+        await fetchItems();
       } else {
         showSnackbar(result.message, "error");
       }
@@ -170,7 +164,6 @@ const AdminsScreen = () => {
 
   return (
     <>
-      <PageLoader loading={loading} />
       <Box sx={{ flexGrow: 1, p: 3 }}>
         <PageTitle title="Admins" />
         <CustomBreadCrumb
@@ -183,7 +176,7 @@ const AdminsScreen = () => {
             },
           ]}
         />
-        <AddButton onClick={handleOpen} title="Add Admin" />
+        <AddButton onClick={handleOpen} title="Add Admin" disabled={loading} />
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -234,7 +227,7 @@ const AdminsScreen = () => {
                       <IconButton
                         color="error"
                         sx={{ borderRadius: "50%" }}
-                        onClick={() => confirmDeleteAdmin(admin.id)}
+                        onClick={() => confirmDeleteModal(admin.id)}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -246,7 +239,7 @@ const AdminsScreen = () => {
                         onClick={() => {
                           if (editMode === admin.id) {
                             setEditMode(null);
-                            updateAdmin(admin.id);
+                            handleUpdate(admin.id);
                           } else {
                             setEditMode(admin.id);
                           }
@@ -303,7 +296,7 @@ const AdminsScreen = () => {
               loading={loading}
               loadingPosition="start"
               startIcon={<SaveIcon />}
-              onClick={handleAddAdmin}
+              onClick={handleAdd}
               variant="contained"
               color="primary"
               disabled={!validNewAdminEmail || !validNewAdminPassword}

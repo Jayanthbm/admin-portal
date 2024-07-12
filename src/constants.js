@@ -13,6 +13,10 @@ export const API_ENDPOINTS = {
   ADDADMIN: "/admin/add",
   UPDATEADMIN: "/admin/update",
   DELETEADMIN: "/admin/delete",
+  ALLSPECIALITIES: "/admin/all-specialities",
+  ADDSPECIALITY: "/admin/add-speciality",
+  UPDATESPECIALITY: "/admin/update-speciality",
+  DELETESPECIALITY: "/admin/delete-speciality",
 };
 
 const PATHS_BASE_PATH = "/";

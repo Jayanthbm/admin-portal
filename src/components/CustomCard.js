@@ -3,10 +3,13 @@
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import {
-  Button,
   Card,
+  CardActions,
   CardContent,
+  CardHeader,
+  Divider,
   Grid,
+  IconButton,
   Skeleton,
   Tooltip,
   Typography,
@@ -20,9 +23,9 @@ const CustomCard = ({
   buttonClick,
   isLoading,
   isCountUp,
-  valueVariant = "h4",
-  detailsText = "Details",
+  valueVariant = "h3",
   valueToolTip,
+  actions,
 }) => {
   icon = icon || (
     <AcUnitIcon color="primary" fontSize="large" sx={{ fontSize: 60 }} />
@@ -30,58 +33,54 @@ const CustomCard = ({
   if (buttonClick === null || buttonClick === undefined) buttonClick = () => {};
   isLoading = isLoading || false;
   if (isCountUp === null || isCountUp === undefined) isCountUp = false;
+  if (value === null || value === undefined) value = isCountUp ? 0 : "";
   return (
     <Card sx={{ height: "100%", position: "relative" }}>
+      <CardHeader title={title} sx={{ pb: 1 }} />
+      <Divider />
       <CardContent>
-        <Grid container>
-          {/* Left Side */}
-          <Grid item container alignItems="center" xs={6}>
-            {icon}
-          </Grid>
-          {/* Right Side */}
-          {value && (
-            <Grid item xs={6} sx={{ textAlign: "right" }}>
-              <Tooltip title={valueToolTip}>
-                <Typography variant={valueVariant}>
-                  {isLoading ? (
-                    <Skeleton
-                      variant="text"
-                      width={30}
-                      height={50}
-                      position="relative"
-                      style={{ display: "inline-block" }}
-                    />
-                  ) : (
-                    <>
-                      {isCountUp ? (
-                        <CountUp
-                          start={0}
-                          end={value}
-                          duration={2.5}
-                          separator=","
-                        />
-                      ) : (
-                        value
-                      )}
-                    </>
-                  )}
-                </Typography>
-              </Tooltip>
-            </Grid>
+        <Grid container justifyContent="center">
+          {isLoading ? (
+            <>
+              <Skeleton animation="wave" width={150} height={20} />
+              <Skeleton animation="wave" width={150} height={20} />
+              <Skeleton animation="wave" width={150} height={20} />
+            </>
+          ) : (
+            <Tooltip title={valueToolTip}>
+              <Typography variant={valueVariant}>
+                {isCountUp ? (
+                  <CountUp start={0} end={value} duration={2.5} separator="," />
+                ) : (
+                  value
+                )}
+              </Typography>
+            </Tooltip>
           )}
         </Grid>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="body2" color="text.secondary">
-            {title}
-          </Typography>
-          <Tooltip title={"Details"}>
-            <Button onClick={buttonClick}>
-              {detailsText}
-              <ArrowForwardIcon />
-            </Button>
-          </Tooltip>
-        </div>
       </CardContent>
+      <Divider />
+      <CardActions disableSpacing>
+        {actions?.map((action, index) => (
+          <IconButton
+            key={index}
+            size="small"
+            onClick={action.onClick}
+            sx={{ cursor: action.disabled ? "not-allowed" : "pointer" }}
+            disabled={action.disabled ? action.disabled : false}
+          >
+            {action.icon}
+          </IconButton>
+        ))}
+        <IconButton
+          size="small"
+          onClick={buttonClick}
+          disabled={isLoading}
+          sx={{ ml: "auto", cursor: isLoading ? "not-allowed" : "pointer" }}
+        >
+          <ArrowForwardIcon color={isLoading ? "disabled" : "primary"} />
+        </IconButton>
+      </CardActions>
     </Card>
   );
 };

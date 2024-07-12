@@ -6,3 +6,8 @@ export const isValidToken = (token) => {
   }
   return true;
 };
+
+
+export const getItemById = (items, id) => {
+  return items.find((item) => item.id === id);
+};
