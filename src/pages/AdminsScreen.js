@@ -6,10 +6,8 @@ import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-import { LoadingButton } from "@mui/lab";
 import {
   Box,
-  Button,
   Chip,
   IconButton,
   Pagination,
@@ -23,23 +21,25 @@ import {
   TableRow,
   TextField,
   Tooltip,
-  Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import AddButton from "../components/AddButton";
 import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import EmailInput from "../components/EmailInput";
 import MyModal from "../components/MyModal";
-import PageLoader from "../components/PageLoader";
 import PageTitle from "../components/PageTitle";
 import PasswordInput from "../components/PasswordInput";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";
-import { del, get, patch, post } from "../helpers/api.helper";
-import useAuthNavigation from "../hooks/useAuthNavigation";
-import { addItem, getItems, updateItem } from "../helpers/api.handler";
+import {
+  addItem,
+  deleteItem,
+  getItems,
+  updateItem,
+} from "../helpers/api.handler";
 import { getItemById } from "../helpers/util.helper";
+import useAuthNavigation from "../hooks/useAuthNavigation";
 const AdminsScreen = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
@@ -105,13 +105,16 @@ const AdminsScreen = () => {
     );
   };
 
-  const handleUpdate = async (id) => {
+  const handleUpdate = async (id, enabled) => {
     const item = getItemById(admins, id);
+    if(typeof enabled !== "boolean"){
+      enabled = enabled === 1 ? true : false
+    }
     return await updateItem({
       url: API_ENDPOINTS.UPDATEADMIN + `/${item.id}`,
       data: {
         name: item.name,
-        enabled: item.enabled === 1 ? true : false,
+        enabled: enabled,
       },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
@@ -127,39 +130,17 @@ const AdminsScreen = () => {
     setConfirmDelete({ open: true, id });
   };
 
-  const deleteAdmin = async () => {
+  const handleDelete = async () => {
     const { id } = confirmDelete;
-    setConfirmDelete({ open: false, id: null });
-    try {
-      const result = await del(API_ENDPOINTS.DELETEADMIN + `/${id}`);
-      if (result.status === 200) {
-        showSnackbar(result.message, "success");
-        await fetchItems();
+    return await deleteItem({
+      url: API_ENDPOINTS.DELETEADMIN + `/${id}`,
+      loadingFunction: setLoading,
+      snackBarFunction: showSnackbar,
+      reloadData: fetchItems,
+      commonFunction: () => {
         setConfirmDelete({ open: false, id: null });
-      } else {
-        showSnackbar(result.message, "error");
-      }
-    } catch (error) {
-      console.error("Error deleting admin:", error);
-    }
-  };
-
-  const disableEnableAdmin = async (id) => {
-    try {
-      let admin = admins.find((admin) => admin.id === id);
-      const result = await patch(API_ENDPOINTS.UPDATEADMIN + `/${id}`, {
-        name: admin.name,
-        enabled: admin.enabled === 1 ? false : true,
-      });
-      if (result.status === 200) {
-        showSnackbar(result.message, "success");
-        await fetchItems();
-      } else {
-        showSnackbar(result.message, "error");
-      }
-    } catch (error) {
-      console.error("Error disabling/enabling admin:", error);
-    }
+      },
+    });
   };
 
   return (
@@ -218,7 +199,7 @@ const AdminsScreen = () => {
                       <IconButton
                         color={admin.enabled === 0 ? "success" : "warning"}
                         sx={{ borderRadius: "50%" }}
-                        onClick={() => disableEnableAdmin(admin.id)}
+                        onClick={() => handleUpdate(admin.id, !admin.enabled)}
                       >
                         {admin.enabled === 0 ? <CheckIcon /> : <BlockIcon />}
                       </IconButton>
@@ -239,7 +220,7 @@ const AdminsScreen = () => {
                         onClick={() => {
                           if (editMode === admin.id) {
                             setEditMode(null);
-                            handleUpdate(admin.id);
+                            handleUpdate(admin.id, admin.enabled);
                           } else {
                             setEditMode(admin.id);
                           }
@@ -265,10 +246,19 @@ const AdminsScreen = () => {
             size="large"
           />
         </Stack>
-        <MyModal open={open} handleClose={handleClose}>
-          <Typography variant="h6" gutterBottom>
-            Add Admin
-          </Typography>
+        <MyModal
+          open={open}
+          handleClose={handleClose}
+          title="Add Admin"
+          subTitle={"Enter admin details"}
+          okButtonText="Add Admin"
+          cancelButtonText="Cancel"
+          onOk={handleAdd}
+          onCancel={handleClose}
+          isLoading={loading}
+          okButtonIcon={<SaveIcon />}
+          okButtondisabled={!validNewAdminEmail || !validNewAdminPassword}
+        >
           <EmailInput
             value={newAdminEmail}
             onChange={(e) => setNewAdminEmail(e.target.value)}
@@ -288,44 +278,20 @@ const AdminsScreen = () => {
             onChange={(e) => setNewAdminPassword(e.target.value)}
             validationPassed={setValidNewAdminPassword}
           />
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button onClick={handleClose} variant="outlined">
-              Close
-            </Button>
-            <LoadingButton
-              loading={loading}
-              loadingPosition="start"
-              startIcon={<SaveIcon />}
-              onClick={handleAdd}
-              variant="contained"
-              color="primary"
-              disabled={!validNewAdminEmail || !validNewAdminPassword}
-            >
-              Save
-            </LoadingButton>
-          </Box>
         </MyModal>
 
         <MyModal
           open={confirmDelete.open}
           handleClose={() => setConfirmDelete({ open: false, id: null })}
-        >
-          <Typography variant="h6" gutterBottom>
-            Confirm Deletion
-          </Typography>
-          <Typography>Are you sure you want to delete this admin?</Typography>
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button
-              onClick={() => setConfirmDelete({ open: false, id: null })}
-              variant="outlined"
-            >
-              Cancel
-            </Button>
-            <Button onClick={deleteAdmin} variant="contained" color="error">
-              Delete
-            </Button>
-          </Box>
-        </MyModal>
+          title="Confirm Deletion"
+          subTitle="Are you sure you want to delete this admin?"
+          okButtonText="Delete"
+          cancelButtonText="Cancel"
+          onOk={handleDelete}
+          onCancel={() => setConfirmDelete({ open: false, id: null })}
+          isLoading={loading}
+          okButtonColor="error"
+        />
       </Box>
     </>
   );
