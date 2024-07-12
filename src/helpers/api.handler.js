@@ -1,6 +1,7 @@
 //src/helpers/api.handler.js
 
 import { del, get, patch, post } from "./api.helper";
+import { getJson, isDataFresh, storeItem, storeJson } from "./util.helper";
 
 const showSnackbar = (message, severity = "success", snackbar) => {
   if (snackbar) {
@@ -13,13 +14,33 @@ export const getItems = async ({
   snackBarFunction,
   dataSetterState,
   commonFunction,
+  force = false,
 }) => {
   loadingFunction(true);
   try {
+    // check if data is already cached and last fetched data is not older than 1 hour
+    if (!force) {
+      const cachedData = getJson(url);
+      if (cachedData && isDataFresh(url)) {
+        dataSetterState(cachedData);
+        return;
+      } else {
+        await getItems({
+          url,
+          loadingFunction,
+          snackBarFunction,
+          dataSetterState,
+          commonFunction,
+          force: true,
+        });
+      }
+    }
     const result = await get(url);
     if (result.status === 200) {
       const data = result?.data;
       dataSetterState(data);
+      storeJson(url, data);
+      storeItem(url + "_timestamp", Date.now());
       showSnackbar(result?.message, "success", snackBarFunction);
     } else {
       showSnackbar(result?.message, "error", snackBarFunction);
@@ -70,7 +91,7 @@ export const updateItem = async ({
   loadingFunction(true);
   try {
     const result = await patch(url, data);
-    if (result.status === 200 || result.status === 204) {
+    if (result.status === 202) {
       showSnackbar(result?.message, "success", snackBarFunction);
       await reloadData();
     } else {
@@ -95,11 +116,7 @@ export const deleteItem = async ({
   loadingFunction(true);
   try {
     const result = await del(url);
-    if (
-      result.status === 200 ||
-      result.status === 202 ||
-      result.status === 204
-    ) {
+    if (result.status === 202) {
       showSnackbar(result?.message, "success", snackBarFunction);
       await reloadData();
     } else {
