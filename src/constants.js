@@ -15,6 +15,9 @@ export const API_ENDPOINTS = {
   DELETEADMIN: "/admin/delete",
   ALLSPECIALITIES: "/common/specialties",
   SPECIALITY: "/admin/specialty",
+  DOCTORS: "/admin/doctors",
+  DOCTOR: "/admin/doctor",
+  USER_RECORD_CONFIG: "/admin/record-config",
 };
 
 const PATHS_BASE_PATH = "/";
