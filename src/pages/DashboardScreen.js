@@ -10,7 +10,9 @@ import CustomCard from "../components/CustomCard";
 import PageTitle from "../components/PageTitle";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
-import { get } from "../helpers/api.helper";
+import { getItems } from "../helpers/api.handler";
+
+import MyPageLayout from "../components/MyPageLayout";
 import useAuthNavigation from "../hooks/useAuthNavigation";
 const DashboardScreen = () => {
   const [loading, setLoading] = useState(true);
@@ -18,19 +20,30 @@ const DashboardScreen = () => {
   const navigate = useAuthNavigation(isLoggedIn, PATHS.DASHBOARD);
   const [dashboardData, setDashboardData] = useState(null);
 
+  const fetchItems = async (force = false) => {
+    return await getItems({
+      url: API_ENDPOINTS.DASHBOARD,
+      loadingFunction: setLoading,
+      snackBarFunction: null,
+      dataSetterState: setDashboardData,
+      commonFunction: () => {},
+      force: force,
+      cachedKey: API_ENDPOINTS.DASHBOARD,
+    });
+  };
+
   useEffect(() => {
-    const init = async () => {
-      console.log("Calling Init function");
-      setLoading(true);
-      const response = await get(API_ENDPOINTS.dashboard);
-      setDashboardData(response?.data);
-      setLoading(false);
-    };
-    init();
+    fetchItems();
   }, []);
+
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
-      <PageTitle title="Dashboard" />
+      <PageTitle
+        title="Dashboard"
+        onRefresh={() => {
+          fetchItems(true);
+        }}
+      />
       <Grid container spacing={3}>
         {/* Doctors Info */}
         <Grid item xs={12} sm={6} md={4}>
