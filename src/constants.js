@@ -13,6 +13,11 @@ export const API_ENDPOINTS = {
   ADDADMIN: "/admin/add",
   UPDATEADMIN: "/admin/update",
   DELETEADMIN: "/admin/delete",
+  ALLSPECIALITIES: "/common/specialties",
+  SPECIALITY: "/admin/specialty",
+  DOCTORS: "/admin/doctors",
+  DOCTOR: "/admin/doctor",
+  USER_RECORD_CONFIG: "/admin/record-config",
 };
 
 const PATHS_BASE_PATH = "/admin-portal/";

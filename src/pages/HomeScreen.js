@@ -6,7 +6,7 @@ import AuthContext from "../context/auth.context";
 import useAuthNavigation from "../hooks/useAuthNavigation";
 const HomeScreen = () => {
   const { isLoggedIn } = useContext(AuthContext);
-  const navigate = useAuthNavigation(isLoggedIn, PATHS.DASHBOARD);
+  useAuthNavigation(isLoggedIn, PATHS.DASHBOARD);
   return <></>;
 };
 
