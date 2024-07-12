@@ -1,26 +1,27 @@
 import AcUnitIcon from "@mui/icons-material/AcUnit";
 import CategoryIcon from "@mui/icons-material/Category";
-import { Box, Grid, Typography, TextField } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import CheckIcon from "@mui/icons-material/Check";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
+import { Box, Grid, TextField } from "@mui/material";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import AddButton from "../components/AddButton";
 import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import CustomCard from "../components/CustomCard";
+import MyModal from "../components/MyModal";
+import MyPageLayout from "../components/MyPageLayout";
 import PageTitle from "../components/PageTitle";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
-import useAuthNavigation from "../hooks/useAuthNavigation";
 import { useSnackbar } from "../context/snackbar.context";
-import MyModal from "../components/MyModal";
-import { LoadingButton } from "@mui/lab";
-import SaveIcon from "@mui/icons-material/Save";
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
 } from "../helpers/api.handler";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import useAuthNavigation from "../hooks/useAuthNavigation";
 const SpecialitiesScreen = () => {
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useContext(AuthContext);
@@ -28,42 +29,28 @@ const SpecialitiesScreen = () => {
   const showSnackbar = useSnackbar();
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(null);
-  const [specialities, setSpecialities] = useState([]);
+  const [data, setData] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
   const [name, setName] = useState("");
 
-  const fetchItems = async () => {
-    return await getItems({
-      url: API_ENDPOINTS.ALLSPECIALITIES,
-      loadingFunction: setLoading,
-      snackBarFunction: null,
-      dataSetterState: setSpecialities,
-      commonFunction: () => {},
-    });
-  };
+  const fetchItems = useCallback(
+    async (force) => {
+      await getItems({
+        url: API_ENDPOINTS.ALLSPECIALITIES,
+        loadingFunction: setLoading,
+        snackBarFunction: null,
+        dataSetterState: setData,
+        commonFunction: () => { },
+        force: force,
+      });
+    },
+    []
+  );
 
   useEffect(() => {
-    // Fetch initial data from API
     fetchItems();
-    setSpecialities([
-      {
-        id: 1,
-        title: "Speciality 1",
-        totalSubSpecialities: 10,
-      },
-      {
-        id: 2,
-        title: "Speciality 2",
-        totalSubSpecialities: 5,
-      },
-      {
-        id: 3,
-        title: "Speciality 3",
-        totalSubSpecialities: 15,
-      },
-    ]);
-  }, []);
+  }, [fetchItems]);
 
   const handleOpen = () => setOpen(true);
 
@@ -71,15 +58,18 @@ const SpecialitiesScreen = () => {
     setOpen(false);
     setEditMode(null);
     setName("");
+    setConfirmDelete({ open: false, id: null });
   };
 
   const handleAdd = async () => {
     return await addItem({
-      url: API_ENDPOINTS.ADDSPECIALITY,
-      data: { title: name },
+      url: API_ENDPOINTS.SPECIALITY,
+      data: { name: name },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
-      reloadData: fetchItems,
+      reloadData: () => {
+        fetchItems(true);
+      },
       commonFunction: () => {
         handleClose();
       },
@@ -87,25 +77,20 @@ const SpecialitiesScreen = () => {
   };
 
   const handleEditChange = (id, name) => {
-    setSpecialities(
-      specialities.map((speciality) =>
-        speciality.id === id ? { ...speciality, name } : speciality
-      )
+    setData(
+      data.map((item) => (item.id === id ? { ...item, name: name } : item))
     );
   };
 
-  const getItemById = (id) => {
-    return specialities.find((speciality) => speciality.id === id);
-  };
-
-  const handleUpdate = async () => {
-    const item = getItemById(editMode.id);
+  const handleUpdate = async (id, title) => {
     return await updateItem({
-      url: API_ENDPOINTS.UPDATESPECIALITY + `/${item.id}`,
-      data: { title: name },
+      url: `${API_ENDPOINTS.SPECIALITY}/${id}`,
+      data: { name: title },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
-      reloadData: fetchItems,
+      reloadData: () => {
+        fetchItems(true);
+      },
       commonFunction: () => {
         handleClose();
       },
@@ -118,19 +103,26 @@ const SpecialitiesScreen = () => {
 
   const handleDelete = async () => {
     return await deleteItem({
-      url: API_ENDPOINTS.DELETESPECIALITY + `/${confirmDelete.id}`,
+      url: `${API_ENDPOINTS.SPECIALITY}/${confirmDelete.id}`,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
-      reloadData: fetchItems,
+      reloadData: () => {
+        fetchItems(true);
+      },
       commonFunction: () => {
-        setConfirmDelete({ open: false, id: null });
+        handleClose();
       },
     });
   };
   return (
     <>
       <Box sx={{ flexGrow: 1, p: 3 }}>
-        <PageTitle title="Specialities" />
+        <PageTitle
+          title="Specialities"
+          onRefresh={() => {
+            fetchItems(true);
+          }}
+        />
         <CustomBreadCrumb
           paths={[
             {
@@ -139,58 +131,89 @@ const SpecialitiesScreen = () => {
             },
           ]}
         />
-        <AddButton
-          onClick={handleOpen}
-          title="Add Speciality"
-          disabled={loading}
-        />
-        <Grid container spacing={3}>
-          {specialities?.map((item, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <CustomCard
-                title={item.title}
-                icon={
-                  <AcUnitIcon
-                    color="primary"
-                    fontSize="large"
-                    sx={{ fontSize: 60 }}
-                  />
-                }
-                buttonClick={() =>
-                  navigate(PATHS.SPECIALITIES + "/" + index, { state: item })
-                }
-                detailsText="More"
-                value={item.totalSubSpecialities}
-                isLoading={loading}
-                valueToolTip="Total Sub Specialities"
-                actions={[
-                  {
-                    title: "Edit",
-                    icon: <EditIcon color={loading ? "disabled" : "primary"} />,
-                    onClick: () => {
-                      setEditMode(item);
-                      handleOpen();
+        <MyPageLayout
+          isLoading={loading}
+          data={data}
+          noPageTitle={"No Specialities Found"}
+          noPageButtonTitle={"Add Speciality"}
+          noPageButton={() => handleOpen()}
+        >
+          <AddButton
+            onClick={handleOpen}
+            title="Add Speciality"
+            disabled={loading}
+          />
+          <Grid container spacing={3}>
+            {data?.map((item, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <CustomCard
+                  title={item.name}
+                  editble={editMode === item.id}
+                  onEditChange={(name) => handleEditChange(item.id, name)}
+                  icon={
+                    <AcUnitIcon
+                      color="primary"
+                      fontSize="large"
+                      sx={{ fontSize: 60 }}
+                    />
+                  }
+                  buttonClick={() =>
+                    navigate(PATHS.SPECIALITIES + "/" + item.id, {
+                      state: item,
+                    })
+                  }
+                  detailsText="More"
+                  value={item.totalSubspecialties}
+                  isLoading={loading}
+                  valueToolTip="Total Sub Specialities"
+                  actions={[
+                    {
+                      title: "Edit",
+                      icon:
+                        editMode === item.id ? (
+                          <CheckIcon />
+                        ) : (
+                          <EditIcon color={loading ? "disabled" : "primary"} />
+                        ),
+                      onClick: () => {
+                        if (editMode === item.id) {
+                          setEditMode(null);
+                          handleUpdate(item.id, item.name);
+                        } else {
+                          setEditMode(item.id);
+                        }
+                      },
+                      disabled: loading,
                     },
-                    disabled: loading,
-                  },
-                  ,
-                  {
-                    title: "Delete",
-                    icon: <DeleteIcon color={loading ? "disabled" : "error"} />,
-                    onClick: () => confirmDeleteModal(item.id),
-                    disabled: loading,
-                  },
-                ]}
-                isCountUp={true}
-              />
-            </Grid>
-          ))}
-        </Grid>
+                    {
+                      title: "Delete",
+                      icon: (
+                        <DeleteIcon color={loading ? "disabled" : "error"} />
+                      ),
+                      onClick: () => confirmDeleteModal(item.id),
+                      disabled: loading,
+                    },
+                  ]}
+                  isCountUp={true}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </MyPageLayout>
       </Box>
-      <MyModal open={open} handleClose={handleClose}>
-        <Typography variant="h6" gutterBottom>
-          Add Speciality
-        </Typography>
+      <MyModal
+        open={open}
+        handleClose={handleClose}
+        title={"Add Speciality"}
+        subTitle={"Fill speciality details"}
+        okButtonText="Add Speciality"
+        cancelButtonText="Cancel"
+        onOk={handleAdd}
+        onCancel={handleClose}
+        isLoading={loading}
+        okButtonIcon={<SaveIcon />}
+        okButtondisabled={!name || loading}
+      >
         <TextField
           label="Speciality Name"
           fullWidth
@@ -198,18 +221,19 @@ const SpecialitiesScreen = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <LoadingButton
-          loading={loading}
-          loadingPosition="start"
-          startIcon={<SaveIcon />}
-          onClick={handleAdd}
-          variant="contained"
-          color="primary"
-          disabled={!name || loading}
-        >
-          Save
-        </LoadingButton>
       </MyModal>
+      <MyModal
+        open={confirmDelete.open}
+        handleClose={() => setConfirmDelete({ open: false, id: null })}
+        title="Confirm Deletion"
+        subTitle="Are you sure you want to delete this speciality? This will also delete all its sub specialities."
+        okButtonText="Delete"
+        cancelButtonText="Cancel"
+        onOk={handleDelete}
+        onCancel={() => setConfirmDelete({ open: false, id: null })}
+        isLoading={loading}
+        okButtonColor="error"
+      />
     </>
   );
 };

@@ -22,7 +22,7 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import AddButton from "../components/AddButton";
 import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import EmailInput from "../components/EmailInput";
@@ -44,11 +44,11 @@ import useAuthNavigation from "../hooks/useAuthNavigation";
 const AdminsScreen = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
-  const navigate = useAuthNavigation(isLoggedIn, PATHS.ADMINS);
+  useAuthNavigation(isLoggedIn, PATHS.ADMINS);
   const showSnackbar = useSnackbar();
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(null);
-  const [admins, setAdmins] = useState([]);
+  const [data, setData] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
   const [newAdminEmail, setNewAdminEmail] = useState("");
@@ -57,22 +57,20 @@ const AdminsScreen = () => {
   const [validNewAdminEmail, setValidNewAdminEmail] = useState(false);
   const [validNewAdminPassword, setValidNewAdminPassword] = useState(false);
 
-  const fetchItems = async (force) => {
-    return await getItems({
+  const fetchItems = useCallback(async (force) => {
+    await getItems({
       url: API_ENDPOINTS.ALLADMINS,
       loadingFunction: setLoading,
       snackBarFunction: null,
-      dataSetterState: setAdmins,
+      dataSetterState: setData,
       commonFunction: () => {},
       force: force,
-      cachedKey: API_ENDPOINTS.ALLADMINS,
     });
-  };
+  }, []);
 
   useEffect(() => {
-    // Fetch initial data from API
     fetchItems();
-  }, []);
+  }, [fetchItems]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -95,7 +93,9 @@ const AdminsScreen = () => {
       },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
-      reloadData: fetchItems,
+      reloadData: () => {
+        fetchItems(true);
+      },
       commonFunction: () => {
         handleClose();
       },
@@ -103,25 +103,27 @@ const AdminsScreen = () => {
   };
 
   const handleEditChange = (id, name) => {
-    setAdmins(
-      admins.map((admin) => (admin.id === id ? { ...admin, name } : admin))
+    setData(
+      data.map((admin) => (admin.id === id ? { ...admin, name } : admin))
     );
   };
 
   const handleUpdate = async (id, enabled) => {
-    const item = getItemById(admins, id);
+    const item = getItemById(data, id);
     if (typeof enabled !== "boolean") {
       enabled = enabled === 1 ? true : false;
     }
     return await updateItem({
-      url: API_ENDPOINTS.UPDATEADMIN + `/${item.id}`,
+      url: `${API_ENDPOINTS.UPDATEADMIN}/${item.id}`,
       data: {
         name: item.name,
         enabled: enabled,
       },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
-      reloadData: fetchItems,
+      reloadData: () => {
+        fetchItems(true);
+      },
       commonFunction: () => {
         handleClose();
         setEditMode(null);
@@ -136,10 +138,12 @@ const AdminsScreen = () => {
   const handleDelete = async () => {
     const { id } = confirmDelete;
     return await deleteItem({
-      url: API_ENDPOINTS.DELETEADMIN + `/${id}`,
+      url: `${API_ENDPOINTS.DELETEADMIN}/${id}`,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
-      reloadData: fetchItems,
+      reloadData: () => {
+        fetchItems(true);
+      },
       commonFunction: () => {
         setConfirmDelete({ open: false, id: null });
       },
@@ -165,8 +169,20 @@ const AdminsScreen = () => {
             },
           ]}
         />
-        <AddButton onClick={handleOpen} title="Add Admin" disabled={loading} />
-        <MyPageLayout isLoading={loading}>
+
+        <MyPageLayout
+          isLoading={loading}
+          noPageButtonTitle="Add Admin"
+          noPageButton={handleOpen}
+          noPageTitle="No Admins"
+          data={data}
+          showSkeleton={true}
+        >
+          <AddButton
+            onClick={handleOpen}
+            title="Add Admin"
+            disabled={loading}
+          />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -179,7 +195,7 @@ const AdminsScreen = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {admins?.map((admin) => (
+                {data?.map((admin) => (
                   <TableRow key={admin.id}>
                     <TableCell>
                       {editMode === admin.id ? (
