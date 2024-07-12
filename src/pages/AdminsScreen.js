@@ -27,6 +27,7 @@ import AddButton from "../components/AddButton";
 import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import EmailInput from "../components/EmailInput";
 import MyModal from "../components/MyModal";
+import MyPageLayout from "../components/MyPageLayout";
 import PageTitle from "../components/PageTitle";
 import PasswordInput from "../components/PasswordInput";
 import { API_ENDPOINTS, PATHS } from "../constants";
@@ -56,13 +57,15 @@ const AdminsScreen = () => {
   const [validNewAdminEmail, setValidNewAdminEmail] = useState(false);
   const [validNewAdminPassword, setValidNewAdminPassword] = useState(false);
 
-  const fetchItems = async () => {
+  const fetchItems = async (force) => {
     return await getItems({
       url: API_ENDPOINTS.ALLADMINS,
       loadingFunction: setLoading,
       snackBarFunction: null,
       dataSetterState: setAdmins,
       commonFunction: () => {},
+      force: force,
+      cachedKey: API_ENDPOINTS.ALLADMINS,
     });
   };
 
@@ -107,8 +110,8 @@ const AdminsScreen = () => {
 
   const handleUpdate = async (id, enabled) => {
     const item = getItemById(admins, id);
-    if(typeof enabled !== "boolean"){
-      enabled = enabled === 1 ? true : false
+    if (typeof enabled !== "boolean") {
+      enabled = enabled === 1 ? true : false;
     }
     return await updateItem({
       url: API_ENDPOINTS.UPDATEADMIN + `/${item.id}`,
@@ -146,7 +149,12 @@ const AdminsScreen = () => {
   return (
     <>
       <Box sx={{ flexGrow: 1, p: 3 }}>
-        <PageTitle title="Admins" />
+        <PageTitle
+          title="Admins"
+          onRefresh={() => {
+            fetchItems(true);
+          }}
+        />
         <CustomBreadCrumb
           paths={[
             {
@@ -158,94 +166,99 @@ const AdminsScreen = () => {
           ]}
         />
         <AddButton onClick={handleOpen} title="Add Admin" disabled={loading} />
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Created At</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {admins?.map((admin) => (
-                <TableRow key={admin.id}>
-                  <TableCell>
-                    {editMode === admin.id ? (
-                      <TextField
-                        value={admin.name}
-                        onChange={(e) =>
-                          handleEditChange(admin.id, e.target.value)
-                        }
-                        size="small"
-                      />
-                    ) : (
-                      admin.name
-                    )}
-                  </TableCell>
-                  <TableCell>{admin.email}</TableCell>
-                  <TableCell>{admin.created_at}</TableCell>
-                  <TableCell>
-                    {admin.enabled === 0 ? (
-                      <Chip color="error" label="Disabled" />
-                    ) : (
-                      <Chip color="success" label="Active" />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title={admin.enabled === 0 ? "Enable" : "Disable"}>
-                      <IconButton
-                        color={admin.enabled === 0 ? "success" : "warning"}
-                        sx={{ borderRadius: "50%" }}
-                        onClick={() => handleUpdate(admin.id, !admin.enabled)}
-                      >
-                        {admin.enabled === 0 ? <CheckIcon /> : <BlockIcon />}
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete">
-                      <IconButton
-                        color="error"
-                        sx={{ borderRadius: "50%" }}
-                        onClick={() => confirmDeleteModal(admin.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit">
-                      <IconButton
-                        color="primary"
-                        sx={{ borderRadius: "50%" }}
-                        onClick={() => {
-                          if (editMode === admin.id) {
-                            setEditMode(null);
-                            handleUpdate(admin.id, admin.enabled);
-                          } else {
-                            setEditMode(admin.id);
-                          }
-                        }}
-                      >
-                        {editMode === admin.id ? <CheckIcon /> : <EditIcon />}
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
+        <MyPageLayout isLoading={loading}>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Created At</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {admins?.map((admin) => (
+                  <TableRow key={admin.id}>
+                    <TableCell>
+                      {editMode === admin.id ? (
+                        <TextField
+                          value={admin.name}
+                          onChange={(e) =>
+                            handleEditChange(admin.id, e.target.value)
+                          }
+                          size="small"
+                        />
+                      ) : (
+                        admin.name
+                      )}
+                    </TableCell>
+                    <TableCell>{admin.email}</TableCell>
+                    <TableCell>{admin.created_at}</TableCell>
+                    <TableCell>
+                      {admin.enabled === 0 ? (
+                        <Chip color="error" label="Disabled" />
+                      ) : (
+                        <Chip color="success" label="Active" />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip
+                        title={admin.enabled === 0 ? "Enable" : "Disable"}
+                      >
+                        <IconButton
+                          color={admin.enabled === 0 ? "success" : "warning"}
+                          sx={{ borderRadius: "50%" }}
+                          onClick={() => handleUpdate(admin.id, !admin.enabled)}
+                        >
+                          {admin.enabled === 0 ? <CheckIcon /> : <BlockIcon />}
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          color="error"
+                          sx={{ borderRadius: "50%" }}
+                          onClick={() => confirmDeleteModal(admin.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Edit">
+                        <IconButton
+                          color="primary"
+                          sx={{ borderRadius: "50%" }}
+                          onClick={() => {
+                            if (editMode === admin.id) {
+                              setEditMode(null);
+                              handleUpdate(admin.id, admin.enabled);
+                            } else {
+                              setEditMode(admin.id);
+                            }
+                          }}
+                        >
+                          {editMode === admin.id ? <CheckIcon /> : <EditIcon />}
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-        <Stack spacing={2} mt={2} direction="row" justifyContent="center">
-          <Pagination
-            count={1}
-            page={1}
-            onChange={(e, page) => console.log("page", page)}
-            variant="outlined"
-            shape="rounded"
-            size="large"
-          />
-        </Stack>
+          <Stack spacing={2} mt={2} direction="row" justifyContent="center">
+            <Pagination
+              count={1}
+              page={1}
+              onChange={(e, page) => console.log("page", page)}
+              variant="outlined"
+              shape="rounded"
+              size="large"
+            />
+          </Stack>
+        </MyPageLayout>
+
         <MyModal
           open={open}
           handleClose={handleClose}
