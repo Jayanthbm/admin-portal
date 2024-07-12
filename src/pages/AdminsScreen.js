@@ -196,7 +196,7 @@ const AdminsScreen = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {admins.map((admin) => (
+              {admins?.map((admin) => (
                 <TableRow key={admin.id}>
                   <TableCell>
                     {editMode === admin.id ? (

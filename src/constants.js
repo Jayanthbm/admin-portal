@@ -15,12 +15,14 @@ export const API_ENDPOINTS = {
   DELETEADMIN: "/admin/delete",
 };
 
+const PATHS_BASE_PATH = "/";
+
 export const PATHS = {
-  ROOT: "/",
-  LOGIN: "/login",
-  DASHBOARD: "/dashboard",
-  DOCTORS: "/doctors",
-  SPECIALITIES: "/specialities",
-  USER_RECORD_CONFIG: "/user-record-config",
-  ADMINS: "/admins",
+  ROOT: PATHS_BASE_PATH,
+  LOGIN: `${PATHS_BASE_PATH}login`,
+  DASHBOARD: `${PATHS_BASE_PATH}dashboard`,
+  DOCTORS: `${PATHS_BASE_PATH}doctors`,
+  SPECIALITIES: `${PATHS_BASE_PATH}specialities`,
+  USER_RECORD_CONFIG: `${PATHS_BASE_PATH}user-record-config`,
+  ADMINS: `${PATHS_BASE_PATH}admins`,
 };
