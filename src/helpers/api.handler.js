@@ -87,7 +87,6 @@ export const updateItem = async ({
 
 export const deleteItem = async ({
   url,
-  data,
   loadingFunction,
   snackBarFunction,
   reloadData,
@@ -95,7 +94,7 @@ export const deleteItem = async ({
 }) => {
   loadingFunction(true);
   try {
-    const result = await del(url, data);
+    const result = await del(url);
     if (
       result.status === 200 ||
       result.status === 202 ||
