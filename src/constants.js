@@ -15,7 +15,7 @@ export const API_ENDPOINTS = {
   DELETEADMIN: "/admin/delete",
 };
 
-const PATHS_BASE_PATH = "/";
+const PATHS_BASE_PATH = "/admin-portal/";
 
 export const PATHS = {
   ROOT: PATHS_BASE_PATH,
