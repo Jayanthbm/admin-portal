@@ -1,9 +1,7 @@
-// src/pages/DoctorsScreen.js
-import BlockIcon from "@mui/icons-material/Block";
-import CheckIcon from "@mui/icons-material/Check";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import SaveIcon from "@mui/icons-material/Save";
 import {
   Box,
   Chip,
@@ -14,11 +12,12 @@ import {
 } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import CustomBreadCrumb from "../components/CustomBreadCrumb";
-import CustomLink from "../components/CustomLink";
 import CustomTable from "../components/CustomTable";
-import DeleteModal from "../components/DeleteModal";
+import SubscriptionForm from "../components/Forms/SubscriptionForm";
+import MyModal from "../components/Modal/MyModal";
 import MyPageLayout from "../components/MyPageLayout";
 import PageTitle from "../components/PageTitle";
+import SubscriptionCard from "../components/SubscriptionCard";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";
@@ -30,12 +29,12 @@ import {
   updateItem,
 } from "../helpers/api.handler";
 import useAuthNavigation from "../hooks/useAuthNavigation";
-import NewAdditonModal from "../components/Modal/NewAdditonModal";
-const DoctorsScreen = () => {
-  const [loading, setLoading] = useState(false);
+
+const SubscriptionsScreen = () => {
+  const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useContext(AuthContext);
   const { view } = useContext(ViewContext);
-  const naviagate = useAuthNavigation(isLoggedIn, PATHS.DOCTORS);
+  useAuthNavigation(isLoggedIn, PATHS.SUBSCRIPTIONS);
   const showSnackbar = useSnackbar();
   const [data, setData] = useState([]);
 
@@ -44,21 +43,18 @@ const DoctorsScreen = () => {
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
   const [item, setItem] = useState({
-    email: "",
-    password: "",
     name: "",
-    phone: "",
-    medical_registration_number: "",
-    specialty_id: null,
+    price: 0,
+    duration: 7,
+    max_patients: 10,
+    allow_multiple_subspecialities: false,
   });
 
   const [editedItem, setEditedItem] = useState({});
 
-  const [options, setOptions] = useState([]);
-
   const fetchItems = useCallback(async (force) => {
     await getItems({
-      url: API_ENDPOINTS.DOCTORS,
+      url: API_ENDPOINTS.SUBSCRIPTIONS,
       loadingFunction: setLoading,
       snackBarFunction: null,
       dataSetterState: setData,
@@ -67,21 +63,9 @@ const DoctorsScreen = () => {
     });
   }, []);
 
-  const fetchOptions = useCallback(async () => {
-    await getItems({
-      url: API_ENDPOINTS.ALLSPECIALITIES,
-      loadingFunction: setLoading,
-      snackBarFunction: null,
-      dataSetterState: setOptions,
-      commonFunction: () => {},
-      force: false,
-    });
-  }, []);
-
   useEffect(() => {
     fetchItems();
-    fetchOptions();
-  }, [fetchItems, fetchOptions]);
+  }, [fetchItems]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -99,26 +83,24 @@ const DoctorsScreen = () => {
     setEditMode(false);
     setConfirmDelete({ open: false, id: null });
     setItem({
-      email: "",
-      password: "",
       name: "",
-      phone: "",
-      medical_registration_number: "",
-      specialty_id: null,
+      price: 0,
+      duration: 7,
+      max_patients: 10,
+      allow_multiple_subspecialities: false,
     });
     setEditedItem({
-      email: "",
-      password: "",
       name: "",
-      phone: "",
-      medical_registration_number: "",
-      specialty_id: null,
+      price: 0,
+      duration: 0,
+      max_patients: 10,
+      allow_multiple_subspecialities: false,
     });
   };
 
   const handleAdd = async () => {
     return await addItem({
-      url: API_ENDPOINTS.DOCTOR,
+      url: API_ENDPOINTS.SUBSCRIPTION,
       data: item,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
@@ -133,7 +115,7 @@ const DoctorsScreen = () => {
 
   const handleUpdate = async () => {
     return await updateItem({
-      url: `${API_ENDPOINTS.DOCTOR}/${editedItem.id}`,
+      url: `${API_ENDPOINTS.SUBSCRIPTION}/${editedItem.id}`,
       data: editedItem,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
@@ -152,7 +134,7 @@ const DoctorsScreen = () => {
 
   const handleDelete = async () => {
     return await deleteItem({
-      url: `${API_ENDPOINTS.DOCTOR}/${confirmDelete.id}`,
+      url: `${API_ENDPOINTS.SUBSCRIPTION}/${confirmDelete.id}`,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
       reloadData: () => {
@@ -163,18 +145,12 @@ const DoctorsScreen = () => {
       },
     });
   };
-  const toDoctorScreen = (id, name) => {
-    return naviagate(PATHS.DOCTORS + `/${id}`, {
-      state: {
-        name: name,
-      },
-    });
-  };
+
   return (
     <>
       <Box sx={{ flexGrow: 1, p: 3 }}>
         <PageTitle
-          title="Doctors"
+          title="Subscriptions"
           onRefresh={() => {
             fetchItems(true);
           }}
@@ -182,21 +158,20 @@ const DoctorsScreen = () => {
         <CustomBreadCrumb
           paths={[
             {
-              title: "Doctors",
-              icon: <LocalHospitalIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+              title: "Subscriptions",
+              icon: <CurrencyRupeeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
             },
           ]}
         />
         <MyPageLayout
           isLoading={loading}
-          noPageButtonTitle="Add Doctor"
-          noPageTitle="No Doctors"
-          noPageButton={() => handleOpen()}
           data={data}
-          showSkeleton={true}
+          noPageTitle={"No Subscriptions Found"}
+          noPageButtonTitle={"Add Subscription"}
+          noPageButton={() => handleOpen()}
           showViewSetting={true}
           addButton={handleOpen}
-          addButtonTitle={"Add Doctor"}
+          addButtonTitle={"Add Subscription"}
           addButtonDisabled={loading}
         >
           <Box
@@ -211,10 +186,10 @@ const DoctorsScreen = () => {
                 heading={[
                   "Id",
                   "Name",
-                  "Email",
-                  "Speciality",
-                  "Created At",
-                  "Status",
+                  "Duration",
+                  "Price",
+                  "Max Patients",
+                  "Multiple Subspecialities",
                   "Actions",
                 ]}
               >
@@ -223,56 +198,19 @@ const DoctorsScreen = () => {
                     key={index}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
+                    <TableCell>{item.id}</TableCell>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.duration} Days</TableCell>
+                    <TableCell>₹{item.price}</TableCell>
+                    <TableCell>{item.max_patients}</TableCell>
                     <TableCell>
-                      <CustomLink
-                        title={item.id}
-                        onClick={() => toDoctorScreen(item.id, item.name)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <CustomLink
-                        title={item.name}
-                        onClick={() => toDoctorScreen(item.id, item.name)}
-                      />
-                    </TableCell>
-
-                    <TableCell>{item.email}</TableCell>
-                    <TableCell>
-                      <CustomLink
-                        title={item.speciality}
-                        onClick={() =>
-                          naviagate(
-                            PATHS.SPECIALITIES + `/${item.speciality_id}`,
-                            {
-                              state: {
-                                name: item.speciality,
-                              },
-                            }
-                          )
-                        }
-                      />
-                    </TableCell>
-
-                    <TableCell>{item.created_at}</TableCell>
-                    <TableCell>
-                      {item.status === 1 ? (
+                      {item.allow_multiple_subspecialities === 1 ? (
                         <Chip color="success" label="Yes" />
                       ) : (
                         <Chip color="error" label="No" />
                       )}
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={() => {}} sx={{ pb: 1, pt: 1 }}>
-                        <Tooltip
-                          title={item.status === 0 ? "Enable" : "Disable"}
-                        >
-                          {item.status === 0 ? (
-                            <CheckIcon color="success" />
-                          ) : (
-                            <BlockIcon color="warning" />
-                          )}
-                        </Tooltip>
-                      </IconButton>
                       <IconButton
                         onClick={() => {
                           handleEditOpen(item);
@@ -296,52 +234,70 @@ const DoctorsScreen = () => {
                 ))}
               </CustomTable>
             ) : (
-              <> Card View</>
+              <>
+                {data.map((item, index) => (
+                  <SubscriptionCard
+                    key={index}
+                    item={item}
+                    onEdit={() => {
+                      handleEditOpen(item);
+                    }}
+                    onDelete={() => confirmDeleteModal(item.id)}
+                  />
+                ))}
+              </>
             )}
           </Box>
         </MyPageLayout>
       </Box>
-      <NewAdditonModal
+
+      <MyModal
         open={open}
         handleClose={handleClose}
-        title={editMode ? "Edit Doctor" : "Add Doctor"}
-        subTitle={"Fill Doctor details"}
+        title={editMode ? "Edit Subscription" : "Add Subscription"}
+        subTitle={"Fill Subscription details"}
         okButtonText={editMode ? "Update" : "Add"}
+        cancelButtonText="Cancel"
         onOk={editMode ? handleUpdate : handleAdd}
         onCancel={handleClose}
         isLoading={loading}
+        okButtonIcon={<SaveIcon />}
         okButtondisabled={
           editMode
-            ? editedItem?.name?.length > 0 &&
-              editedItem?.password?.length > 6 &&
-              editedItem?.specialty_id > 0 &&
-              editedItem?.medical_registration_number?.length > 0 &&
-              editedItem?.phone.length > 9 &&
+            ? editedItem.name.length > 0 &&
+              editedItem.max_patients > 0 &&
+              editedItem.duration > 0 &&
               !loading
               ? false
               : true
-            : item?.name?.length > 0 &&
-              item?.password?.length > 0 &&
-              item?.specialty_id > 0 &&
-              item?.medical_registration_number?.length > 0 &&
-              item?.phone?.length > 0 &&
+            : item.name.length > 0 &&
+              item.max_patients > 0 &&
+              item.duration > 0 &&
               !loading
             ? false
             : true
         }
       >
-        {editMode ? <>Edit View</> : <>Add View</>}
-      </NewAdditonModal>
-      <DeleteModal
+        {editMode ? (
+          <SubscriptionForm item={editedItem} setItem={setEditedItem} />
+        ) : (
+          <SubscriptionForm item={item} setItem={setItem} />
+        )}
+      </MyModal>
+      <MyModal
         open={confirmDelete.open}
         handleClose={() => setConfirmDelete({ open: false, id: null })}
-        subTitle="Are you sure you want to delete this doctor?"
+        title="Confirm Deletion"
+        subTitle="Are you sure you want to delete this subscription?"
+        okButtonText="Delete"
+        cancelButtonText="Cancel"
         onOk={handleDelete}
         onCancel={() => setConfirmDelete({ open: false, id: null })}
         isLoading={loading}
+        okButtonColor="error"
       />
     </>
   );
 };
 
-export default DoctorsScreen;
+export default SubscriptionsScreen;

@@ -18,6 +18,8 @@ export const API_ENDPOINTS = {
   DOCTORS: "/admin/doctors",
   DOCTOR: "/admin/doctor",
   USER_RECORD_CONFIG: "/admin/record-config",
+  SUBSCRIPTIONS: "/admin/subscriptions",
+  SUBSCRIPTION: "/admin/subscription",
 };
 
 const PATHS_BASE_PATH = "/";
@@ -30,4 +32,6 @@ export const PATHS = {
   SPECIALITIES: `${PATHS_BASE_PATH}specialities`,
   USER_RECORD_CONFIG: `${PATHS_BASE_PATH}user-record-config`,
   ADMINS: `${PATHS_BASE_PATH}admins`,
+  LOGOUT: `${PATHS_BASE_PATH}logout`,
+  SUBSCRIPTIONS: `${PATHS_BASE_PATH}subscriptions`,
 };

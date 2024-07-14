@@ -4,18 +4,26 @@ import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-import { Box, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  TableCell,
+  TableRow,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import AddButton from "../components/AddButton";
 import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import CustomCard from "../components/CustomCard";
-import MyModal from "../components/MyModal";
+import CustomTable from "../components/CustomTable";
 import MyPageLayout from "../components/MyPageLayout";
 import PageTitle from "../components/PageTitle";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";
+import ViewContext from "../context/view.context";
 import {
   addItem,
   deleteItem,
@@ -23,11 +31,13 @@ import {
   updateItem,
 } from "../helpers/api.handler";
 import useAuthNavigation from "../hooks/useAuthNavigation";
+import MyModal from "../components/Modal/MyModal";
 
 const SubSpecialityScreen = () => {
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useContext(AuthContext);
   const { id } = useParams();
+  const { view } = useContext(ViewContext);
   const location = useLocation();
   const state = location.state;
   useAuthNavigation(isLoggedIn, PATHS.SPECIALITIES + "/" + id, state);
@@ -149,61 +159,124 @@ const SubSpecialityScreen = () => {
           noPageTitle={"No Sub Specialities Found"}
           noPageButtonTitle={"Add Sub Speciality"}
           noPageButton={() => handleOpen()}
+          showViewSetting={true}
+          addButton={handleOpen}
+          addButtonTitle={"Add Sub Speciality"}
+          addButtonDisabled={loading}
         >
-          <AddButton
-            onClick={handleOpen}
-            title="Add Sub Speciality"
-            disabled={loading}
-          />
-          <Grid container spacing={3}>
-            {data?.map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <CustomCard
-                  title={item.name}
-                  editble={editMode === item.id}
-                  onEditChange={(name) => handleEditChange(item.id, name)}
-                  icon={
-                    <AcUnitIcon
-                      color="primary"
-                      fontSize="large"
-                      sx={{ fontSize: 60 }}
-                    />
-                  }
-                  detailsText="More"
-                  isLoading={loading}
-                  actions={[
-                    {
-                      title: "Edit",
-                      icon:
-                        editMode === item.id ? (
-                          <CheckIcon />
-                        ) : (
-                          <EditIcon color={loading ? "disabled" : "primary"} />
-                        ),
-                      onClick: () => {
-                        if (editMode === item.id) {
-                          setEditMode(null);
-                          handleUpdate(item.id, item.name);
-                        } else {
-                          setEditMode(item.id);
-                        }
-                      },
-                      disabled: loading,
-                    },
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-start",
+              flexWrap: "wrap",
+            }}
+          >
+            {view === "table" ? (
+              <CustomTable heading={["Name", "Actions"]}>
+                {data?.map((item, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>
+                      {editMode === item.id ? (
+                        <TextField
+                          value={item.name}
+                          onChange={(e) =>
+                            handleEditChange(item.id, e.target.value)
+                          }
+                          size="small"
+                        />
+                      ) : (
+                        <> {item.name}</>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title="Edit">
+                        <IconButton
+                          color="primary"
+                          sx={{ borderRadius: "50%" }}
+                          onClick={() => {
+                            if (editMode === item.id) {
+                              setEditMode(null);
+                              handleUpdate(item.id, item.name);
+                            } else {
+                              setEditMode(item.id);
+                            }
+                          }}
+                        >
+                          {editMode === item.id ? <CheckIcon /> : <EditIcon />}
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          color="error"
+                          sx={{ borderRadius: "50%" }}
+                          onClick={() => confirmDeleteModal(item.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </CustomTable>
+            ) : (
+              <Grid container spacing={3}>
+                {data?.map((item, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <CustomCard
+                      title={item.name}
+                      editble={editMode === item.id}
+                      onEditChange={(name) => handleEditChange(item.id, name)}
+                      icon={
+                        <AcUnitIcon
+                          color="primary"
+                          fontSize="large"
+                          sx={{ fontSize: 60 }}
+                        />
+                      }
+                      detailsText="More"
+                      isLoading={loading}
+                      actions={[
+                        {
+                          title: "Edit",
+                          icon:
+                            editMode === item.id ? (
+                              <CheckIcon />
+                            ) : (
+                              <EditIcon
+                                color={loading ? "disabled" : "primary"}
+                              />
+                            ),
+                          onClick: () => {
+                            if (editMode === item.id) {
+                              setEditMode(null);
+                              handleUpdate(item.id, item.name);
+                            } else {
+                              setEditMode(item.id);
+                            }
+                          },
+                          disabled: loading,
+                        },
 
-                    {
-                      title: "Delete",
-                      icon: (
-                        <DeleteIcon color={loading ? "disabled" : "error"} />
-                      ),
-                      onClick: () => confirmDeleteModal(item.id),
-                      disabled: loading,
-                    },
-                  ]}
-                />
+                        {
+                          title: "Delete",
+                          icon: (
+                            <DeleteIcon
+                              color={loading ? "disabled" : "error"}
+                            />
+                          ),
+                          onClick: () => confirmDeleteModal(item.id),
+                          disabled: loading,
+                        },
+                      ]}
+                    />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            )}
+          </Box>
         </MyPageLayout>
       </Box>
       <MyModal

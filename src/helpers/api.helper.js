@@ -37,9 +37,8 @@ api.interceptors.response.use(
         const { data } = await axios.post(
           `${BASE_URL}${API_ENDPOINTS.REFRESHTOKEN}`,
           {
-            refreshToken: getToken(REFRESH_KEY),
-          },
-          { withCredentials: true } // Adjust if needed for your backend
+            refresh_token: getToken(REFRESH_KEY),
+          }
         );
         let accessToken = data.data.accessToken;
         setToken(TOKEN_KEY, accessToken);
@@ -50,6 +49,8 @@ api.interceptors.response.use(
         ] = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (err) {
+        // navigate to /logout
+        window.location.href = "/logout";
         return Promise.reject(err);
       }
     }

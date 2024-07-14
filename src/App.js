@@ -5,17 +5,19 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import AppHeader from "./components/appHeader";
 import LeftMenu from "./components/leftMenu";
+import MyFooter from "./components/MyFooter";
 import { PATHS } from "./constants";
 import AuthContext from "./context/auth.context";
 import AdminsScreen from "./pages/AdminsScreen";
 import DashboardScreen from "./pages/DashboardScreen";
+import DoctorScreen from "./pages/DoctorScreen";
 import DoctorsScreen from "./pages/DoctorsScreen";
 import HomeScreen from "./pages/HomeScreen";
 import LoginScreen from "./pages/LoginScreen";
 import SpecialitiesScreen from "./pages/SpecialitiesScreen";
+import SubscriptionsScreen from "./pages/SubscriptionsScreen";
 import SubSpecialityScreen from "./pages/SubSpecialityScreen";
 import UserRecordConfigScreen from "./pages/UserRecordConfigScreen";
-import MyFooter from "./components/MyFooter";
 
 const Checker = () => {
   const navigate = useNavigate();
@@ -23,6 +25,15 @@ const Checker = () => {
   useEffect(() => {
     navigate(PATHS.DASHBOARD);
   }, [navigate]);
+};
+
+const Logout = () => {
+  const navigate = useNavigate();
+  const { handleLogout } = useContext(AuthContext);
+  useEffect(() => {
+    handleLogout();
+    navigate(PATHS.LOGIN);
+  }, [handleLogout, navigate]);
 };
 const App = () => {
   const { isLoggedIn } = useContext(AuthContext);
@@ -48,6 +59,7 @@ const App = () => {
             <Route path={PATHS.LOGIN} element={<LoginScreen />} />
             <Route path={PATHS.DASHBOARD} element={<DashboardScreen />} />
             <Route path={PATHS.DOCTORS} element={<DoctorsScreen />} />
+            <Route path={PATHS.DOCTORS + "/:id"} element={<DoctorScreen />} />
             <Route path={PATHS.SPECIALITIES} element={<SpecialitiesScreen />} />
             <Route
               path={PATHS.SPECIALITIES + "/:id"}
@@ -58,6 +70,11 @@ const App = () => {
               element={<UserRecordConfigScreen />}
             />
             <Route path={PATHS.ADMINS} element={<AdminsScreen />} />
+            <Route
+              path={PATHS.SUBSCRIPTIONS}
+              element={<SubscriptionsScreen />}
+            />
+            <Route path={PATHS.LOGOUT} element={<Logout />} />
             <Route path="*" element={<Checker />} />
           </Routes>
         </div>

@@ -4,17 +4,27 @@ import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-import { Box, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  TableCell,
+  TableRow,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import AddButton from "../components/AddButton";
 import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import CustomCard from "../components/CustomCard";
-import MyModal from "../components/MyModal";
+import CustomLink from "../components/CustomLink";
+import CustomTable from "../components/CustomTable";
+import MyModal from "../components/Modal/MyModal";
 import MyPageLayout from "../components/MyPageLayout";
 import PageTitle from "../components/PageTitle";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";
+import ViewContext from "../context/view.context";
 import {
   addItem,
   deleteItem,
@@ -25,6 +35,7 @@ import useAuthNavigation from "../hooks/useAuthNavigation";
 const SpecialitiesScreen = () => {
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useContext(AuthContext);
+  const { view } = useContext(ViewContext);
   const navigate = useAuthNavigation(isLoggedIn, PATHS.SPECIALITIES);
   const showSnackbar = useSnackbar();
   const [open, setOpen] = useState(false);
@@ -33,20 +44,16 @@ const SpecialitiesScreen = () => {
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
   const [name, setName] = useState("");
-
-  const fetchItems = useCallback(
-    async (force) => {
-      await getItems({
-        url: API_ENDPOINTS.ALLSPECIALITIES,
-        loadingFunction: setLoading,
-        snackBarFunction: null,
-        dataSetterState: setData,
-        commonFunction: () => { },
-        force: force,
-      });
-    },
-    []
-  );
+  const fetchItems = useCallback(async (force) => {
+    await getItems({
+      url: API_ENDPOINTS.ALLSPECIALITIES,
+      loadingFunction: setLoading,
+      snackBarFunction: null,
+      dataSetterState: setData,
+      commonFunction: () => {},
+      force: force,
+    });
+  }, []);
 
   useEffect(() => {
     fetchItems();
@@ -137,68 +144,141 @@ const SpecialitiesScreen = () => {
           noPageTitle={"No Specialities Found"}
           noPageButtonTitle={"Add Speciality"}
           noPageButton={() => handleOpen()}
+          showViewSetting={true}
+          addButton={handleOpen}
+          addButtonTitle={"Add Speciality"}
+          addButtonDisabled={loading}
         >
-          <AddButton
-            onClick={handleOpen}
-            title="Add Speciality"
-            disabled={loading}
-          />
-          <Grid container spacing={3}>
-            {data?.map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <CustomCard
-                  title={item.name}
-                  editble={editMode === item.id}
-                  onEditChange={(name) => handleEditChange(item.id, name)}
-                  icon={
-                    <AcUnitIcon
-                      color="primary"
-                      fontSize="large"
-                      sx={{ fontSize: 60 }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-start",
+              flexWrap: "wrap",
+            }}
+          >
+            {view === "table" ? (
+              <CustomTable
+                heading={["Name", "Total Sub Specialities", "Actions"]}
+              >
+                {data?.map((item, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>
+                      {editMode === item.id ? (
+                        <TextField
+                          value={item.name}
+                          onChange={(e) =>
+                            handleEditChange(item.id, e.target.value)
+                          }
+                          size="small"
+                        />
+                      ) : (
+                        <CustomLink
+                          title={item.name}
+                          onClick={() =>
+                            navigate(PATHS.SPECIALITIES + "/" + item.id, {
+                              state: item,
+                            })
+                          }
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>{item.totalSubspecialties}</TableCell>
+                    <TableCell>
+                      <Tooltip title="Edit">
+                        <IconButton
+                          color="primary"
+                          sx={{ borderRadius: "50%" }}
+                          onClick={() => {
+                            if (editMode === item.id) {
+                              setEditMode(null);
+                              handleUpdate(item.id, item.name);
+                            } else {
+                              setEditMode(item.id);
+                            }
+                          }}
+                        >
+                          {editMode === item.id ? <CheckIcon /> : <EditIcon />}
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete">
+                        <IconButton
+                          color="error"
+                          sx={{ borderRadius: "50%" }}
+                          onClick={() => confirmDeleteModal(item.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </CustomTable>
+            ) : (
+              <Grid container spacing={3}>
+                {data?.map((item, index) => (
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <CustomCard
+                      title={item.name}
+                      editble={editMode === item.id}
+                      onEditChange={(name) => handleEditChange(item.id, name)}
+                      icon={
+                        <AcUnitIcon
+                          color="primary"
+                          fontSize="large"
+                          sx={{ fontSize: 60 }}
+                        />
+                      }
+                      buttonClick={() =>
+                        navigate(PATHS.SPECIALITIES + "/" + item.id, {
+                          state: item,
+                        })
+                      }
+                      detailsText="More"
+                      value={item.totalSubspecialties}
+                      isLoading={loading}
+                      valueToolTip="Total Sub Specialities"
+                      actions={[
+                        {
+                          title: "Edit",
+                          icon:
+                            editMode === item.id ? (
+                              <CheckIcon />
+                            ) : (
+                              <EditIcon
+                                color={loading ? "disabled" : "primary"}
+                              />
+                            ),
+                          onClick: () => {
+                            if (editMode === item.id) {
+                              setEditMode(null);
+                              handleUpdate(item.id, item.name);
+                            } else {
+                              setEditMode(item.id);
+                            }
+                          },
+                          disabled: loading,
+                        },
+                        {
+                          title: "Delete",
+                          icon: (
+                            <DeleteIcon
+                              color={loading ? "disabled" : "error"}
+                            />
+                          ),
+                          onClick: () => confirmDeleteModal(item.id),
+                          disabled: loading,
+                        },
+                      ]}
+                      isCountUp={true}
                     />
-                  }
-                  buttonClick={() =>
-                    navigate(PATHS.SPECIALITIES + "/" + item.id, {
-                      state: item,
-                    })
-                  }
-                  detailsText="More"
-                  value={item.totalSubspecialties}
-                  isLoading={loading}
-                  valueToolTip="Total Sub Specialities"
-                  actions={[
-                    {
-                      title: "Edit",
-                      icon:
-                        editMode === item.id ? (
-                          <CheckIcon />
-                        ) : (
-                          <EditIcon color={loading ? "disabled" : "primary"} />
-                        ),
-                      onClick: () => {
-                        if (editMode === item.id) {
-                          setEditMode(null);
-                          handleUpdate(item.id, item.name);
-                        } else {
-                          setEditMode(item.id);
-                        }
-                      },
-                      disabled: loading,
-                    },
-                    {
-                      title: "Delete",
-                      icon: (
-                        <DeleteIcon color={loading ? "disabled" : "error"} />
-                      ),
-                      onClick: () => confirmDeleteModal(item.id),
-                      disabled: loading,
-                    },
-                  ]}
-                  isCountUp={true}
-                />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
+            )}
+          </Box>
         </MyPageLayout>
       </Box>
       <MyModal

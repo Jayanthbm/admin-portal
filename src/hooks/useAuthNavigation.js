@@ -14,7 +14,7 @@ function useAuthNavigation(isLoggedIn, currentPath, existingState) {
     } else {
       navigate(PATHS.LOGIN);
     }
-  }, [isLoggedIn, navigate, currentPath, existingState]);
+  }, [isLoggedIn, navigate, currentPath]);
 
   return navigate;
 }

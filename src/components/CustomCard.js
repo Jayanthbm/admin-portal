@@ -77,29 +77,29 @@ const CustomCard = ({
       <Divider />
       <CardActions disableSpacing>
         {actions?.map((action, index) => (
-          <Tooltip key={index} title={action.title}>
-            <IconButton
-              key={index}
-              size="small"
-              onClick={action.onClick}
-              sx={{ cursor: action.disabled ? "not-allowed" : "pointer" }}
-              disabled={action.disabled ? action.disabled : false}
-            >
+          <IconButton
+            key={index}
+            size="small"
+            onClick={action.onClick}
+            sx={{ cursor: action.disabled ? "not-allowed" : "pointer" }}
+            disabled={action.disabled ? action.disabled : false}
+          >
+            <Tooltip key={index} title={action.title}>
               {action.icon}
-            </IconButton>
-          </Tooltip>
+            </Tooltip>
+          </IconButton>
         ))}
         {buttonClick && (
-          <Tooltip title="More">
-            <IconButton
-              size="small"
-              onClick={buttonClick}
-              disabled={isLoading}
-              sx={{ ml: "auto", cursor: isLoading ? "not-allowed" : "pointer" }}
-            >
+          <IconButton
+            size="small"
+            onClick={buttonClick}
+            disabled={isLoading}
+            sx={{ ml: "auto", cursor: isLoading ? "not-allowed" : "pointer" }}
+          >
+            <Tooltip title="More">
               <ArrowForwardIcon color={isLoading ? "disabled" : "primary"} />
-            </IconButton>
-          </Tooltip>
+            </Tooltip>
+          </IconButton>
         )}
       </CardActions>
     </Card>

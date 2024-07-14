@@ -1,9 +1,9 @@
 // src/components/MyModal.js
 
+import SaveIcon from "@mui/icons-material/Save";
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import React from "react";
-
 const MyModal = ({
   children,
   open,
@@ -21,6 +21,7 @@ const MyModal = ({
   cancelButtonColor = "primary",
   isLoading = false,
 }) => {
+  okButtonIcon = okButtonIcon ? okButtonIcon : <SaveIcon />;
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
