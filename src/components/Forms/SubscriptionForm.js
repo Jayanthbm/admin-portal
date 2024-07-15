@@ -1,6 +1,9 @@
-import { ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import CustomTextInput from "../Input/CustomTextInput";
+//src/components/Forms/SubscriptionForm.js
+
+import { ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+
+import CustomTextInput from '../Input/CustomTextInput';
 
 const SubscriptionForm = ({ item, setItem }) => {
   const [name, setName] = useState(item.name);
@@ -8,7 +11,7 @@ const SubscriptionForm = ({ item, setItem }) => {
   const [max_patients, setMax_patients] = useState(item.max_patients);
   const [duration, setDuration] = useState(item.duration);
   const [allow_multiple_subspecialities, setAllow_multiple_subspecialities] =
-    useState("no");
+    useState('no');
   const id = item.id;
   useEffect(() => {
     setItem({
@@ -16,7 +19,7 @@ const SubscriptionForm = ({ item, setItem }) => {
       price: parseInt(price),
       max_patients: parseInt(max_patients),
       allow_multiple_subspecialities:
-        allow_multiple_subspecialities === "yes" ? true : false,
+        allow_multiple_subspecialities === 'yes' ? true : false,
       duration,
       id,
     });
@@ -36,7 +39,7 @@ const SubscriptionForm = ({ item, setItem }) => {
         onChange={(e) => setName(e.target.value)}
         id="name"
         label="Subscription Name"
-        validationPassed={() => {}}
+        setValidationState={() => {}}
         inputType="text"
       />
       <CustomTextInput
@@ -44,7 +47,7 @@ const SubscriptionForm = ({ item, setItem }) => {
         onChange={(e) => setPrice(e.target.value)}
         id="price"
         label="Subscription Price"
-        validationPassed={() => {}}
+        setValidationState={() => {}}
         inputType="number"
         minNumber={0}
         maxNumber={100000}
@@ -54,7 +57,7 @@ const SubscriptionForm = ({ item, setItem }) => {
         onChange={(e) => setMax_patients(e.target.value)}
         id="max_patients"
         label="Max Patients"
-        validationPassed={() => {}}
+        setValidationState={() => {}}
         inputType="number"
         minNumber={1}
         maxNumber={10000}
@@ -64,7 +67,7 @@ const SubscriptionForm = ({ item, setItem }) => {
         onChange={(e) => setDuration(e.target.value)}
         id="duration"
         label="Duration(Days)"
-        validationPassed={() => {}}
+        setValidationState={() => {}}
         inputType="number"
         minNumber={1}
         maxNumber={366}
@@ -79,8 +82,8 @@ const SubscriptionForm = ({ item, setItem }) => {
         }}
         aria-label="Allow Multiple Subspecialities"
       >
-        <ToggleButton value={"yes"}>Yes</ToggleButton>
-        <ToggleButton value={"no"}>No</ToggleButton>
+        <ToggleButton value={'yes'}>Yes</ToggleButton>
+        <ToggleButton value={'no'}>No</ToggleButton>
       </ToggleButtonGroup>
     </>
   );

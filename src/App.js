@@ -1,23 +1,25 @@
 // src/App.js
 
-import React, { useContext, useEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import "./App.css";
-import AppHeader from "./components/Layout/appHeader";
-import LeftMenu from "./components/Layout/leftMenu";
-import MyFooter from "./components/Layout/MyFooter";
-import { PATHS } from "./constants";
-import AuthContext from "./context/auth.context";
-import AdminsScreen from "./pages/AdminsScreen";
-import DashboardScreen from "./pages/DashboardScreen";
-import DoctorScreen from "./pages/DoctorScreen";
-import DoctorsScreen from "./pages/DoctorsScreen";
-import HomeScreen from "./pages/HomeScreen";
-import LoginScreen from "./pages/LoginScreen";
-import SpecialitiesScreen from "./pages/SpecialitiesScreen";
-import SubscriptionsScreen from "./pages/SubscriptionsScreen";
-import SubSpecialityScreen from "./pages/SubSpecialityScreen";
-import UserRecordConfigScreen from "./pages/UserRecordConfigScreen";
+import './App.css';
+
+import React, { useContext, useEffect } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+
+import AppHeader from './components/Layout/appHeader';
+import LeftMenu from './components/Layout/leftMenu';
+import MyFooter from './components/Layout/MyFooter';
+import { PATHS } from './constants';
+import AuthContext from './context/auth.context';
+import AdminsScreen from './pages/AdminsScreen';
+import DashboardScreen from './pages/DashboardScreen';
+import DoctorScreen from './pages/DoctorScreen';
+import DoctorsScreen from './pages/DoctorsScreen';
+import HomeScreen from './pages/HomeScreen';
+import LoginScreen from './pages/LoginScreen';
+import SpecialitiesScreen from './pages/SpecialitiesScreen';
+import SubscriptionsScreen from './pages/SubscriptionsScreen';
+import SubSpecialityScreen from './pages/SubSpecialityScreen';
+import UserRecordConfigScreen from './pages/UserRecordConfigScreen';
 
 const Checker = () => {
   const navigate = useNavigate();
@@ -43,8 +45,8 @@ const App = () => {
       <div
         className="body-container"
         style={{
-          justifyContent: isLoggedIn ? "flex-start" : "space-around",
-          marginRight: isLoggedIn ? "0px" : "240px",
+          justifyContent: isLoggedIn ? 'flex-start' : 'space-around',
+          marginRight: isLoggedIn ? '0px' : '240px',
         }}
       >
         {isLoggedIn && (
@@ -59,10 +61,10 @@ const App = () => {
             <Route path={PATHS.LOGIN} element={<LoginScreen />} />
             <Route path={PATHS.DASHBOARD} element={<DashboardScreen />} />
             <Route path={PATHS.DOCTORS} element={<DoctorsScreen />} />
-            <Route path={PATHS.DOCTORS + "/:id"} element={<DoctorScreen />} />
+            <Route path={PATHS.DOCTORS + '/:id'} element={<DoctorScreen />} />
             <Route path={PATHS.SPECIALITIES} element={<SpecialitiesScreen />} />
             <Route
-              path={PATHS.SPECIALITIES + "/:id"}
+              path={PATHS.SPECIALITIES + '/:id'}
               element={<SubSpecialityScreen />}
             />
             <Route

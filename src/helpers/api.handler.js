@@ -1,9 +1,9 @@
 //src/helpers/api.handler.js
 
-import { del, get, patch, post } from "./api.helper";
-import { getJson, isDataFresh, storeItem, storeJson } from "./util.helper";
+import { del, get, patch, post } from './api.helper';
+import { getJson, isDataFresh, storeItem, storeJson } from './util.helper';
 
-const showSnackbar = (message, severity = "success", snackbar) => {
+const showSnackbar = (message, severity = 'success', snackbar) => {
   if (snackbar) {
     snackbar(message, severity);
   }
@@ -40,14 +40,14 @@ export const getItems = async ({
       const data = result?.data;
       dataSetterState(data);
       storeJson(url, data);
-      storeItem(url + "_timestamp", Date.now());
-      showSnackbar(result?.message, "success", snackBarFunction);
+      storeItem(url + '_timestamp', Date.now());
+      showSnackbar(result?.message, 'success', snackBarFunction);
     } else {
-      showSnackbar(result?.message, "error", snackBarFunction);
+      showSnackbar(result?.message, 'error', snackBarFunction);
     }
   } catch (error) {
-    console.log("Error fetching items:", error);
-    showSnackbar(error?.message, "error", snackBarFunction);
+    console.log('Error fetching items:', error);
+    showSnackbar(error?.message, 'error', snackBarFunction);
   } finally {
     loadingFunction(false);
     commonFunction();
@@ -66,14 +66,14 @@ export const addItem = async ({
   try {
     const result = await post(url, data);
     if (result.status === 201) {
-      showSnackbar(result?.message, "success", snackBarFunction);
+      showSnackbar(result?.message, 'success', snackBarFunction);
       await reloadData();
     } else {
-      showSnackbar(result?.message, "error", snackBarFunction);
+      showSnackbar(result?.message, 'error', snackBarFunction);
     }
   } catch (error) {
-    console.log("Error adding item:", error);
-    showSnackbar(error?.message, "error", snackBarFunction);
+    console.log('Error adding item:', error);
+    showSnackbar(error?.message, 'error', snackBarFunction);
   } finally {
     loadingFunction(false);
     commonFunction();
@@ -92,14 +92,14 @@ export const updateItem = async ({
   try {
     const result = await patch(url, data);
     if (result.status === 202) {
-      showSnackbar(result?.message, "success", snackBarFunction);
+      showSnackbar(result?.message, 'success', snackBarFunction);
       await reloadData();
     } else {
-      showSnackbar(result?.message, "error", snackBarFunction);
+      showSnackbar(result?.message, 'error', snackBarFunction);
     }
   } catch (error) {
-    console.log("Error updating item:", error);
-    showSnackbar(error?.message, "error", snackBarFunction);
+    console.log('Error updating item:', error);
+    showSnackbar(error?.message, 'error', snackBarFunction);
   } finally {
     loadingFunction(false);
     commonFunction();
@@ -117,14 +117,14 @@ export const deleteItem = async ({
   try {
     const result = await del(url);
     if (result.status === 202) {
-      showSnackbar(result?.message, "success", snackBarFunction);
+      showSnackbar(result?.message, 'success', snackBarFunction);
       await reloadData();
     } else {
-      showSnackbar(result?.message, "error", snackBarFunction);
+      showSnackbar(result?.message, 'error', snackBarFunction);
     }
   } catch (error) {
-    console.log("Error deleting item:", error);
-    showSnackbar(error?.message, "error", snackBarFunction);
+    console.log('Error deleting item:', error);
+    showSnackbar(error?.message, 'error', snackBarFunction);
   } finally {
     loadingFunction(false);
     commonFunction();

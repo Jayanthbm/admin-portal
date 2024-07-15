@@ -1,5 +1,9 @@
-import React from "react";
-import MyModal from "./MyModal";
+// src/components/DeleteModal.js
+
+import DeleteIcon from '@mui/icons-material/Delete';
+import React from 'react';
+
+import MyModal from './MyModal';
 
 const DeleteModal = ({
   open,
@@ -16,6 +20,7 @@ const DeleteModal = ({
       title="Confirm Deletion"
       subTitle={subTitle}
       okButtonText="Delete"
+      okButtonIcon={<DeleteIcon />}
       cancelButtonText="Cancel"
       onOk={onOk}
       onCancel={onCancel}

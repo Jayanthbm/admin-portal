@@ -1,7 +1,9 @@
-import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
+// src/pages/SubscriptionsScreen.js
+
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 import {
   Box,
   Chip,
@@ -9,26 +11,27 @@ import {
   TableCell,
   TableRow,
   Tooltip,
-} from "@mui/material";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import CustomTable from "../components/CustomTable";
-import SubscriptionForm from "../components/Forms/SubscriptionForm";
-import CustomBreadCrumb from "../components/Layout/CustomBreadCrumb";
-import MyPageLayout from "../components/Layout/MyPageLayout";
-import PageTitle from "../components/Layout/PageTitle";
-import MyModal from "../components/Modal/MyModal";
-import SubscriptionCard from "../components/Card/SubscriptionCard";
-import { API_ENDPOINTS, PATHS } from "../constants";
-import AuthContext from "../context/auth.context";
-import { useSnackbar } from "../context/snackbar.context";
-import ViewContext from "../context/view.context";
+} from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import SubscriptionCard from '../components/Card/SubscriptionCard';
+import CustomTable from '../components/CustomTable';
+import SubscriptionForm from '../components/Forms/SubscriptionForm';
+import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
+import MyPageLayout from '../components/Layout/MyPageLayout';
+import PageTitle from '../components/Layout/PageTitle';
+import MyModal from '../components/Modal/MyModal';
+import { API_ENDPOINTS, PATHS } from '../constants';
+import AuthContext from '../context/auth.context';
+import { useSnackbar } from '../context/snackbar.context';
+import ViewContext from '../context/view.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
-} from "../helpers/api.handler";
-import useAuthNavigation from "../hooks/useAuthNavigation";
+} from '../helpers/api.handler';
+import useAuthNavigation from '../hooks/useAuthNavigation';
 
 const SubscriptionsScreen = () => {
   const [loading, setLoading] = useState(true);
@@ -43,7 +46,7 @@ const SubscriptionsScreen = () => {
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
   const [item, setItem] = useState({
-    name: "",
+    name: '',
     price: 0,
     duration: 7,
     max_patients: 10,
@@ -83,14 +86,14 @@ const SubscriptionsScreen = () => {
     setEditMode(false);
     setConfirmDelete({ open: false, id: null });
     setItem({
-      name: "",
+      name: '',
       price: 0,
       duration: 7,
       max_patients: 10,
       allow_multiple_subspecialities: false,
     });
     setEditedItem({
-      name: "",
+      name: '',
       price: 0,
       duration: 0,
       max_patients: 10,
@@ -158,7 +161,7 @@ const SubscriptionsScreen = () => {
         <CustomBreadCrumb
           paths={[
             {
-              title: "Subscriptions",
+              title: 'Subscriptions',
               icon: <CurrencyRupeeIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
             },
           ]}
@@ -166,37 +169,37 @@ const SubscriptionsScreen = () => {
         <MyPageLayout
           isLoading={loading}
           data={data}
-          noPageTitle={"No Subscriptions Found"}
-          noPageButtonTitle={"Add Subscription"}
+          noPageTitle={'No Subscriptions Found'}
+          noPageButtonTitle={'Add Subscription'}
           noPageButton={() => handleOpen()}
           showViewSetting={true}
           addButton={handleOpen}
-          addButtonTitle={"Add Subscription"}
+          addButtonTitle={'Add Subscription'}
           addButtonDisabled={loading}
         >
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              flexWrap: "wrap",
+              display: 'flex',
+              justifyContent: 'flex-start',
+              flexWrap: 'wrap',
             }}
           >
-            {view === "table" ? (
+            {view === 'table' ? (
               <CustomTable
                 heading={[
-                  "Id",
-                  "Name",
-                  "Duration",
-                  "Price",
-                  "Max Patients",
-                  "Multiple Subspecialities",
-                  "Actions",
+                  'Id',
+                  'Name',
+                  'Duration',
+                  'Price',
+                  'Max Patients',
+                  'Multiple Subspecialities',
+                  'Actions',
                 ]}
               >
                 {data.map((item, index) => (
                   <TableRow
                     key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell>{item.id}</TableCell>
                     <TableCell>{item.name}</TableCell>
@@ -254,9 +257,9 @@ const SubscriptionsScreen = () => {
       <MyModal
         open={open}
         handleClose={handleClose}
-        title={editMode ? "Edit Subscription" : "Add Subscription"}
-        subTitle={"Fill Subscription details"}
-        okButtonText={editMode ? "Update" : "Add"}
+        title={editMode ? 'Edit Subscription' : 'Add Subscription'}
+        subTitle={'Fill Subscription details'}
+        okButtonText={editMode ? 'Update' : 'Add'}
         cancelButtonText="Cancel"
         onOk={editMode ? handleUpdate : handleAdd}
         onCancel={handleClose}
@@ -271,11 +274,11 @@ const SubscriptionsScreen = () => {
               ? false
               : true
             : item.name.length > 0 &&
-              item.max_patients > 0 &&
-              item.duration > 0 &&
-              !loading
-            ? false
-            : true
+                item.max_patients > 0 &&
+                item.duration > 0 &&
+                !loading
+              ? false
+              : true
         }
       >
         {editMode ? (

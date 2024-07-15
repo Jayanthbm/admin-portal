@@ -1,18 +1,14 @@
 // src/pages/DashboardScreen.js
 
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import { Box, Grid } from "@mui/material";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { Box } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import PageTitle from "../components/Layout/PageTitle";
-import { API_ENDPOINTS, PATHS } from "../constants";
-import AuthContext from "../context/auth.context";
-import { getItems } from "../helpers/api.handler";
-
-import CustomCard from "../components/Card/CustomCard";
-import useAuthNavigation from "../hooks/useAuthNavigation";
+import DashboardCard from '../components/Card/DashboardCard';
+import PageTitle from '../components/Layout/PageTitle';
+import { API_ENDPOINTS, PATHS } from '../constants';
+import AuthContext from '../context/auth.context';
+import { getItems } from '../helpers/api.handler';
+import useAuthNavigation from '../hooks/useAuthNavigation';
 const DashboardScreen = () => {
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useContext(AuthContext);
@@ -33,6 +29,7 @@ const DashboardScreen = () => {
   useEffect(() => {
     fetchItems();
   }, [fetchItems]);
+
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <PageTitle
@@ -41,108 +38,50 @@ const DashboardScreen = () => {
           fetchItems(true);
         }}
       />
-      <Grid container spacing={3}>
-        {/* Doctors Info */}
-        <Grid item xs={12} sm={6} md={4}>
-          <CustomCard
-            title={"Total Doctors"}
-            value={data && data?.doctors.totalDoctors}
-            icon={
-              <LocalHospitalIcon
-                color="primary"
-                fontSize="large"
-                sx={{ fontSize: 60 }}
-              />
-            }
-            isLoading={loading}
-            isCountUp={true}
-            buttonClick={() => navigate(PATHS.DOCTORS)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <CustomCard
-            title={"Active Doctors"}
-            value={data && data?.doctors.totalActive}
-            icon={
-              <LocalHospitalIcon
-                color="primary"
-                fontSize="large"
-                sx={{ fontSize: 60 }}
-              />
-            }
-            isLoading={loading}
-            isCountUp={true}
-            buttonClick={() => navigate(PATHS.DOCTORS)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <CustomCard
-            title={"Inactive Doctors"}
-            value={data && data?.doctors.totalInactive}
-            icon={
-              <LocalHospitalIcon
-                color="primary"
-                fontSize="large"
-                sx={{ fontSize: 60 }}
-              />
-            }
-            isLoading={loading}
-            isCountUp={true}
-            buttonClick={() => navigate(PATHS.DOCTORS)}
-          />
-        </Grid>
-        {/* Specialities Info */}
-        <Grid item xs={12} sm={6} md={4}>
-          <CustomCard
-            title={"Total Specialities"}
-            value={data && data?.specialities.totalSpecialities}
-            icon={
-              <LocalOfferIcon
-                color="primary"
-                fontSize="large"
-                sx={{ fontSize: 60 }}
-              />
-            }
-            isLoading={loading}
-            isCountUp={true}
-            buttonClick={() => navigate(PATHS.SPECIALITIES)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <CustomCard
-            title={"Total Sub Specialities"}
-            value={data && data?.specialities.totalSubSpecialities}
-            icon={
-              <LocalOfferIcon
-                color="primary"
-                fontSize="large"
-                sx={{ fontSize: 60 }}
-              />
-            }
-            isLoading={loading}
-            isCountUp={true}
-            buttonClick={() => navigate(PATHS.SPECIALITIES)}
-          />
-        </Grid>
-
-        {/* Admins Info */}
-        <Grid item xs={12} sm={6} md={4}>
-          <CustomCard
-            title={"Total Admins"}
-            value={data?.totalAdmins}
-            icon={
-              <PeopleAltIcon
-                color="primary"
-                fontSize="large"
-                sx={{ fontSize: 60 }}
-              />
-            }
-            isLoading={loading}
-            isCountUp={true}
-            buttonClick={() => navigate(PATHS.ADMINS)}
-          />
-        </Grid>
-      </Grid>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          flexWrap: 'wrap',
+        }}
+      >
+        <DashboardCard
+          title={'Total Doctors'}
+          value={data && data?.doctors.totalDoctors}
+          onNavigate={() => navigate(PATHS.DOCTORS)}
+          isLoading={loading}
+        />
+        <DashboardCard
+          title={'Active Doctors'}
+          value={data && data?.doctors.totalActive}
+          onNavigate={() => navigate(PATHS.DOCTORS)}
+          isLoading={loading}
+        />
+        <DashboardCard
+          title={'Inactive Doctors'}
+          value={data && data?.doctors.totalInactive}
+          onNavigate={() => navigate(PATHS.DOCTORS)}
+          isLoading={loading}
+        />
+        <DashboardCard
+          title={'Specialities'}
+          value={data && data?.specialities.totalSpecialities}
+          onNavigate={() => navigate(PATHS.SPECIALITIES)}
+          isLoading={loading}
+        />
+        <DashboardCard
+          title={'Sub Specialities'}
+          value={data && data?.specialities.totalSubSpecialities}
+          onNavigate={() => navigate(PATHS.SPECIALITIES)}
+          isLoading={loading}
+        />
+        <DashboardCard
+          title={'Admins'}
+          value={data?.totalAdmins}
+          onNavigate={() => navigate(PATHS.ADMINS)}
+          isLoading={loading}
+        />
+      </Box>
     </Box>
   );
 };

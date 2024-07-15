@@ -1,23 +1,24 @@
 // src/pages/LoginScreen.js
 
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import LoginIcon from "@mui/icons-material/Login";
-import LoadingButton from "@mui/lab/LoadingButton";
-import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
-import React, { useContext, useState } from "react";
-import EmailInput from "../components/Input/EmailInput";
-import PasswordInput from "../components/Input/PasswordInput";
-import { API_ENDPOINTS, PATHS, REFRESH_KEY, TOKEN_KEY } from "../constants";
-import AuthContext from "../context/auth.context";
-import { useSnackbar } from "../context/snackbar.context";
-import { post } from "../helpers/api.helper";
-import { setToken } from "../helpers/auth.helper";
-import useAuthNavigation from "../hooks/useAuthNavigation";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import LoginIcon from '@mui/icons-material/Login';
+import LoadingButton from '@mui/lab/LoadingButton';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import React, { useContext, useState } from 'react';
+
+import EmailInput from '../components/Input/EmailInput';
+import PasswordInput from '../components/Input/PasswordInput';
+import { API_ENDPOINTS, PATHS, REFRESH_KEY, TOKEN_KEY } from '../constants';
+import AuthContext from '../context/auth.context';
+import { useSnackbar } from '../context/snackbar.context';
+import { post } from '../helpers/api.helper';
+import { setToken } from '../helpers/auth.helper';
+import useAuthNavigation from '../hooks/useAuthNavigation';
 
 const defaultTheme = createTheme();
 
@@ -28,8 +29,8 @@ const LoginScreen = () => {
   const showSnackbar = useSnackbar();
 
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
@@ -39,17 +40,17 @@ const LoginScreen = () => {
     try {
       const result = await post(API_ENDPOINTS.LOGIN, { email, password });
       if (result.status === 200) {
-        showSnackbar(result.message, "success");
+        showSnackbar(result.message, 'success');
         setToken(TOKEN_KEY, result.data.accessToken);
         setToken(REFRESH_KEY, result.data.refreshToken);
         setIsLoggedIn(true);
         navigate(PATHS.DASHBOARD);
       } else {
-        showSnackbar(result.message, "error");
+        showSnackbar(result.message, 'error');
       }
     } catch (error) {
-      console.error("Error logging in:", error);
-      showSnackbar(error.message, "error");
+      console.error('Error logging in:', error);
+      showSnackbar(error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -62,12 +63,12 @@ const LoginScreen = () => {
         <Box
           sx={{
             marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -80,7 +81,7 @@ const LoginScreen = () => {
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
-              validationPassed={setValidEmail}
+              setValidationState={setValidEmail}
             />
 
             <PasswordInput
@@ -89,7 +90,7 @@ const LoginScreen = () => {
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
-              validationPassed={setValidPassword}
+              setValidationState={setValidPassword}
             />
             <LoadingButton
               type="submit"

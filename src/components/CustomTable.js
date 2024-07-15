@@ -1,3 +1,5 @@
+// src/components/CustomTable.js
+
 import {
   Paper,
   Table,
@@ -5,7 +7,9 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-} from "@mui/material";
+} from '@mui/material';
+import React from 'react';
+
 const CustomTable = ({ heading, children }) => {
   return (
     <>

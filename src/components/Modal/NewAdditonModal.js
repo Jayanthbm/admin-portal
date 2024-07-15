@@ -1,6 +1,9 @@
-import SaveIcon from "@mui/icons-material/Save";
-import React from "react";
-import MyModal from "./MyModal";
+// src/components/NewAdditonModal.js
+
+import SaveIcon from '@mui/icons-material/Save';
+import React from 'react';
+
+import MyModal from './MyModal';
 const NewAdditonModal = ({
   open,
   handleClose,

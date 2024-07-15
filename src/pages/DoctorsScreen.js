@@ -1,9 +1,10 @@
 // src/pages/DoctorsScreen.js
-import BlockIcon from "@mui/icons-material/Block";
-import CheckIcon from "@mui/icons-material/Check";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+
+import BlockIcon from '@mui/icons-material/Block';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import {
   Box,
   Chip,
@@ -11,33 +12,36 @@ import {
   TableCell,
   TableRow,
   Tooltip,
-} from "@mui/material";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import CustomLink from "../components/CustomLink";
-import CustomTable from "../components/CustomTable";
-import CustomBreadCrumb from "../components/Layout/CustomBreadCrumb";
+} from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import MyPageLayout from "../components/Layout/MyPageLayout";
-import PageTitle from "../components/Layout/PageTitle";
-import DeleteModal from "../components/Modal/DeleteModal";
-import NewAdditonModal from "../components/Modal/NewAdditonModal";
-import { API_ENDPOINTS, PATHS } from "../constants";
-import AuthContext from "../context/auth.context";
-import { useSnackbar } from "../context/snackbar.context";
-import ViewContext from "../context/view.context";
+import DoctorCard from '../components/Card/DoctorCard';
+import CustomLink from '../components/CustomLink';
+import CustomTable from '../components/CustomTable';
+import DoctorForm from '../components/Forms/DoctorForm';
+import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
+import MyPageLayout from '../components/Layout/MyPageLayout';
+import PageTitle from '../components/Layout/PageTitle';
+import DeleteModal from '../components/Modal/DeleteModal';
+import NewAdditonModal from '../components/Modal/NewAdditonModal';
+import { API_ENDPOINTS, PATHS } from '../constants';
+import AuthContext from '../context/auth.context';
+import { useSnackbar } from '../context/snackbar.context';
+import ViewContext from '../context/view.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
-} from "../helpers/api.handler";
-import useAuthNavigation from "../hooks/useAuthNavigation";
+} from '../helpers/api.handler';
+import useAuthNavigation from '../hooks/useAuthNavigation';
 const DoctorsScreen = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
   const { view } = useContext(ViewContext);
-  const naviagate = useAuthNavigation(isLoggedIn, PATHS.DOCTORS);
+  const navigate = useAuthNavigation(isLoggedIn, PATHS.DOCTORS);
   const showSnackbar = useSnackbar();
+
   const [data, setData] = useState([]);
 
   const [open, setOpen] = useState(false);
@@ -45,17 +49,16 @@ const DoctorsScreen = () => {
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
   const [item, setItem] = useState({
-    email: "",
-    password: "",
-    name: "",
-    phone: "",
-    medical_registration_number: "",
+    email: '',
+    password: '',
+    name: '',
+    mobile: '',
+    medical_registration_number: '',
     specialty_id: null,
   });
 
   const [editedItem, setEditedItem] = useState({});
-
-  const [options, setOptions] = useState([]);
+  const [doctorValid, setDoctorValid] = useState(false);
 
   const fetchItems = useCallback(async (force) => {
     await getItems({
@@ -68,21 +71,9 @@ const DoctorsScreen = () => {
     });
   }, []);
 
-  const fetchOptions = useCallback(async () => {
-    await getItems({
-      url: API_ENDPOINTS.ALLSPECIALITIES,
-      loadingFunction: setLoading,
-      snackBarFunction: null,
-      dataSetterState: setOptions,
-      commonFunction: () => {},
-      force: false,
-    });
-  }, []);
-
   useEffect(() => {
     fetchItems();
-    fetchOptions();
-  }, [fetchItems, fetchOptions]);
+  }, [fetchItems]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -99,22 +90,8 @@ const DoctorsScreen = () => {
     setOpen(false);
     setEditMode(false);
     setConfirmDelete({ open: false, id: null });
-    setItem({
-      email: "",
-      password: "",
-      name: "",
-      phone: "",
-      medical_registration_number: "",
-      specialty_id: null,
-    });
-    setEditedItem({
-      email: "",
-      password: "",
-      name: "",
-      phone: "",
-      medical_registration_number: "",
-      specialty_id: null,
-    });
+    setItem({});
+    setEditedItem({});
   };
 
   const handleAdd = async () => {
@@ -165,9 +142,30 @@ const DoctorsScreen = () => {
     });
   };
   const toDoctorScreen = (id, name) => {
-    return naviagate(PATHS.DOCTORS + `/${id}`, {
+    return navigate(PATHS.DOCTORS + `/${id}`, {
       state: {
         name: name,
+      },
+    });
+  };
+
+  const handleToggleStatus = async (doctor) => {
+    const status = doctor.status === 0 ? true : false;
+
+    return await updateItem({
+      url: `${API_ENDPOINTS.DOCTOR}/${doctor.id}`,
+      data: {
+        name: doctor.name,
+        status: status,
+        customMessage: status === true ? 'Doctor Enabled' : 'Doctor Disabled',
+      },
+      loadingFunction: setLoading,
+      snackBarFunction: showSnackbar,
+      reloadData: () => {
+        fetchItems(true);
+      },
+      commonFunction: () => {
+        handleClose();
       },
     });
   };
@@ -183,7 +181,7 @@ const DoctorsScreen = () => {
         <CustomBreadCrumb
           paths={[
             {
-              title: "Doctors",
+              title: 'Doctors',
               icon: <LocalHospitalIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
             },
           ]}
@@ -197,32 +195,34 @@ const DoctorsScreen = () => {
           showSkeleton={true}
           showViewSetting={true}
           addButton={handleOpen}
-          addButtonTitle={"Add Doctor"}
+          addButtonTitle={'Add Doctor'}
           addButtonDisabled={loading}
         >
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "flex-start",
-              flexWrap: "wrap",
+              display: 'flex',
+              justifyContent: 'flex-start',
+              flexWrap: 'wrap',
             }}
           >
-            {view === "table" ? (
+            {view === 'table' ? (
               <CustomTable
                 heading={[
-                  "Id",
-                  "Name",
-                  "Email",
-                  "Speciality",
-                  "Created At",
-                  "Status",
-                  "Actions",
+                  'Id',
+                  'Name',
+                  'Email',
+                  'Speciality',
+                  'Created At',
+                  'Reg No',
+                  'Doctor ID',
+                  'Status',
+                  'Actions',
                 ]}
               >
                 {data.map((item, index) => (
                   <TableRow
                     key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
                     <TableCell>
                       <CustomLink
@@ -242,7 +242,7 @@ const DoctorsScreen = () => {
                       <CustomLink
                         title={item.speciality}
                         onClick={() =>
-                          naviagate(
+                          navigate(
                             PATHS.SPECIALITIES + `/${item.speciality_id}`,
                             {
                               state: {
@@ -255,6 +255,8 @@ const DoctorsScreen = () => {
                     </TableCell>
 
                     <TableCell>{item.created_at}</TableCell>
+                    <TableCell>{item.medical_registration_number}</TableCell>
+                    <TableCell>{item.unique_id}</TableCell>
                     <TableCell>
                       {item.status === 1 ? (
                         <Chip color="success" label="Yes" />
@@ -263,9 +265,12 @@ const DoctorsScreen = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={() => {}} sx={{ pb: 1, pt: 1 }}>
+                      <IconButton
+                        onClick={() => handleToggleStatus(item)}
+                        sx={{ pb: 1, pt: 1 }}
+                      >
                         <Tooltip
-                          title={item.status === 0 ? "Enable" : "Disable"}
+                          title={item.status === 0 ? 'Enable' : 'Disable'}
                         >
                           {item.status === 0 ? (
                             <CheckIcon color="success" />
@@ -297,7 +302,16 @@ const DoctorsScreen = () => {
                 ))}
               </CustomTable>
             ) : (
-              <> Card View</>
+              data.map((item, index) => (
+                <DoctorCard
+                  key={index}
+                  doctor={item}
+                  onEdit={handleEditOpen}
+                  onDelete={confirmDeleteModal}
+                  onToggleStatus={handleToggleStatus}
+                  onNavigate={() => toDoctorScreen(item.id, item.name)}
+                />
+              ))
             )}
           </Box>
         </MyPageLayout>
@@ -305,33 +319,29 @@ const DoctorsScreen = () => {
       <NewAdditonModal
         open={open}
         handleClose={handleClose}
-        title={editMode ? "Edit Doctor" : "Add Doctor"}
-        subTitle={"Fill Doctor details"}
-        okButtonText={editMode ? "Update" : "Add"}
+        title={editMode ? 'Edit Doctor' : 'Add Doctor'}
+        subTitle={'Fill Doctor details'}
+        okButtonText={editMode ? 'Update' : 'Add'}
         onOk={editMode ? handleUpdate : handleAdd}
         onCancel={handleClose}
         isLoading={loading}
-        okButtondisabled={
-          editMode
-            ? editedItem?.name?.length > 0 &&
-              editedItem?.password?.length > 6 &&
-              editedItem?.specialty_id > 0 &&
-              editedItem?.medical_registration_number?.length > 0 &&
-              editedItem?.phone.length > 9 &&
-              !loading
-              ? false
-              : true
-            : item?.name?.length > 0 &&
-              item?.password?.length > 0 &&
-              item?.specialty_id > 0 &&
-              item?.medical_registration_number?.length > 0 &&
-              item?.phone?.length > 0 &&
-              !loading
-            ? false
-            : true
-        }
+        okButtondisabled={doctorValid && !loading ? false : true}
       >
-        {editMode ? <>Edit View</> : <>Add View</>}
+        {editMode ? (
+          <DoctorForm
+            mode={editMode ? 'edit' : 'add'}
+            item={editedItem}
+            setItem={setEditedItem}
+            isValid={setDoctorValid}
+          />
+        ) : (
+          <DoctorForm
+            mode={editMode ? 'edit' : 'add'}
+            item={item}
+            setItem={setItem}
+            isValid={setDoctorValid}
+          />
+        )}
       </NewAdditonModal>
       <DeleteModal
         open={confirmDelete.open}

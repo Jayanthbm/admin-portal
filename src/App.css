@@ -9,7 +9,7 @@
   margin-top: 90px;
   flex-shrink: 0;
   position: fixed;
-  top:20px
+  top: 20px;
 }
 
 .main-content {
@@ -26,7 +26,7 @@
   .main-content {
     margin-left: 0;
   }
-  .body-container{
+  .body-container {
     margin-right: 0 !important;
   }
 }

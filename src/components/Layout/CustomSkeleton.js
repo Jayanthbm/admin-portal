@@ -1,5 +1,7 @@
-import { Box, Skeleton } from "@mui/material";
-import React from "react";
+// src/components/CustomSkeleton.js
+
+import { Box, Skeleton } from '@mui/material';
+import React from 'react';
 
 const CustomSkeleton = () => {
   return (

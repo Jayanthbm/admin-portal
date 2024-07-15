@@ -1,9 +1,10 @@
 // src/context/auth.context.js
 
-import React, { createContext, useEffect, useState } from "react";
-import { REFRESH_KEY, TOKEN_KEY } from "../constants";
-import { removeToken } from "../helpers/auth.helper";
-import { isValidToken } from "../helpers/util.helper";
+import React, { createContext, useEffect, useState } from 'react';
+
+import { REFRESH_KEY, TOKEN_KEY } from '../constants';
+import { removeToken } from '../helpers/auth.helper';
+import { isValidToken } from '../helpers/util.helper';
 
 const AuthContext = createContext();
 
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     async function init() {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem('accessToken');
       if (token && isValidToken(token)) {
         setIsLoggedIn(true);
       } else {
