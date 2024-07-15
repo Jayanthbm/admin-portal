@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { PATHS } from "../constants";
+import { PATHS } from "../../constants";
 
 const LeftMenu = () => {
   const navigate = useNavigate();

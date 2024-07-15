@@ -1,6 +1,6 @@
 import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import React from "react";
-import { ReactComponent as NoDataIcon } from "../assets/no-data-icon.svg"; // Adjust the path to your SVG
+import { ReactComponent as NoDataIcon } from "../../assets/no-data-icon.svg"; // Adjust the path to your SVG
 
 const NoDataCard = ({
   title = "No data found",

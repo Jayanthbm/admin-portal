@@ -11,13 +11,13 @@ import {
   Tooltip,
 } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import CustomTable from "../components/CustomTable";
 import SubscriptionForm from "../components/Forms/SubscriptionForm";
+import CustomBreadCrumb from "../components/Layout/CustomBreadCrumb";
+import MyPageLayout from "../components/Layout/MyPageLayout";
+import PageTitle from "../components/Layout/PageTitle";
 import MyModal from "../components/Modal/MyModal";
-import MyPageLayout from "../components/MyPageLayout";
-import PageTitle from "../components/PageTitle";
-import SubscriptionCard from "../components/SubscriptionCard";
+import SubscriptionCard from "../components/Card/SubscriptionCard";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";

@@ -6,12 +6,12 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import { Box, Grid } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 
-import CustomCard from "../components/CustomCard";
-import PageTitle from "../components/PageTitle";
+import PageTitle from "../components/Layout/PageTitle";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { getItems } from "../helpers/api.handler";
 
+import CustomCard from "../components/Card/CustomCard";
 import useAuthNavigation from "../hooks/useAuthNavigation";
 const DashboardScreen = () => {
   const [loading, setLoading] = useState(true);
@@ -19,14 +19,13 @@ const DashboardScreen = () => {
   const navigate = useAuthNavigation(isLoggedIn, PATHS.DASHBOARD);
   const [data, setData] = useState(null);
 
-
   const fetchItems = useCallback(async (force) => {
     await getItems({
       url: API_ENDPOINTS.DASHBOARD,
       loadingFunction: setLoading,
       snackBarFunction: null,
       dataSetterState: setData,
-      commonFunction: () => { },
+      commonFunction: () => {},
       force: force,
     });
   }, []);

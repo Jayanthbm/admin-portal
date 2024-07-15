@@ -13,12 +13,14 @@ import {
   Tooltip,
 } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import CustomBreadCrumb from "../components/CustomBreadCrumb";
 import CustomLink from "../components/CustomLink";
 import CustomTable from "../components/CustomTable";
-import DeleteModal from "../components/DeleteModal";
-import MyPageLayout from "../components/MyPageLayout";
-import PageTitle from "../components/PageTitle";
+import CustomBreadCrumb from "../components/Layout/CustomBreadCrumb";
+
+import MyPageLayout from "../components/Layout/MyPageLayout";
+import PageTitle from "../components/Layout/PageTitle";
+import DeleteModal from "../components/Modal/DeleteModal";
+import NewAdditonModal from "../components/Modal/NewAdditonModal";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";
@@ -30,7 +32,6 @@ import {
   updateItem,
 } from "../helpers/api.handler";
 import useAuthNavigation from "../hooks/useAuthNavigation";
-import NewAdditonModal from "../components/Modal/NewAdditonModal";
 const DoctorsScreen = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);

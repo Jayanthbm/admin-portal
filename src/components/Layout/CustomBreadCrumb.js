@@ -4,7 +4,8 @@ import HomeIcon from "@mui/icons-material/Home";
 import { Breadcrumbs, Link } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { PATHS } from "../constants";
+import { PATHS } from "../../constants";
+
 
 const CustomBreadCrumb = ({ paths }) => {
   const navigate = useNavigate();

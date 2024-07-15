@@ -3,9 +3,9 @@
 import React, { useContext, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
-import AppHeader from "./components/appHeader";
-import LeftMenu from "./components/leftMenu";
-import MyFooter from "./components/MyFooter";
+import AppHeader from "./components/Layout/appHeader";
+import LeftMenu from "./components/Layout/leftMenu";
+import MyFooter from "./components/Layout/MyFooter";
 import { PATHS } from "./constants";
 import AuthContext from "./context/auth.context";
 import AdminsScreen from "./pages/AdminsScreen";

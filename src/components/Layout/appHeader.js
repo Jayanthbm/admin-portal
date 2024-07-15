@@ -11,7 +11,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import React, { useContext, useState } from "react";
-import AuthContext from "../context/auth.context";
+import AuthContext from "../../context/auth.context";
 
 const AppHeader = ({ title }) => {
   title = title || "Admin Dashboard";

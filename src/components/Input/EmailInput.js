@@ -2,7 +2,7 @@
 
 import { TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { validateEmail } from "../helpers/validation.helper";
+import { validateEmail } from "../../helpers/validation.helper";
 
 const EmailInput = ({ value, onChange, id, label, validationPassed }) => {
   const [error, setError] = useState(false);

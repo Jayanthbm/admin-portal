@@ -1,6 +1,6 @@
 import { ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import CustomTextInput from "../CustomTextInput";
+import CustomTextInput from "../Input/CustomTextInput";
 
 const SubscriptionForm = ({ item, setItem }) => {
   const [name, setName] = useState(item.name);

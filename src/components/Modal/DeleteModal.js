@@ -1,5 +1,5 @@
 import React from "react";
-import MyModal from "./Modal/MyModal";
+import MyModal from "./MyModal";
 
 const DeleteModal = ({
   open,

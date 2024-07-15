@@ -15,11 +15,12 @@ import {
 } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import CustomBreadCrumb from "../components/CustomBreadCrumb";
-import CustomCard from "../components/CustomCard";
+import CustomCard from "../components/Card/CustomCard";
 import CustomTable from "../components/CustomTable";
-import MyPageLayout from "../components/MyPageLayout";
-import PageTitle from "../components/PageTitle";
+import CustomBreadCrumb from "../components/Layout/CustomBreadCrumb";
+import MyPageLayout from "../components/Layout/MyPageLayout";
+import PageTitle from "../components/Layout/PageTitle";
+import MyModal from "../components/Modal/MyModal";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";
@@ -31,7 +32,6 @@ import {
   updateItem,
 } from "../helpers/api.handler";
 import useAuthNavigation from "../hooks/useAuthNavigation";
-import MyModal from "../components/Modal/MyModal";
 
 const SubSpecialityScreen = () => {
   const [loading, setLoading] = useState(true);

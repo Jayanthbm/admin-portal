@@ -16,13 +16,15 @@ import {
   Tooltip,
 } from "@mui/material";
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import CustomBreadCrumb from "../components/CustomBreadCrumb";
+
 import CustomTable from "../components/CustomTable";
-import EmailInput from "../components/EmailInput";
+import EmailInput from "../components/Input/EmailInput";
+import CustomBreadCrumb from "../components/Layout/CustomBreadCrumb";
 import MyModal from "../components/Modal/MyModal";
-import MyPageLayout from "../components/MyPageLayout";
-import PageTitle from "../components/PageTitle";
-import PasswordInput from "../components/PasswordInput";
+
+import MyPageLayout from "../components/Layout/MyPageLayout";
+import PageTitle from "../components/Layout/PageTitle";
+import PasswordInput from "../components/Input/PasswordInput";
 import { API_ENDPOINTS, PATHS } from "../constants";
 import AuthContext from "../context/auth.context";
 import { useSnackbar } from "../context/snackbar.context";

@@ -2,10 +2,11 @@ import GridViewIcon from "@mui/icons-material/GridView";
 import TableRowsIcon from "@mui/icons-material/TableRows";
 import { Box, ToggleButton, ToggleButtonGroup, Tooltip } from "@mui/material";
 import React, { useContext } from "react";
-import ViewContext from "../context/view.context";
-import AddButton from "./AddButton";
+import ViewContext from "../../context/view.context";
+import AddButton from "../Button/AddButton";
 import CustomSkeleton from "./CustomSkeleton";
 import NoDataCard from "./NoDataCard";
+
 const MyPageLayout = ({
   isLoading,
   children,
