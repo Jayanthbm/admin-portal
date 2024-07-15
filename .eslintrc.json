@@ -14,15 +14,16 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:react-hooks/recommended"
   ],
-  "plugins": ["react", "prettier", "simple-import-sort"],
+  "plugins": ["react", "prettier", "simple-import-sort", "react-hooks"],
   "rules": {
     "prettier/prettier": "error",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "react/prop-types": "off" // Disable prop type checking
+    "react/prop-types": "off"
   },
   "settings": {
     "react": {
