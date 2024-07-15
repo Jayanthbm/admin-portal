@@ -22,7 +22,7 @@ export const API_ENDPOINTS = {
   SUBSCRIPTION: '/admin/subscription',
 };
 
-const PATHS_BASE_PATH = "/admin-portal/";
+const PATHS_BASE_PATH = '/admin-portal/';
 
 export const PATHS = {
   ROOT: PATHS_BASE_PATH,
