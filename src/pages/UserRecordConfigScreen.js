@@ -1,16 +1,16 @@
 // src/pages/UserRecordConfigScreen.js
 
-import SettingsIcon from "@mui/icons-material/Settings";
-import { Box } from "@mui/material";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import AddButton from "../components/AddButton";
-import CustomBreadCrumb from "../components/CustomBreadCrumb";
-import MyPageLayout from "../components/MyPageLayout";
-import PageTitle from "../components/PageTitle";
-import { API_ENDPOINTS, PATHS } from "../constants";
-import AuthContext from "../context/auth.context";
-import { getItems } from "../helpers/api.handler";
-import useAuthNavigation from "../hooks/useAuthNavigation";
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Box } from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
+import MyPageLayout from '../components/Layout/MyPageLayout';
+import PageTitle from '../components/Layout/PageTitle';
+import { API_ENDPOINTS, PATHS } from '../constants';
+import AuthContext from '../context/auth.context';
+import { getItems } from '../helpers/api.handler';
+import useAuthNavigation from '../hooks/useAuthNavigation';
 const UserRecordConfigScreen = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
@@ -38,7 +38,7 @@ const UserRecordConfigScreen = () => {
       <CustomBreadCrumb
         paths={[
           {
-            title: "Record Config",
+            title: 'Record Config',
             icon: <SettingsIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
           },
         ]}
@@ -50,13 +50,7 @@ const UserRecordConfigScreen = () => {
         noPageTitle="No Record Configurations"
         data={data}
         showSkeleton={true}
-      >
-        <AddButton
-          onClick={() => {}}
-          title="Add Configuration"
-          disabled={loading}
-        />
-      </MyPageLayout>
+      ></MyPageLayout>
     </Box>
   );
 };

@@ -1,34 +1,42 @@
 // src/components/EmailInput.js
 
-import { TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { validateEmail } from "../helpers/validation.helper";
+import { TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 
-const EmailInput = ({ value, onChange, id, label, validationPassed }) => {
+import { validateEmail } from '../../helpers/validation.helper';
+
+const EmailInput = ({
+  value,
+  onChange,
+  id,
+  label,
+  setValidationState,
+  disabled = false,
+}) => {
   const [error, setError] = useState(false);
-  const [helperText, setHelperText] = useState("");
+  const [helperText, setHelperText] = useState('');
   const [focused, setFocused] = useState(false);
   useEffect(() => {
     if (focused) {
       if (!value) {
         setError(true);
-        setHelperText("Please enter an email address");
-        validationPassed(false);
+        setHelperText('Please enter an email address');
+        setValidationState(false);
       } else if (!validateEmail(value)) {
         setError(true);
-        setHelperText("Please enter a valid email address");
-        validationPassed(false);
+        setHelperText('Please enter a valid email address');
+        setValidationState(false);
       } else {
         setError(false);
-        setHelperText("");
-        validationPassed(true);
+        setHelperText('');
+        setValidationState(true);
       }
     }
-  }, [value, focused, validationPassed]);
+  }, [value, focused, setValidationState]);
   return (
     <TextField
       id={id}
-      label={label ? label : "Email"}
+      label={label ? label : 'Email'}
       type="email"
       fullWidth
       required
@@ -41,6 +49,7 @@ const EmailInput = ({ value, onChange, id, label, validationPassed }) => {
       onFocus={() => {
         setFocused(true);
       }}
+      disabled={disabled}
     />
   );
 };

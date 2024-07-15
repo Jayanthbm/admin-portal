@@ -1,46 +1,40 @@
 // src/pages/AdminsScreen.js
 
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import BlockIcon from "@mui/icons-material/Block";
-import CheckIcon from "@mui/icons-material/Check";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import BlockIcon from '@mui/icons-material/Block';
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 import {
   Box,
   Chip,
   IconButton,
-  Pagination,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
   TextField,
   Tooltip,
-} from "@mui/material";
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import AddButton from "../components/AddButton";
-import CustomBreadCrumb from "../components/CustomBreadCrumb";
-import EmailInput from "../components/EmailInput";
-import MyModal from "../components/MyModal";
-import MyPageLayout from "../components/MyPageLayout";
-import PageTitle from "../components/PageTitle";
-import PasswordInput from "../components/PasswordInput";
-import { API_ENDPOINTS, PATHS } from "../constants";
-import AuthContext from "../context/auth.context";
-import { useSnackbar } from "../context/snackbar.context";
+} from '@mui/material';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+
+import CustomTable from '../components/CustomTable';
+import EmailInput from '../components/Input/EmailInput';
+import PasswordInput from '../components/Input/PasswordInput';
+import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
+import MyPageLayout from '../components/Layout/MyPageLayout';
+import PageTitle from '../components/Layout/PageTitle';
+import MyModal from '../components/Modal/MyModal';
+import { API_ENDPOINTS, PATHS } from '../constants';
+import AuthContext from '../context/auth.context';
+import { useSnackbar } from '../context/snackbar.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
-} from "../helpers/api.handler";
-import { getItemById } from "../helpers/util.helper";
-import useAuthNavigation from "../hooks/useAuthNavigation";
+} from '../helpers/api.handler';
+import { getItemById } from '../helpers/util.helper';
+import useAuthNavigation from '../hooks/useAuthNavigation';
 const AdminsScreen = () => {
   const [loading, setLoading] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
@@ -51,9 +45,9 @@ const AdminsScreen = () => {
   const [data, setData] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
-  const [newAdminEmail, setNewAdminEmail] = useState("");
-  const [newAdminName, setNewAdminName] = useState("");
-  const [newAdminPassword, setNewAdminPassword] = useState("");
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [newAdminName, setNewAdminName] = useState('');
+  const [newAdminPassword, setNewAdminPassword] = useState('');
   const [validNewAdminEmail, setValidNewAdminEmail] = useState(false);
   const [validNewAdminPassword, setValidNewAdminPassword] = useState(false);
 
@@ -76,9 +70,9 @@ const AdminsScreen = () => {
   const handleClose = () => {
     setOpen(false);
     setEditMode(null);
-    setNewAdminEmail("");
-    setNewAdminName("");
-    setNewAdminPassword("");
+    setNewAdminEmail('');
+    setNewAdminName('');
+    setNewAdminPassword('');
     setValidNewAdminEmail(false);
     setValidNewAdminPassword(false);
   };
@@ -110,10 +104,10 @@ const AdminsScreen = () => {
 
   const handleUpdate = async (id, enabled) => {
     const item = getItemById(data, id);
-    if (typeof enabled !== "boolean") {
+    if (typeof enabled !== 'boolean') {
       enabled = enabled === 1 ? true : false;
     }
-    return await updateItem({
+    return updateItem({
       url: `${API_ENDPOINTS.UPDATEADMIN}/${item.id}`,
       data: {
         name: item.name,
@@ -162,7 +156,7 @@ const AdminsScreen = () => {
         <CustomBreadCrumb
           paths={[
             {
-              title: "Admins",
+              title: 'Admins',
               icon: (
                 <AdminPanelSettingsIcon sx={{ mr: 0.5 }} fontSize="inherit" />
               ),
@@ -177,109 +171,95 @@ const AdminsScreen = () => {
           noPageTitle="No Admins"
           data={data}
           showSkeleton={true}
+          addButton={handleOpen}
+          addButtonTitle={'Add Admin'}
+          addButtonDisabled={loading}
+          showViewSettings={false}
         >
-          <AddButton
-            onClick={handleOpen}
-            title="Add Admin"
-            disabled={loading}
-          />
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Created At</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data?.map((admin) => (
-                  <TableRow key={admin.id}>
-                    <TableCell>
-                      {editMode === admin.id ? (
-                        <TextField
-                          value={admin.name}
-                          onChange={(e) =>
-                            handleEditChange(admin.id, e.target.value)
-                          }
-                          size="small"
-                        />
-                      ) : (
-                        admin.name
-                      )}
-                    </TableCell>
-                    <TableCell>{admin.email}</TableCell>
-                    <TableCell>{admin.created_at}</TableCell>
-                    <TableCell>
-                      {admin.enabled === 0 ? (
-                        <Chip color="error" label="Disabled" />
-                      ) : (
-                        <Chip color="success" label="Active" />
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip
-                        title={admin.enabled === 0 ? "Enable" : "Disable"}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-start',
+              flexWrap: 'wrap',
+            }}
+          >
+            <CustomTable
+              heading={['Name', 'Email', 'Created At', 'Status', 'Actions']}
+            >
+              {data.map((item, index) => (
+                <TableRow
+                  key={index}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell>
+                    {editMode === item.id ? (
+                      <TextField
+                        value={item.name}
+                        onChange={(e) =>
+                          handleEditChange(item.id, e.target.value)
+                        }
+                        size="small"
+                      />
+                    ) : (
+                      item.name
+                    )}
+                  </TableCell>
+                  <TableCell>{item.email}</TableCell>
+                  <TableCell>{item.created_at}</TableCell>
+                  <TableCell>
+                    {item.enabled === 0 ? (
+                      <Chip color="error" label="Disabled" />
+                    ) : (
+                      <Chip color="success" label="Active" />
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Tooltip title={item.enabled === 0 ? 'Enable' : 'Disable'}>
+                      <IconButton
+                        color={item.enabled === 0 ? 'success' : 'warning'}
+                        sx={{ borderRadius: '50%' }}
+                        onClick={() => handleUpdate(item.id, !item.enabled)}
                       >
-                        <IconButton
-                          color={admin.enabled === 0 ? "success" : "warning"}
-                          sx={{ borderRadius: "50%" }}
-                          onClick={() => handleUpdate(admin.id, !admin.enabled)}
-                        >
-                          {admin.enabled === 0 ? <CheckIcon /> : <BlockIcon />}
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete">
-                        <IconButton
-                          color="error"
-                          sx={{ borderRadius: "50%" }}
-                          onClick={() => confirmDeleteModal(admin.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Edit">
-                        <IconButton
-                          color="primary"
-                          sx={{ borderRadius: "50%" }}
-                          onClick={() => {
-                            if (editMode === admin.id) {
-                              setEditMode(null);
-                              handleUpdate(admin.id, admin.enabled);
-                            } else {
-                              setEditMode(admin.id);
-                            }
-                          }}
-                        >
-                          {editMode === admin.id ? <CheckIcon /> : <EditIcon />}
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <Stack spacing={2} mt={2} direction="row" justifyContent="center">
-            <Pagination
-              count={1}
-              page={1}
-              onChange={(e, page) => console.log("page", page)}
-              variant="outlined"
-              shape="rounded"
-              size="large"
-            />
-          </Stack>
+                        {item.enabled === 0 ? <CheckIcon /> : <BlockIcon />}
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton
+                        color="error"
+                        sx={{ borderRadius: '50%' }}
+                        onClick={() => confirmDeleteModal(item.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Edit">
+                      <IconButton
+                        color="primary"
+                        sx={{ borderRadius: '50%' }}
+                        onClick={() => {
+                          if (editMode === item.id) {
+                            setEditMode(null);
+                            handleUpdate(item.id, item.enabled);
+                          } else {
+                            setEditMode(item.id);
+                          }
+                        }}
+                      >
+                        {editMode === item.id ? <CheckIcon /> : <EditIcon />}
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </CustomTable>
+          </Box>
         </MyPageLayout>
 
         <MyModal
           open={open}
           handleClose={handleClose}
           title="Add Admin"
-          subTitle={"Enter admin details"}
+          subTitle={'Enter admin details'}
           okButtonText="Add Admin"
           cancelButtonText="Cancel"
           onOk={handleAdd}
@@ -291,7 +271,7 @@ const AdminsScreen = () => {
           <EmailInput
             value={newAdminEmail}
             onChange={(e) => setNewAdminEmail(e.target.value)}
-            validationPassed={setValidNewAdminEmail}
+            setValidationState={setValidNewAdminEmail}
           />
 
           <TextField
@@ -305,7 +285,7 @@ const AdminsScreen = () => {
             value={newAdminPassword}
             minLength={6}
             onChange={(e) => setNewAdminPassword(e.target.value)}
-            validationPassed={setValidNewAdminPassword}
+            setValidationState={setValidNewAdminPassword}
           />
         </MyModal>
 

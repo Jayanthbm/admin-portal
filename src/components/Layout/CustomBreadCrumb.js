@@ -1,10 +1,11 @@
 // src/components/CustomBreadCrumb.js
 
-import HomeIcon from "@mui/icons-material/Home";
-import { Breadcrumbs, Link } from "@mui/material";
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { PATHS } from "../constants";
+import HomeIcon from '@mui/icons-material/Home';
+import { Breadcrumbs, Link } from '@mui/material';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { PATHS } from '../../constants';
 
 const CustomBreadCrumb = ({ paths }) => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const CustomBreadCrumb = ({ paths }) => {
       <Breadcrumbs aria-label="breadcrumb">
         <Link
           underline="hover"
-          sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
           color="inherit"
           onClick={() => navigate(PATHS.DASHBOARD)}
         >
@@ -23,11 +24,11 @@ const CustomBreadCrumb = ({ paths }) => {
         {paths?.map((path, index) => (
           <Link
             key={index}
-            underline={path?.navigation ? "hover" : "none"}
+            underline={path?.navigation ? 'hover' : 'none'}
             sx={{
-              display: "flex",
-              alignItems: "center",
-              cursor: path?.navigation ? "pointer" : "default",
+              display: 'flex',
+              alignItems: 'center',
+              cursor: path?.navigation ? 'pointer' : 'default',
             }}
             color="inherit"
             onClick={() => navigate(path?.navigation)}

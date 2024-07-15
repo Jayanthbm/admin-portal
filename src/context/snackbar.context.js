@@ -1,7 +1,7 @@
 // src/context/snackbar.context.js
 
-import React, { createContext, useContext, useState } from "react";
-import { Snackbar, Alert } from "@mui/material";
+import { Alert, Snackbar } from '@mui/material';
+import React, { createContext, useContext, useState } from 'react';
 
 const SnackbarContext = createContext();
 
@@ -12,11 +12,11 @@ export const useSnackbar = () => {
 export const SnackbarProvider = ({ children }) => {
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: "",
-    severity: "success",
+    message: '',
+    severity: 'success',
   });
 
-  const showSnackbar = (message, severity = "success") => {
+  const showSnackbar = (message, severity = 'success') => {
     setSnackbar({
       open: true,
       message,
@@ -35,12 +35,12 @@ export const SnackbarProvider = ({ children }) => {
         open={snackbar.open}
         autoHideDuration={3000}
         onClose={closeSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert
           onClose={closeSnackbar}
           severity={snackbar.severity}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
           {snackbar.message}
         </Alert>

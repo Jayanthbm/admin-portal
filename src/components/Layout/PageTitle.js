@@ -1,16 +1,16 @@
 // src/components/PageTitle.js
 
-import RefreshIcon from "@mui/icons-material/Refresh";
-import { Box, Tooltip, Typography } from "@mui/material";
-import React from "react";
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { Box, Tooltip, Typography } from '@mui/material';
+import React from 'react';
 
 const PageTitle = ({ title, onRefresh }) => {
   return (
     <Box
       sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
       }}
     >
       <Typography variant="h4" gutterBottom>
@@ -24,7 +24,7 @@ const PageTitle = ({ title, onRefresh }) => {
               color="primary"
               onClick={onRefresh}
               sx={{
-                cursor: "pointer",
+                cursor: 'pointer',
               }}
             />
           </Typography>

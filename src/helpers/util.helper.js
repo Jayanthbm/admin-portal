@@ -31,7 +31,7 @@ export const getItem = (key) => {
   return localStorage.getItem(key);
 };
 export const isDataFresh = (key, duration = 3600000) => {
-  const timestamp = getItem(key + "_timestamp");
+  const timestamp = getItem(key + '_timestamp');
   if (!timestamp) return false;
   const currentTime = Date.now();
   return currentTime - timestamp < duration;

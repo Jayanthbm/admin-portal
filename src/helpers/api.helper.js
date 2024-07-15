@@ -1,13 +1,14 @@
 // src/helpers/api.helper.js
 
-import axios from "axios";
-import { API_ENDPOINTS, BASE_URL, REFRESH_KEY, TOKEN_KEY } from "../constants";
-import { getToken, setToken } from "./auth.helper";
+import axios from 'axios';
+
+import { API_ENDPOINTS, BASE_URL, REFRESH_KEY, TOKEN_KEY } from '../constants';
+import { getToken, setToken } from './auth.helper';
 
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -37,19 +38,19 @@ api.interceptors.response.use(
         const { data } = await axios.post(
           `${BASE_URL}${API_ENDPOINTS.REFRESHTOKEN}`,
           {
-            refreshToken: getToken(REFRESH_KEY),
-          },
-          { withCredentials: true } // Adjust if needed for your backend
+            refresh_token: getToken(REFRESH_KEY),
+          }
         );
         let accessToken = data.data.accessToken;
         setToken(TOKEN_KEY, accessToken);
         let refreshToken = data.data.refreshToken;
         setToken(REFRESH_KEY, refreshToken);
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${accessToken}`;
+        axios.defaults.headers.common['Authorization'] =
+          `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (err) {
+        // navigate to /logout
+        window.location.href = '/logout';
         return Promise.reject(err);
       }
     }
@@ -66,7 +67,7 @@ export const get = async (url, params = {}) => {
     let errorMessage = error?.response?.data
       ? error?.response?.data
       : {
-          message: "Server Error",
+          message: 'Server Error',
         };
     return errorMessage;
   }
@@ -80,7 +81,7 @@ export const post = async (url, data) => {
     let errorMessage = error?.response?.data
       ? error?.response?.data
       : {
-          message: "Server Error",
+          message: 'Server Error',
         };
     return errorMessage;
   }
@@ -94,7 +95,7 @@ export const patch = async (url, data) => {
     let errorMessage = error?.response?.data
       ? error?.response?.data
       : {
-          message: "Server Error",
+          message: 'Server Error',
         };
     return errorMessage;
   }
@@ -107,7 +108,7 @@ export const put = async (url, data) => {
     let errorMessage = error?.response?.data
       ? error?.response?.data
       : {
-          message: "Server Error",
+          message: 'Server Error',
         };
     return errorMessage;
   }
@@ -121,7 +122,7 @@ export const del = async (url) => {
     let errorMessage = error?.response?.data
       ? error?.response?.data
       : {
-          message: "Server Error",
+          message: 'Server Error',
         };
     return errorMessage;
   }

@@ -1,36 +1,37 @@
 // src/components/MyModal.js
 
-import { LoadingButton } from "@mui/lab";
-import { Box, Button, Modal, Typography } from "@mui/material";
-import React from "react";
-
+import SaveIcon from '@mui/icons-material/Save';
+import { LoadingButton } from '@mui/lab';
+import { Box, Button, Modal, Typography } from '@mui/material';
+import React from 'react';
 const MyModal = ({
   children,
   open,
   handleClose,
   title,
-  titleVariant = "h6",
+  titleVariant = 'h6',
   subTitle,
   okButtonText,
-  okButtonColor = "primary",
+  okButtonColor = 'primary',
   okButtonIcon,
   okButtondisabled = false,
   cancelButtonText,
   onOk,
   onCancel,
-  cancelButtonColor = "primary",
+  cancelButtonColor = 'primary',
   isLoading = false,
 }) => {
+  okButtonIcon = okButtonIcon ? okButtonIcon : <SaveIcon />;
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           width: 400,
-          bgcolor: "background.paper",
+          bgcolor: 'background.paper',
           borderRadius: 1,
           boxShadow: 24,
           p: 4,
