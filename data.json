@@ -1,0 +1,51 @@
+{
+  "doctor": {
+    "status": 200,
+    "message": "Doctor details",
+    "data": {
+      "doctor": {
+        "id": 4,
+        "email": "abc@gmail.com",
+        "name": "Abc",
+        "mobile": "1234567887",
+        "medical_registration_number": "XSDFGREE",
+        "speciality": "Ortho",
+        "unique_id": "100004",
+        "enabled": 0,
+        "created_at": "2024-07-15T10:18:31.000Z"
+      },
+      "subscriptions": []
+    }
+  },
+  "doctors": {
+    "status": 200,
+    "message": "All doctors",
+    "data": [
+      {
+        "id": 4,
+        "name": "Abc",
+        "email": "abc@gmail.com",
+        "mobile": "1234567887",
+        "speciality": "Ortho",
+        "speciality_id": 6,
+        "created_at": "2024-07-15T10:18:31.000Z",
+        "medical_registration_number": "XSDFGREE",
+        "unique_id": "100004",
+        "status": 0
+      }
+    ]
+  },
+  "admins": {
+    "status": 200,
+    "message": "All admins",
+    "data": [
+      {
+        "id": 10,
+        "email": "jayanth@xyz.com",
+        "name": "Jayanth",
+        "created_at": "2024-07-11T17:41:35.000Z",
+        "enabled": 1
+      }
+    ]
+  }
+}

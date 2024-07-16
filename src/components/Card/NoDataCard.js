@@ -13,7 +13,7 @@ const NoDataCard = ({
   return (
     <Card sx={{ margin: 'auto', mt: 4 }}>
       <CardContent>
-        <Box textAlign="center" mb={2}>
+        <Box textAlign={'center'} mb={2}>
           <NoDataIcon style={{ width: 50, height: 50, marginBottom: 16 }} />
           <Typography variant="h6" color="textSecondary">
             {title}
