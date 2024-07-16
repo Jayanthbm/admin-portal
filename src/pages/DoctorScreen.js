@@ -314,13 +314,7 @@ const DoctorScreen = () => {
                   )}
                 </TableCell>
                 <TableCell>
-                  <IconButton
-                    onClick={() => {
-                      handleOpen();
-                      setEditMode(true);
-                      setEditedItem(item);
-                    }}
-                  >
+                  <IconButton onClick={() => handleEditOpen(item)}>
                     <Tooltip title="Edit">
                       <EditIcon color="primary" />
                     </Tooltip>

@@ -15,13 +15,7 @@ import { API_ENDPOINTS } from '../../constants';
 import { useSnackbar } from '../../context/snackbar.context';
 import { getItems } from '../../helpers/api.handler';
 
-const DoctorSubscriptionForm = ({
-  item,
-  setItem,
-  isValid,
-  speciality_id,
-  mode,
-}) => {
+const DoctorSubscriptionForm = ({ setItem, isValid, speciality_id }) => {
   const snackbar = useSnackbar();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -160,7 +154,7 @@ const DoctorSubscriptionForm = ({
         setSubSpecialities(subSpecialities.slice(0, 1));
       }
     }
-  }, [allowMultipleSubspecialities]);
+  }, [allowMultipleSubspecialities, subSpecialities]);
 
   return (
     <Box sx={{ mt: 2 }}>
@@ -273,15 +267,29 @@ const DoctorSubscriptionForm = ({
                     ? subSpecialities[0]
                     : ''
               }
-              onChange={(e) =>
-                setSubSpecialities(
-                  allowMultipleSubspecialities
-                    ? typeof e.target.value === 'string'
-                      ? e.target.value.split(',')
-                      : e.target.value
-                    : [e.target.value]
-                )
-              }
+              onChange={(e) => {
+                if (
+                  Array.isArray(e.target.value) &&
+                  e.target.value.includes('all')
+                ) {
+                  setSubSpecialities(
+                    subSpecialitiesOptions.map((item) => item.id)
+                  );
+                } else if (
+                  Array.isArray(e.target.value) &&
+                  e.target.value.includes('remove')
+                ) {
+                  setSubSpecialities([]);
+                } else {
+                  setSubSpecialities(
+                    allowMultipleSubspecialities
+                      ? typeof e.target.value === 'string'
+                        ? e.target.value.split(',')
+                        : e.target.value
+                      : [e.target.value]
+                  );
+                }
+              }}
               sx={{
                 width: '100%',
                 mb: 2,
@@ -291,7 +299,11 @@ const DoctorSubscriptionForm = ({
                   const subSpecialityNames = subSpecialitiesOptions
                     ?.filter((item) => selected.includes(item.id))
                     .map((item) => item.name);
-                  return subSpecialityNames.join(', ');
+                  if (selected.length === subSpecialitiesOptions.length) {
+                    return ['All Selected'];
+                  } else {
+                    return subSpecialityNames.join(', ');
+                  }
                 } else {
                   const subSpeciality = subSpecialitiesOptions?.find(
                     (item) => item.id === selected
@@ -300,6 +312,17 @@ const DoctorSubscriptionForm = ({
                 }
               }}
             >
+              {allowMultipleSubspecialities &&
+              Array.isArray(subSpecialities) &&
+              subSpecialities?.length === subSpecialitiesOptions.length ? (
+                <MenuItem key={'-1'} value={'remove'}>
+                  Remove All
+                </MenuItem>
+              ) : (
+                <MenuItem key={'-1'} value={'all'}>
+                  Select All
+                </MenuItem>
+              )}
               {subSpecialitiesOptions?.map((option) => (
                 <MenuItem key={option.id} value={option.id}>
                   {option.name}
