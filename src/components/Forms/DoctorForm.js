@@ -47,7 +47,7 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
       mobile,
       medical_registration_number,
       speciality_id,
-      status: item.status === 1 ? true : false,
+      enabled: item.enabled === 1 ? true : false,
     });
     if (mode === 'edit') {
       isValid(name?.length > 0);

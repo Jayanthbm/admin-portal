@@ -153,14 +153,14 @@ const DoctorsScreen = () => {
   };
 
   const handleToggleStatus = async (doctor) => {
-    const status = doctor.status === 0 ? true : false;
+    const enabled = doctor.enabled === 0 ? true : false;
 
     return await updateItem({
       url: `${API_ENDPOINTS.DOCTOR}/${doctor.id}`,
       data: {
         name: doctor.name,
-        status: status,
-        customMessage: status === true ? 'Doctor Enabled' : 'Doctor Disabled',
+        enabled: enabled,
+        customMessage: enabled === true ? 'Doctor Enabled' : 'Doctor Disabled',
       },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
@@ -261,7 +261,7 @@ const DoctorsScreen = () => {
                     <TableCell>{item.medical_registration_number}</TableCell>
                     <TableCell>{item.unique_id}</TableCell>
                     <TableCell>
-                      {item.status === 1 ? (
+                      {item.enabled === 1 ? (
                         <Chip color="success" label="Yes" />
                       ) : (
                         <Chip color="error" label="No" />
@@ -273,9 +273,9 @@ const DoctorsScreen = () => {
                         sx={{ pb: 1, pt: 1 }}
                       >
                         <Tooltip
-                          title={item.status === 0 ? 'Enable' : 'Disable'}
+                          title={item.enabled === 0 ? 'Enable' : 'Disable'}
                         >
-                          {item.status === 0 ? (
+                          {item.enabled === 0 ? (
                             <CheckIcon color="success" />
                           ) : (
                             <BlockIcon color="warning" />

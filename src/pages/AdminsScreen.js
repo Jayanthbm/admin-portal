@@ -142,14 +142,14 @@ const AdminsScreen = () => {
   };
 
   const handleToggleStatus = async (item) => {
-    const status = item.enabled === 0 ? true : false;
+    const enabled = item.enabled === 0 ? true : false;
 
     return await updateItem({
       url: `${API_ENDPOINTS.UPDATEADMIN}/${item.id}`,
       data: {
         name: item.name,
-        enabled: status,
-        customMessage: status === true ? 'Admin Enabled' : 'Admin Disabled',
+        enabled: enabled,
+        customMessage: enabled === true ? 'Admin Enabled' : 'Admin Disabled',
       },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,

@@ -193,14 +193,14 @@ const DoctorScreen = () => {
   };
 
   const handleToggleStatus = async (doctor) => {
-    const status = doctor.enabled === 0 ? true : false;
+    const enabled = doctor.enabled === 0 ? true : false;
 
     return await updateItem({
       url: `${API_ENDPOINTS.DOCTOR}/${doctor.id}`,
       data: {
         name: doctor.name,
-        status: status,
-        customMessage: status === true ? 'Doctor Enabled' : 'Doctor Disabled',
+        enabled: enabled,
+        customMessage: enabled === true ? 'Doctor Enabled' : 'Doctor Disabled',
       },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,

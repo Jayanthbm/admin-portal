@@ -37,8 +37,8 @@ const DoctorCard = ({
               onClick={() => onToggleStatus(doctor)}
               sx={{ pb: 1, pt: 1 }}
             >
-              <Tooltip title={doctor.status === 0 ? 'Enable' : 'Disable'}>
-                {doctor.status === 0 ? (
+              <Tooltip title={doctor.enabled === 0 ? 'Enable' : 'Disable'}>
+                {doctor.enabled === 0 ? (
                   <CheckIcon color="success" />
                 ) : (
                   <BlockIcon color="warning" />
@@ -89,13 +89,13 @@ const DoctorCard = ({
         </InfoRow>
 
         <InfoRow>
-          {doctor.status === 1 ? (
+          {doctor.enabled === 1 ? (
             <CheckCircleIcon color="success" />
           ) : (
             <CancelIcon color="error" />
           )}
           <Typography variant="body1">
-            {doctor.status === 1 ? 'Active' : 'Inactive'}
+            {doctor.enabled === 1 ? 'Active' : 'Inactive'}
           </Typography>
         </InfoRow>
       </StyledCardContent>
