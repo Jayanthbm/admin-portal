@@ -16,51 +16,62 @@ const CustomTextInput = ({
   maxNumber = 100000000,
   required = true,
   disabled = false,
+  readOnly = false,
 }) => {
   const [error, setError] = useState(false);
   const [helperText, setHelperText] = useState('');
   const [focused, setFocused] = useState(false);
   useEffect(() => {
     if (focused) {
-      if (!value) {
-        setError(true);
-        setHelperText(`Please enter ${label}`);
-        setValidationState(false);
-      } else if (inputType === 'number') {
-        if (value < minNumber || value > maxNumber) {
-          setError(true);
-          setHelperText(
-            `Please enter a number between ${minNumber} and ${maxNumber}`
-          );
-          setValidationState(false);
-        } else {
+      switch (inputType) {
+        case 'number': {
+          if (value < minNumber || value > maxNumber) {
+            setError(true);
+            setHelperText(
+              `Please enter a number between ${minNumber} and ${maxNumber}`
+            );
+            setValidationState(false);
+          } else {
+            setError(false);
+            setHelperText('');
+            setValidationState(true);
+          }
+          break;
+        }
+        case 'text': {
+          if (value.length < minLength || value.length > maxLength) {
+            setError(true);
+            setHelperText(
+              `Please enter a text between ${minLength} and ${maxLength} characters`
+            );
+            setValidationState(false);
+          } else {
+            setError(false);
+            setHelperText('');
+            setValidationState(true);
+          }
+          break;
+        }
+        case 'mobile': {
+          if (value.length !== 10 || isNaN(value)) {
+            setError(true);
+            setHelperText('Please enter a valid mobile number');
+            setValidationState(false);
+          } else {
+            setError(false);
+            setHelperText('');
+            setValidationState(true);
+          }
+          break;
+        }
+        default: {
           setError(false);
           setHelperText('');
           setValidationState(true);
         }
-      } else if (inputType === 'text') {
-        if (value.length < minLength || value.length > maxLength) {
-          setError(true);
-          setHelperText(
-            `Please enter a text between ${minLength} and ${maxLength} characters`
-          );
-          setValidationState(false);
-        } else {
-          setError(false);
-          setHelperText('');
-          setValidationState(true);
-        }
-      } else if (inputType === 'mobile') {
-        if (value.length !== 10 || isNaN(value)) {
-          setError(true);
-          setHelperText('Please enter a valid mobile number');
-          setValidationState(false);
-        } else {
-          setError(false);
-          setHelperText('');
-          setValidationState(true);
-        }
-      } else {
+      }
+    } else {
+      if (value) {
         setError(false);
         setHelperText('');
         setValidationState(true);
@@ -94,6 +105,7 @@ const CustomTextInput = ({
         setFocused(true);
       }}
       disabled={disabled}
+      readOnly={readOnly}
     />
   );
 };

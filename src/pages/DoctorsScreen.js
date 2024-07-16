@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import DoctorCard from '../components/Card/DoctorCard';
 import CustomLink from '../components/CustomLink';
@@ -41,7 +42,9 @@ const DoctorsScreen = () => {
   const { view } = useContext(ViewContext);
   const navigate = useAuthNavigation(isLoggedIn, PATHS.DOCTORS);
   const showSnackbar = useSnackbar();
-
+  const location = useLocation();
+  const state = location.state;
+  const reload = state?.reload || false;
   const [data, setData] = useState([]);
 
   const [open, setOpen] = useState(false);
@@ -72,8 +75,8 @@ const DoctorsScreen = () => {
   }, []);
 
   useEffect(() => {
-    fetchItems();
-  }, [fetchItems]);
+    fetchItems(reload);
+  }, [fetchItems, reload]);
 
   const handleOpen = () => {
     setOpen(true);

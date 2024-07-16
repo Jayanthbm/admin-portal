@@ -36,3 +36,11 @@ export const isDataFresh = (key, duration = 3600000) => {
   const currentTime = Date.now();
   return currentTime - timestamp < duration;
 };
+
+export const getRemainingDays = (startDate, endDate) => {
+  const date1 = new Date(startDate);
+  const date2 = new Date(endDate);
+  const diffTime = Math.abs(date2 - date1);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
+};
