@@ -58,28 +58,32 @@ const MyPageLayout = ({
           />
         ) : (
           <>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                mt: 2,
-                mb: 5,
-              }}
-            >
-              {showViewSetting ? (
-                <ViewSetting view={view} setView={setView} />
-              ) : (
-                <div></div>
-              )}
-              {addButton && (
-                <AddButton
-                  onClick={addButton}
-                  title={addButtonTitle}
-                  disabled={addButtonDisabled}
-                />
-              )}
-            </Box>
-            {children}
+            {!isLoading && (
+              <>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mt: 2,
+                    mb: 5,
+                  }}
+                >
+                  {showViewSetting ? (
+                    <ViewSetting view={view} setView={setView} />
+                  ) : (
+                    <div></div>
+                  )}
+                  {addButton && (
+                    <AddButton
+                      onClick={addButton}
+                      title={addButtonTitle}
+                      disabled={addButtonDisabled}
+                    />
+                  )}
+                </Box>
+                {children}
+              </>
+            )}
           </>
         )}
       </>
