@@ -33,7 +33,7 @@ import {
   getItems,
   updateItem,
 } from '../helpers/api.handler';
-import { getRemainingDays } from '../helpers/util.helper';
+import { formatDate, getRemainingDays } from '../helpers/util.helper';
 import useAuthNavigation from '../hooks/useAuthNavigation';
 
 const DoctorScreen = () => {
@@ -292,36 +292,39 @@ const DoctorScreen = () => {
               'Actions',
             ]}
           >
-            {data?.subscriptions?.map((item) => (
+            {data?.subscriptions?.map((subscription) => (
               <TableRow
-                key={item.id}
+                key={subscription.id}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell>{item.id}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>₹{item.price}</TableCell>
-                <TableCell>{item.start_date}</TableCell>
-                <TableCell>{item.end_date}</TableCell>
+                <TableCell>{subscription.id}</TableCell>
+                <TableCell>{subscription.name}</TableCell>
+                <TableCell>₹{subscription.price}</TableCell>
+                <TableCell>{formatDate(subscription.start_date)}</TableCell>
+                <TableCell>{formatDate(subscription.end_date)}</TableCell>
                 <TableCell>
-                  {getRemainingDays(item.start_date, item.end_date)}
+                  {getRemainingDays(
+                    subscription.start_date,
+                    subscription.end_date
+                  )}
                 </TableCell>
-                <TableCell>{item.max_patients}</TableCell>
+                <TableCell>{subscription.max_patients}</TableCell>
                 <TableCell>
-                  {item.allow_multiple_subspecialities === 1 ? (
+                  {subscription.allow_multiple_subspecialities === 1 ? (
                     <Chip color="success" label="Yes" />
                   ) : (
                     <Chip color="error" label="No" />
                   )}
                 </TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEditOpen(item)}>
+                  <IconButton onClick={() => handleEditOpen(subscription)}>
                     <Tooltip title="Edit">
                       <EditIcon color="primary" />
                     </Tooltip>
                   </IconButton>
                   <IconButton
                     onClick={() => {
-                      confirmDeleteSubscriptionModal(item.id);
+                      confirmDeleteSubscriptionModal(subscription.id);
                     }}
                   >
                     <Tooltip title="Delete">
@@ -346,23 +349,19 @@ const DoctorScreen = () => {
         isLoading={loading}
         okButtondisabled={subscriptionValid && !loading ? false : true}
       >
-        {editMode ? (
-          <DoctorSubscriptionForm
-            mode={editMode ? 'edit' : 'add'}
-            item={editedItem}
-            setItem={setEditedItem}
-            isValid={setSubscriptionValid}
-            speciality_id={data?.doctor?.speciality_id}
-          />
-        ) : (
-          <DoctorSubscriptionForm
-            mode={editMode ? 'edit' : 'add'}
-            item={item}
-            setItem={setItem}
-            isValid={setSubscriptionValid}
-            speciality_id={data?.doctor?.speciality_id}
-          />
-        )}
+        <DoctorSubscriptionForm
+          mode={editMode ? 'edit' : 'add'}
+          item={
+            editMode
+              ? data?.subscriptions?.find((item) => item.id === editedItem.id)
+              : item
+          }
+          editedItem={editedItem}
+          setItem={setItem}
+          setEditedItem={setEditedItem}
+          isValid={setSubscriptionValid}
+          speciality_id={data?.doctor?.speciality_id}
+        />
       </NewAdditonModal>
       <DeleteModal
         open={confirmDeleteDoctor.open}
