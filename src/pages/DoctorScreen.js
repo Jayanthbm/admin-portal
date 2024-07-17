@@ -27,6 +27,7 @@ import PageTitle from '../components/Layout/PageTitle';
 import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
 import { API_ENDPOINTS, PATHS } from '../constants';
+import { DOCTOR_SCREEN_CONTENT } from '../content';
 import AuthContext from '../context/auth.context';
 import { useSnackbar } from '../context/snackbar.context';
 import {
@@ -416,7 +417,7 @@ const DoctorScreen = () => {
       <DeleteModal
         open={confirmDeleteDoctor.open}
         handleClose={() => setConfirmDeleteDoctor({ open: false, id: null })}
-        subTitle="Are you sure you want to delete this Doctor?"
+        subTitle={DOCTOR_SCREEN_CONTENT.DELETE}
         onOk={handleDeleteDoctor}
         onCancel={() => setConfirmDeleteDoctor({ open: false, id: null })}
         isLoading={loading}
