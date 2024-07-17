@@ -1,4 +1,6 @@
 // src/pages/DoctorScreen.js
+import BlockIcon from '@mui/icons-material/Block';
+import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
@@ -212,6 +214,27 @@ const DoctorScreen = () => {
       },
     });
   };
+
+  const handleToggleSubscriptionStatus = async (subscription) => {
+    const enabled = subscription.enabled === 0 ? true : false;
+
+    return await updateItem({
+      url: `${API_ENDPOINTS.DOCTOR}/${id}/subscription/${subscription.id}`,
+      data: {
+        enabled: enabled,
+        customMessage:
+          enabled === true ? 'Subscription Enabled' : 'Subscription Disabled',
+      },
+      loadingFunction: setLoading,
+      snackBarFunction: showSnackbar,
+      reloadData: () => {
+        fetchItems(true);
+      },
+      commonFunction: () => {
+        handleClose();
+      },
+    });
+  };
   return (
     <>
       <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -278,7 +301,12 @@ const DoctorScreen = () => {
           noPageButtonTitle={'Add Subscription'}
           noPageButton={() => handleOpen()}
         >
-          <Typography variant="h5">Subscriptions</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+            <Typography variant="h5">Subscriptions</Typography>
+            <Button variant="contained" onClick={handleOpen}>
+              Add Subscription
+            </Button>
+          </Box>
           <CustomTable
             heading={[
               'Id',
@@ -289,6 +317,7 @@ const DoctorScreen = () => {
               'Remaing Days',
               'Max Patients',
               'Multiple Specialities',
+              'Status',
               'Actions',
             ]}
           >
@@ -311,12 +340,33 @@ const DoctorScreen = () => {
                 <TableCell>{subscription.max_patients}</TableCell>
                 <TableCell>
                   {subscription.allow_multiple_subspecialities === 1 ? (
-                    <Chip color="success" label="Yes" />
+                    <Chip color="success" label="Allowed" />
                   ) : (
-                    <Chip color="error" label="No" />
+                    <Chip color="error" label="Not Allowed" />
                   )}
                 </TableCell>
                 <TableCell>
+                  {subscription.enabled === 1 ? (
+                    <Chip color="success" label="Enabled" />
+                  ) : (
+                    <Chip color="error" label="Disabled" />
+                  )}
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    onClick={() => handleToggleSubscriptionStatus(subscription)}
+                    sx={{ pb: 1, pt: 1 }}
+                  >
+                    <Tooltip
+                      title={subscription.enabled === 0 ? 'Enable' : 'Disable'}
+                    >
+                      {subscription.enabled === 0 ? (
+                        <CheckIcon color="success" />
+                      ) : (
+                        <BlockIcon color="warning" />
+                      )}
+                    </Tooltip>
+                  </IconButton>
                   <IconButton onClick={() => handleEditOpen(subscription)}>
                     <Tooltip title="Edit">
                       <EditIcon color="primary" />
