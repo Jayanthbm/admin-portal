@@ -10,16 +10,16 @@ const SubscriptionForm = ({ item, setItem }) => {
   const [price, setPrice] = useState(item.price);
   const [max_patients, setMax_patients] = useState(item.max_patients);
   const [duration, setDuration] = useState(item.duration);
-  const [allow_multiple_subspecialities, setAllow_multiple_subspecialities] =
-    useState('no');
+  const [allow_multiple_subspecialties, setAllow_multiple_subspecialties] =
+    useState(item.allow_multiple_subspecialties === 1 ? 'yes' : 'no');
   const id = item.id;
   useEffect(() => {
     setItem({
       name,
       price: parseInt(price),
       max_patients: parseInt(max_patients),
-      allow_multiple_subspecialities:
-        allow_multiple_subspecialities === 'yes' ? true : false,
+      allow_multiple_subspecialties:
+        allow_multiple_subspecialties === 'yes' ? true : false,
       duration,
       id,
     });
@@ -27,7 +27,7 @@ const SubscriptionForm = ({ item, setItem }) => {
     name,
     price,
     max_patients,
-    allow_multiple_subspecialities,
+    allow_multiple_subspecialties,
     duration,
     id,
     setItem,
@@ -75,10 +75,10 @@ const SubscriptionForm = ({ item, setItem }) => {
       <Typography variant="body2">Allow Multiple Subspecialities</Typography>
       <ToggleButtonGroup
         color="primary"
-        value={allow_multiple_subspecialities}
+        value={allow_multiple_subspecialties}
         exclusive
         onChange={(e, value) => {
-          setAllow_multiple_subspecialities(value);
+          setAllow_multiple_subspecialties(value);
         }}
         aria-label="Allow Multiple Subspecialities"
       >

@@ -244,13 +244,13 @@ const DoctorsScreen = () => {
                     <TableCell>{item.email}</TableCell>
                     <TableCell>
                       <CustomLink
-                        title={item.speciality}
+                        title={item.specialty}
                         onClick={() =>
                           navigate(
-                            PATHS.SPECIALITIES + `/${item.speciality_id}`,
+                            PATHS.SPECIALTIES + `/${item.specialty_id}`,
                             {
                               state: {
-                                name: item.speciality,
+                                name: item.specialty,
                               },
                             }
                           )

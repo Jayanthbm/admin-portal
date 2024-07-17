@@ -72,7 +72,7 @@ const DoctorCard = ({
         <InfoRow>
           <LocalHospitalIcon color="action" />
           <Typography variant="body1" color="text.secondary">
-            {doctor.speciality}
+            {doctor.specialty}
           </Typography>
         </InfoRow>
         <InfoRow>

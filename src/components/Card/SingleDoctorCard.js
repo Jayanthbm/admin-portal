@@ -27,7 +27,7 @@ const SingleDoctorCard = ({ doctor }) => {
             <InfoRow>
               <LocalHospitalIcon color="primary" />
               <Typography variant="body1" color="text.secondary">
-                {doctor.speciality}
+                {doctor.specialty}
               </Typography>
             </InfoRow>
           </Tooltip>

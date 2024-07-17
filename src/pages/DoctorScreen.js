@@ -147,10 +147,9 @@ const DoctorScreen = () => {
       snackBarFunction: showSnackbar,
       reloadData: () => {
         fetchItems(true);
-      },
-      commonFunction: () => {
         handleClose();
       },
+      commonFunction: () => {},
     });
   };
 
@@ -295,12 +294,12 @@ const DoctorScreen = () => {
         </MyPageLayout>
         <MyPageLayout
           isLoading={loading}
-          showSkeleton={true}
-          data={data?.subscriptions}
-          showViewSetting={false}
-          noPageTitle={'No Subcriptions Assigned'}
           noPageButtonTitle={'Add Subscription'}
+          noPageTitle={'No Subcriptions Assigned'}
           noPageButton={() => handleOpen()}
+          data={data?.subscriptions}
+          showSkeleton={true}
+          showViewSetting={false}
         >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
             <Typography variant="h5">Subscriptions</Typography>
@@ -317,7 +316,7 @@ const DoctorScreen = () => {
               'End Date',
               'Remaing Days',
               'Max Patients',
-              'Multiple Specialities',
+              'Multiple Specialties',
               'Status',
               'Actions',
             ]}
@@ -411,7 +410,7 @@ const DoctorScreen = () => {
           setItem={setItem}
           setEditedItem={setEditedItem}
           isValid={setSubscriptionValid}
-          speciality_id={data?.doctor?.speciality_id}
+          specialty_id={data?.doctor?.specialty_id}
         />
       </NewAdditonModal>
       <DeleteModal

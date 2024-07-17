@@ -1,4 +1,4 @@
-// src/pages/SpecialitiesScreen.js
+// src/pages/SubSpecialityScreen.js
 
 import CategoryIcon from '@mui/icons-material/Category';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,9 +12,9 @@ import {
   Tooltip,
 } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 
 import SpecialityCard from '../components/Card/SpecialityCard';
-import CustomLink from '../components/CustomLink';
 import CustomTable from '../components/CustomTable';
 import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
 import MyPageLayout from '../components/Layout/MyPageLayout';
@@ -32,12 +32,17 @@ import {
   updateItem,
 } from '../helpers/api.handler';
 import useAuthNavigation from '../hooks/useAuthNavigation';
-const SpecialitiesScreen = () => {
+
+const SubSpecialtyScreen = () => {
   const [loading, setLoading] = useState(true);
   const { isLoggedIn } = useContext(AuthContext);
+  const { id } = useParams();
   const { view } = useContext(ViewContext);
-  const navigate = useAuthNavigation(isLoggedIn, PATHS.SPECIALITIES);
   const showSnackbar = useSnackbar();
+
+  const location = useLocation();
+  const state = location.state;
+  useAuthNavigation(isLoggedIn, PATHS.SPECIALTIES + '/' + id, state);
 
   const [data, setData] = useState([]);
 
@@ -50,16 +55,19 @@ const SpecialitiesScreen = () => {
   });
   const [editedItem, setEditedItem] = useState({});
 
-  const fetchItems = useCallback(async (force) => {
-    await getItems({
-      url: API_ENDPOINTS.ALLSPECIALITIES,
-      loadingFunction: setLoading,
-      snackBarFunction: null,
-      dataSetterState: setData,
-      commonFunction: () => {},
-      force: force,
-    });
-  }, []);
+  const fetchItems = useCallback(
+    async (force) => {
+      await getItems({
+        url: `${API_ENDPOINTS.ALLSPECIALTIES}/${id}`,
+        loadingFunction: setLoading,
+        snackBarFunction: null,
+        dataSetterState: setData,
+        commonFunction: () => {},
+        force: force,
+      });
+    },
+    [id]
+  );
 
   useEffect(() => {
     fetchItems();
@@ -86,7 +94,7 @@ const SpecialitiesScreen = () => {
 
   const handleAdd = async () => {
     return await addItem({
-      url: API_ENDPOINTS.SPECIALITY,
+      url: `${API_ENDPOINTS.SPECIALTY}/${id}/subspecialty`,
       data: { name: item.name },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
@@ -101,16 +109,15 @@ const SpecialitiesScreen = () => {
 
   const handleUpdate = async () => {
     return await updateItem({
-      url: `${API_ENDPOINTS.SPECIALITY}/${editedItem.id}`,
+      url: `${API_ENDPOINTS.SPECIALTY}/${id}/subspecialty/${editedItem.id}`,
       data: { name: editedItem.name },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
       reloadData: () => {
         fetchItems(true);
-      },
-      commonFunction: () => {
         handleClose();
       },
+      commonFunction: () => {},
     });
   };
 
@@ -120,7 +127,7 @@ const SpecialitiesScreen = () => {
 
   const handleDelete = async () => {
     return await deleteItem({
-      url: `${API_ENDPOINTS.SPECIALITY}/${confirmDelete.id}`,
+      url: `${API_ENDPOINTS.SPECIALTY}/${id}/subspecialty/${confirmDelete.id}`,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
       reloadData: () => {
@@ -132,17 +139,11 @@ const SpecialitiesScreen = () => {
     });
   };
 
-  const toSubSpecialityScreen = (item) => {
-    return navigate(PATHS.SPECIALITIES + `/${item.id}`, {
-      state: item,
-    });
-  };
-
   return (
     <>
       <Box sx={{ flexGrow: 1, p: 3 }}>
         <PageTitle
-          title="Specialities"
+          title="Sub Specialties"
           onRefresh={() => {
             fetchItems(true);
           }}
@@ -150,21 +151,26 @@ const SpecialitiesScreen = () => {
         <CustomBreadCrumb
           paths={[
             {
-              title: 'Specialities',
+              navigation: PATHS.SPECIALTIES,
+              title: 'Specialties',
               icon: <CategoryIcon sx={{ mr: 0.5 }} fontSize="inherit" />,
+            },
+            {
+              title: state?.name || 'Sub Specialties',
+              icon: <></>,
             },
           ]}
         />
         <MyPageLayout
           isLoading={loading}
           data={data}
-          noPageTitle={'No Specialities Found'}
-          noPageButtonTitle={'Add Speciality'}
+          noPageTitle={'No Sub Specialties Found'}
+          noPageButtonTitle={'Add Sub Speciality'}
           noPageButton={() => handleOpen()}
           showSkeleton={true}
           showViewSetting={true}
           addButton={handleOpen}
-          addButtonTitle={'Add Speciality'}
+          addButtonTitle={'Add Sub Speciality'}
           addButtonDisabled={loading}
         >
           <Box
@@ -175,21 +181,13 @@ const SpecialitiesScreen = () => {
             }}
           >
             {view === 'table' ? (
-              <CustomTable
-                heading={['Name', 'Total Sub Specialities', 'Actions']}
-              >
+              <CustomTable heading={['Name', 'Actions']}>
                 {data?.map((item, index) => (
                   <TableRow
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
-                    <TableCell>
-                      <CustomLink
-                        title={item.name}
-                        onClick={() => toSubSpecialityScreen(item)}
-                      />
-                    </TableCell>
-                    <TableCell>{item.totalSubspecialties}</TableCell>
+                    <TableCell>{item.name}</TableCell>
                     <TableCell>
                       <IconButton
                         onClick={() => {
@@ -218,13 +216,13 @@ const SpecialitiesScreen = () => {
                 {data?.map((item, index) => (
                   <SpecialityCard
                     key={index}
-                    title={item.name}
                     onEdit={() => {
                       handleEditOpen(item);
                     }}
                     onDelete={() => confirmDeleteModal(item.id)}
-                    onNavigate={() => toSubSpecialityScreen(item)}
-                    value={item.totalSubspecialties}
+                    onNavigate={() => {}}
+                    value={0}
+                    valueTitle={item.name}
                   />
                 ))}
               </>
@@ -235,8 +233,8 @@ const SpecialitiesScreen = () => {
       <NewAdditonModal
         open={open}
         handleClose={handleClose}
-        title={editMode ? 'Edit Speciality' : 'Add Speciality'}
-        subTitle={'Fill speciality details'}
+        title={editMode ? 'Edit Sub Speciality' : 'Add Sub Speciality'}
+        subTitle={'Fill Specialty details'}
         okButtonText={editMode ? 'Update' : 'Add'}
         onOk={editMode ? handleUpdate : handleAdd}
         onCancel={handleClose}
@@ -248,7 +246,7 @@ const SpecialitiesScreen = () => {
         }
       >
         <TextField
-          label="Speciality Name"
+          label="Sub Speciality Name"
           fullWidth
           margin="normal"
           value={editMode ? editedItem.name : item.name}
@@ -270,7 +268,7 @@ const SpecialitiesScreen = () => {
       <DeleteModal
         open={confirmDelete.open}
         handleClose={() => setConfirmDelete({ open: false, id: null })}
-        subTitle="Are you sure you want to delete this speciality? This will also delete all its sub specialities."
+        subTitle="Are you sure you want to delete this Sub Specialty?"
         onOk={handleDelete}
         onCancel={() => setConfirmDelete({ open: false, id: null })}
         isLoading={loading}
@@ -279,4 +277,4 @@ const SpecialitiesScreen = () => {
   );
 };
 
-export default SpecialitiesScreen;
+export default SubSpecialtyScreen;

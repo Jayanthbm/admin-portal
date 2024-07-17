@@ -17,7 +17,7 @@ const PasswordInput = ({
   minLength = minLength || 6;
   useEffect(() => {
     if (focused) {
-      if (value.length < minLength) {
+      if (value?.length < minLength) {
         setError(true);
         setHelperText(`Minimum ${minLength} characters`);
         setValidationState(false);

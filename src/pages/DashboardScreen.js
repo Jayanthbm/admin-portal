@@ -64,15 +64,15 @@ const DashboardScreen = () => {
           isLoading={loading}
         />
         <DashboardCard
-          title={'Specialities'}
-          value={data && data?.specialities.totalSpecialities}
-          onNavigate={() => navigate(PATHS.SPECIALITIES)}
+          title={'Specialties'}
+          value={data && data?.specialties.totalspecialties}
+          onNavigate={() => navigate(PATHS.SPECIALTIES)}
           isLoading={loading}
         />
         <DashboardCard
-          title={'Sub Specialities'}
-          value={data && data?.specialities.totalSubSpecialities}
-          onNavigate={() => navigate(PATHS.SPECIALITIES)}
+          title={'Sub Specialties'}
+          value={data && data?.specialties.totalSubspecialties}
+          onNavigate={() => navigate(PATHS.SPECIALTIES)}
           isLoading={loading}
         />
         <DashboardCard

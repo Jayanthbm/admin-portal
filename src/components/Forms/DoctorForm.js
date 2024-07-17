@@ -18,14 +18,12 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
   const [mobile, setMobile] = useState(item.mobile || '');
   const [medical_registration_number, setMedical_registration_number] =
     useState(item.medical_registration_number || '');
-  const [speciality_id, setSpeciality_id] = useState(
-    item.speciality_id || null
-  );
+  const [specialty_id, setSpecialty_id] = useState(item.specialty_id || null);
   const [options, setOptions] = useState([]);
 
   const fetchOptions = useCallback(async () => {
     await getItems({
-      url: API_ENDPOINTS.ALLSPECIALITIES,
+      url: API_ENDPOINTS.ALLSPECIALTIES,
       loadingFunction: () => {},
       snackBarFunction: null,
       dataSetterState: setOptions,
@@ -46,7 +44,7 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
       name,
       mobile,
       medical_registration_number,
-      speciality_id,
+      specialty_id,
       enabled: item.enabled === 1 ? true : false,
     });
     if (mode === 'edit') {
@@ -59,7 +57,7 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
           medical_registration_number?.length > 0 &&
           mobile?.length > 0 &&
           mobile?.length === 10 &&
-          speciality_id
+          specialty_id
       );
     }
   }, [
@@ -68,7 +66,7 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
     name,
     mobile,
     medical_registration_number,
-    speciality_id,
+    specialty_id,
     id,
     setItem,
     mode,
@@ -127,9 +125,9 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
       <Select
         labelId="doctor-specialty-label"
         id="doctor-specialty"
-        value={speciality_id}
+        value={specialty_id}
         label="Specialty"
-        onChange={(e) => setSpeciality_id(e.target.value)}
+        onChange={(e) => setSpecialty_id(e.target.value)}
         sx={{
           width: '100%',
         }}

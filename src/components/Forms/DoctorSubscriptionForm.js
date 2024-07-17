@@ -19,7 +19,7 @@ import { formatDate } from '../../helpers/util.helper';
 const DoctorSubscriptionForm = ({
   setItem,
   isValid,
-  speciality_id,
+  specialty_id,
   mode,
   item,
   editedItem,
@@ -29,7 +29,7 @@ const DoctorSubscriptionForm = ({
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [maxPatients, setMaxPatients] = useState('');
-  const [allowMultipleSubspecialities, setAllowMultipleSubspecialities] =
+  const [allowMultipleSubspecialties, setAllowMultipleSubspecialties] =
     useState(false);
   const [subSpecialities, setSubSpecialities] = useState([]);
   const [price, setPrice] = useState('');
@@ -49,9 +49,9 @@ const DoctorSubscriptionForm = ({
     });
   }, []);
 
-  const fetchSubSpecialities = useCallback(async (speciality_id) => {
+  const fetchSubSpecialities = useCallback(async (specialty_id) => {
     await getItems({
-      url: `${API_ENDPOINTS.ALLSPECIALITIES}/${speciality_id}`,
+      url: `${API_ENDPOINTS.ALLSPECIALTIES}/${specialty_id}`,
       loadingFunction: () => {},
       snackBarFunction: null,
       dataSetterState: setSubSpecialitiesOptions,
@@ -62,10 +62,10 @@ const DoctorSubscriptionForm = ({
 
   useEffect(() => {
     fetchSubscriptions();
-    if (speciality_id) {
-      fetchSubSpecialities(speciality_id);
+    if (specialty_id) {
+      fetchSubSpecialities(specialty_id);
     }
-  }, [fetchSubscriptions, fetchSubSpecialities, speciality_id]);
+  }, [fetchSubscriptions, fetchSubSpecialities, specialty_id]);
 
   useEffect(() => {
     if (mode === 'add') {
@@ -73,7 +73,7 @@ const DoctorSubscriptionForm = ({
         if (selectedSubscription === 'custom') {
           setPrice(null);
           setMaxPatients(null);
-          setAllowMultipleSubspecialities(false);
+          setAllowMultipleSubspecialties(false);
           setSubSpecialities([]);
           setEndDate(null);
         } else {
@@ -82,7 +82,7 @@ const DoctorSubscriptionForm = ({
           );
           setPrice(parseFloat(subscription.price));
           setMaxPatients(subscription.max_patients);
-          setAllowMultipleSubspecialities(
+          setAllowMultipleSubspecialties(
             !!subscription.allow_multiple_subspecialities
           );
           setSubSpecialities([]);
@@ -106,8 +106,8 @@ const DoctorSubscriptionForm = ({
         start_date: startDate,
         end_date: endDate,
         max_patients: maxPatients,
-        allow_multiple_subspecialities: allowMultipleSubspecialities,
-        sub_specialities:
+        allow_multiple_subspecialties: allowMultipleSubspecialties,
+        sub_specialties:
           typeof subSpecialities === 'string' ||
           typeof subSpecialities === 'number'
             ? [subSpecialities]
@@ -123,7 +123,7 @@ const DoctorSubscriptionForm = ({
         startDate?.length > 0 &&
           endDate?.length > 0 &&
           maxPatients !== null &&
-          allowMultipleSubspecialities !== null &&
+          allowMultipleSubspecialties !== null &&
           subSpecialities?.length > 0 &&
           price !== null
       );
@@ -132,7 +132,7 @@ const DoctorSubscriptionForm = ({
     startDate,
     endDate,
     maxPatients,
-    allowMultipleSubspecialities,
+    allowMultipleSubspecialties,
     subSpecialities,
     price,
     subscriptions,
@@ -162,13 +162,13 @@ const DoctorSubscriptionForm = ({
   };
 
   useEffect(() => {
-    if (allowMultipleSubspecialities === false && mode === 'add') {
+    if (allowMultipleSubspecialties === false && mode === 'add') {
       if (Array.isArray(subSpecialities)) {
         // trim the array to length 1
         setSubSpecialities(subSpecialities.slice(0, 1));
       }
     }
-  }, [allowMultipleSubspecialities, subSpecialities, mode]);
+  }, [allowMultipleSubspecialties, subSpecialities, mode]);
 
   const [editendDate, setEditendDate] = useState('');
   const [editmaxPatients, setEditmaxPatients] = useState(item.max_patients);
@@ -334,9 +334,9 @@ const DoctorSubscriptionForm = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={allowMultipleSubspecialities}
+                    checked={allowMultipleSubspecialties}
                     onChange={(e) => {
-                      setAllowMultipleSubspecialities(e.target.checked);
+                      setAllowMultipleSubspecialties(e.target.checked);
                     }}
                     disabled={selectedSubscription !== 'custom'}
                   />
@@ -344,42 +344,28 @@ const DoctorSubscriptionForm = ({
                 label="Allow Multiple Subspecialities"
               />
 
-              <InputLabel id="sub-specialities-select-label">
+              <InputLabel id="sub-specialties-select-label">
                 Subspecialities
               </InputLabel>
               <Select
-                labelId="sub-specialities-select-label"
-                id="sub-specialities-select"
-                multiple={allowMultipleSubspecialities}
+                labelId="sub-specialties-select-label"
+                id="sub-specialties-select"
+                multiple={allowMultipleSubspecialties}
                 value={
-                  allowMultipleSubspecialities
+                  allowMultipleSubspecialties
                     ? subSpecialities
                     : subSpecialities.length > 0
                       ? subSpecialities[0]
                       : ''
                 }
                 onChange={(e) => {
-                  if (
-                    Array.isArray(e.target.value) &&
-                    e.target.value.includes('all')
-                  ) {
-                    setSubSpecialities(
-                      subSpecialitiesOptions.map((item) => item.id)
-                    );
-                  } else if (
-                    Array.isArray(e.target.value) &&
-                    e.target.value.includes('remove')
-                  ) {
-                    setSubSpecialities([]);
-                  } else {
-                    setSubSpecialities(
-                      allowMultipleSubspecialities
-                        ? typeof e.target.value === 'string'
-                          ? e.target.value.split(',')
-                          : e.target.value
-                        : [e.target.value]
-                    );
-                  }
+                  setSubSpecialities(
+                    allowMultipleSubspecialties
+                      ? typeof e.target.value === 'string'
+                        ? e.target.value.split(',')
+                        : e.target.value
+                      : [e.target.value]
+                  );
                 }}
                 sx={{
                   width: '100%',
@@ -403,16 +389,32 @@ const DoctorSubscriptionForm = ({
                   }
                 }}
               >
-                {allowMultipleSubspecialities &&
-                Array.isArray(subSpecialities) &&
-                subSpecialities?.length === subSpecialitiesOptions.length ? (
-                  <MenuItem key={'-1'} value={'remove'}>
-                    Remove All
-                  </MenuItem>
-                ) : (
-                  <MenuItem key={'-1'} value={'all'}>
-                    Select All
-                  </MenuItem>
+                {allowMultipleSubspecialties && (
+                  <>
+                    {Array.isArray(subSpecialities) &&
+                    subSpecialities?.length ===
+                      subSpecialitiesOptions.length ? (
+                      <MenuItem
+                        key={'-1'}
+                        value={'remove'}
+                        onClick={() => setSubSpecialities([])}
+                      >
+                        Remove All
+                      </MenuItem>
+                    ) : (
+                      <MenuItem
+                        key={'-2'}
+                        value={'all'}
+                        onClick={() =>
+                          setSubSpecialities(
+                            subSpecialitiesOptions.map((item) => item.id)
+                          )
+                        }
+                      >
+                        Select All
+                      </MenuItem>
+                    )}
+                  </>
                 )}
                 {subSpecialitiesOptions?.map((option) => (
                   <MenuItem key={option.id} value={option.id}>

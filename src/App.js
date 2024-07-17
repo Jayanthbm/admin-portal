@@ -16,9 +16,9 @@ import DoctorScreen from './pages/DoctorScreen';
 import DoctorsScreen from './pages/DoctorsScreen';
 import HomeScreen from './pages/HomeScreen';
 import LoginScreen from './pages/LoginScreen';
-import SpecialitiesScreen from './pages/SpecialitiesScreen';
+import SpecialtiesScreen from './pages/SpecialtiesScreen';
 import SubscriptionsScreen from './pages/SubscriptionsScreen';
-import SubSpecialityScreen from './pages/SubSpecialityScreen';
+import SubSpecialtyScreen from './pages/SubSpecialtyScreen';
 import UserRecordConfigScreen from './pages/UserRecordConfigScreen';
 
 const Checker = () => {
@@ -62,10 +62,10 @@ const App = () => {
             <Route path={PATHS.DASHBOARD} element={<DashboardScreen />} />
             <Route path={PATHS.DOCTORS} element={<DoctorsScreen />} />
             <Route path={PATHS.DOCTORS + '/:id'} element={<DoctorScreen />} />
-            <Route path={PATHS.SPECIALITIES} element={<SpecialitiesScreen />} />
+            <Route path={PATHS.SPECIALTIES} element={<SpecialtiesScreen />} />
             <Route
-              path={PATHS.SPECIALITIES + '/:id'}
-              element={<SubSpecialityScreen />}
+              path={PATHS.SPECIALTIES + '/:id'}
+              element={<SubSpecialtyScreen />}
             />
             <Route
               path={PATHS.USER_RECORD_CONFIG}
