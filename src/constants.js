@@ -17,7 +17,7 @@ export const API_ENDPOINTS = {
   SPECIALTY: '/admin/specialty',
   DOCTORS: '/admin/doctors',
   DOCTOR: '/admin/doctor',
-  USER_RECORD_CONFIG: '/admin/record-config',
+  USER_RECORD_CONFIG: '/admin/formfields',
   SUBSCRIPTIONS: '/admin/subscriptions',
   SUBSCRIPTION: '/admin/subscription',
 };

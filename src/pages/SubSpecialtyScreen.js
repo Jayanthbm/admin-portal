@@ -15,6 +15,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
 import SpecialityCard from '../components/Card/SpecialityCard';
+import CustomLink from '../components/CustomLink';
 import CustomTable from '../components/CustomTable';
 import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
 import MyPageLayout from '../components/Layout/MyPageLayout';
@@ -42,7 +43,11 @@ const SubSpecialtyScreen = () => {
 
   const location = useLocation();
   const state = location.state;
-  useAuthNavigation(isLoggedIn, PATHS.SPECIALTIES + '/' + id, state);
+  const navigate = useAuthNavigation(
+    isLoggedIn,
+    PATHS.SPECIALTIES + '/' + id,
+    state
+  );
 
   const [data, setData] = useState([]);
 
@@ -139,6 +144,13 @@ const SubSpecialtyScreen = () => {
     });
   };
 
+  const toUserRecordConfig = (item) => {
+    return navigate(PATHS.USER_RECORD_CONFIG, {
+      state: {
+        subSpecialtyId: item.id,
+      },
+    });
+  };
   return (
     <>
       <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -187,7 +199,12 @@ const SubSpecialtyScreen = () => {
                     key={index}
                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   >
-                    <TableCell>{item.name}</TableCell>
+                    <TableCell>
+                      <CustomLink
+                        title={item.name}
+                        onClick={() => toUserRecordConfig(item)}
+                      />
+                    </TableCell>
                     <TableCell>
                       <IconButton
                         onClick={() => {
@@ -220,7 +237,7 @@ const SubSpecialtyScreen = () => {
                       handleEditOpen(item);
                     }}
                     onDelete={() => confirmDeleteModal(item.id)}
-                    onNavigate={() => {}}
+                    onNavigate={() => toUserRecordConfig(item)}
                     value={0}
                     valueTitle={item.name}
                   />
