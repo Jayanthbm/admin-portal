@@ -1,3 +1,5 @@
+// src/routes/AppRoutes.js
+
 import React, { useContext, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
