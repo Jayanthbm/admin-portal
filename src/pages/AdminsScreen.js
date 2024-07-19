@@ -25,8 +25,7 @@ import MyPageLayout from '../components/Layout/MyPageLayout';
 import PageTitle from '../components/Layout/PageTitle';
 import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
-import { API_ENDPOINTS, PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
+import { API_ENDPOINTS } from '../constants';
 import { useSnackbar } from '../context/snackbar.context';
 import ViewContext from '../context/view.context';
 import {
@@ -35,12 +34,9 @@ import {
   getItems,
   updateItem,
 } from '../helpers/api.handler';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 const AdminsScreen = () => {
   const [loading, setLoading] = useState(false);
-  const { isLoggedIn } = useContext(AuthContext);
   const { view } = useContext(ViewContext);
-  useAuthNavigation(isLoggedIn, PATHS.ADMINS);
   const showSnackbar = useSnackbar();
 
   const [data, setData] = useState([]);

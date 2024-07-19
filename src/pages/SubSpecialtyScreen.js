@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import SpecialityCard from '../components/Card/SpecialityCard';
 import CustomLink from '../components/CustomLink';
@@ -23,7 +23,6 @@ import PageTitle from '../components/Layout/PageTitle';
 import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
 import { API_ENDPOINTS, PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
 import { useSnackbar } from '../context/snackbar.context';
 import ViewContext from '../context/view.context';
 import {
@@ -32,22 +31,16 @@ import {
   getItems,
   updateItem,
 } from '../helpers/api.handler';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 
 const SubSpecialtyScreen = () => {
   const [loading, setLoading] = useState(true);
-  const { isLoggedIn } = useContext(AuthContext);
   const { id } = useParams();
   const { view } = useContext(ViewContext);
   const showSnackbar = useSnackbar();
 
   const location = useLocation();
   const state = location.state;
-  const navigate = useAuthNavigation(
-    isLoggedIn,
-    PATHS.SPECIALTIES + '/' + id,
-    state
-  );
+  const navigate = useNavigate();
 
   const [data, setData] = useState([]);
 

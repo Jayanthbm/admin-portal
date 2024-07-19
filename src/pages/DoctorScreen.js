@@ -15,8 +15,8 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import SingleDoctorCard from '../components/Card/SingleDoctorCard';
 import CustomTable from '../components/CustomTable';
@@ -28,7 +28,6 @@ import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
 import { API_ENDPOINTS, PATHS } from '../constants';
 import { DOCTOR_SCREEN_CONTENT } from '../content';
-import AuthContext from '../context/auth.context';
 import { useSnackbar } from '../context/snackbar.context';
 import {
   addItem,
@@ -37,20 +36,14 @@ import {
   updateItem,
 } from '../helpers/api.handler';
 import { formatDate, getRemainingDays } from '../helpers/util.helper';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 
 const DoctorScreen = () => {
   const [loading, setLoading] = useState(true);
-  const { isLoggedIn } = useContext(AuthContext);
   const { id } = useParams();
 
   const location = useLocation();
   const state = location.state;
-  const navigate = useAuthNavigation(
-    isLoggedIn,
-    PATHS.DOCTORS + '/' + id,
-    state
-  );
+  const navigate = useNavigate();
   const showSnackbar = useSnackbar();
 
   const [data, setData] = useState([]);

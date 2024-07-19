@@ -9,7 +9,8 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import EmailInput from '../components/Input/EmailInput';
 import PasswordInput from '../components/Input/PasswordInput';
@@ -18,13 +19,17 @@ import AuthContext from '../context/auth.context';
 import { useSnackbar } from '../context/snackbar.context';
 import { post } from '../helpers/api.helper';
 import { setToken } from '../helpers/auth.helper';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 
 const defaultTheme = createTheme();
 
 const LoginScreen = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const navigate = useAuthNavigation(isLoggedIn);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate(PATHS.DASHBOARD);
+    }
+  }, [isLoggedIn, navigate]);
 
   const showSnackbar = useSnackbar();
 

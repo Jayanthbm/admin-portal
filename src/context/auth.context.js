@@ -1,6 +1,6 @@
 // src/context/auth.context.js
 
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 import { REFRESH_KEY, TOKEN_KEY } from '../constants';
 import { removeToken } from '../helpers/auth.helper';
@@ -11,11 +11,11 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     removeToken(TOKEN_KEY);
     removeToken(REFRESH_KEY);
     setIsLoggedIn(false);
-  };
+  }, []);
 
   useEffect(() => {
     async function init() {

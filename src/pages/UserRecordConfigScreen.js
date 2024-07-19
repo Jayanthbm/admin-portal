@@ -11,15 +11,14 @@ import {
   Stepper,
   Typography,
 } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import CustomRecord from '../components/Forms/CustomRecord';
 import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
 import MyPageLayout from '../components/Layout/MyPageLayout';
 import PageTitle from '../components/Layout/PageTitle';
-import { API_ENDPOINTS, PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
+import { API_ENDPOINTS } from '../constants';
 import { useSnackbar } from '../context/snackbar.context';
 import {
   addItem,
@@ -27,11 +26,8 @@ import {
   getItems,
   updateItem,
 } from '../helpers/api.handler';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 const UserRecordConfigScreen = () => {
   const [loading, setLoading] = useState(true);
-  const { isLoggedIn } = useContext(AuthContext);
-  useAuthNavigation(isLoggedIn, PATHS.USER_RECORD_CONFIG);
   const showSnackbar = useSnackbar();
   const location = useLocation();
   const state = location?.state;

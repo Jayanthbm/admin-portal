@@ -21,8 +21,7 @@ import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
 import MyPageLayout from '../components/Layout/MyPageLayout';
 import PageTitle from '../components/Layout/PageTitle';
 import MyModal from '../components/Modal/MyModal';
-import { API_ENDPOINTS, PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
+import { API_ENDPOINTS } from '../constants';
 import { useSnackbar } from '../context/snackbar.context';
 import ViewContext from '../context/view.context';
 import {
@@ -31,13 +30,10 @@ import {
   getItems,
   updateItem,
 } from '../helpers/api.handler';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 
 const SubscriptionsScreen = () => {
   const [loading, setLoading] = useState(true);
-  const { isLoggedIn } = useContext(AuthContext);
   const { view } = useContext(ViewContext);
-  useAuthNavigation(isLoggedIn, PATHS.SUBSCRIPTIONS);
   const showSnackbar = useSnackbar();
   const [data, setData] = useState([]);
 
