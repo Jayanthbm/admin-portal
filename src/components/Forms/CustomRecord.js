@@ -237,7 +237,6 @@ const CustomRecord = ({
     }
     if (loaded === true) {
       const result = checkConditions();
-      console.log('RESULT', result);
       setSubmitButtonDisabled(result);
     }
   }, [

@@ -7,6 +7,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TableRow,
 } from '@mui/material';
 import React from 'react';
 
@@ -16,9 +17,11 @@ const CustomTable = ({ heading, children }) => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            {heading?.map((item, index) => {
-              return <TableCell key={index}>{item}</TableCell>;
-            })}
+            <TableRow>
+              {heading?.map((item, index) => {
+                return <TableCell key={index}>{item}</TableCell>;
+              })}
+            </TableRow>
           </TableHead>
           <TableBody>{children}</TableBody>
         </Table>

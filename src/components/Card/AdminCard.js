@@ -25,18 +25,18 @@ const AdminCard = ({ item, onEdit, onDelete, onToggleStatus }) => {
         title={item.name}
         action={
           <>
-            <IconButton
-              onClick={() => onToggleStatus(item)}
-              sx={{ pb: 1, pt: 1 }}
-            >
-              <Tooltip title={item.enabled === 0 ? 'Enable' : 'Disable'}>
+            <Tooltip title={item.enabled === 0 ? 'Enable' : 'Disable'}>
+              <IconButton
+                onClick={() => onToggleStatus(item)}
+                sx={{ pb: 1, pt: 1 }}
+              >
                 {item.enabled === 0 ? (
                   <CheckIcon color="success" />
                 ) : (
                   <BlockIcon color="warning" />
                 )}
-              </Tooltip>
-            </IconButton>
+              </IconButton>
+            </Tooltip>
             <IconButton onClick={() => onEdit(item)} sx={{ pb: 1, pt: 1 }}>
               <Tooltip title="Edit">
                 <EditIcon color="primary" />

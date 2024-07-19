@@ -34,7 +34,7 @@ const UserRecordConfigScreen = () => {
   useAuthNavigation(isLoggedIn, PATHS.USER_RECORD_CONFIG);
   const showSnackbar = useSnackbar();
   const location = useLocation();
-  const state = location.state;
+  const state = location?.state;
   const [data, setData] = useState([]);
 
   const [speaclties, setSpecialties] = useState([]);

@@ -33,18 +33,18 @@ const DoctorCard = ({
         title={doctor.name}
         action={
           <>
-            <IconButton
-              onClick={() => onToggleStatus(doctor)}
-              sx={{ pb: 1, pt: 1 }}
-            >
-              <Tooltip title={doctor.enabled === 0 ? 'Enable' : 'Disable'}>
+            <Tooltip title={doctor.enabled === 0 ? 'Enable' : 'Disable'}>
+              <IconButton
+                onClick={() => onToggleStatus(doctor)}
+                sx={{ pb: 1, pt: 1 }}
+              >
                 {doctor.enabled === 0 ? (
                   <CheckIcon color="success" />
                 ) : (
                   <BlockIcon color="warning" />
                 )}
-              </Tooltip>
-            </IconButton>
+              </IconButton>
+            </Tooltip>
             <IconButton onClick={() => onEdit(doctor)} sx={{ pb: 1, pt: 1 }}>
               <Tooltip title="Edit">
                 <EditIcon color="primary" />

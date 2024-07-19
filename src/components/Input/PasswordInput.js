@@ -9,6 +9,7 @@ const PasswordInput = ({
   minLength,
   setValidationState,
   disabled = false,
+  autoComplete,
 }) => {
   const [error, setError] = useState(false);
   const [helperText, setHelperText] = useState('');
@@ -44,6 +45,7 @@ const PasswordInput = ({
         setFocused(true);
       }}
       disabled={disabled}
+      autoComplete={autoComplete ? autoComplete : 'current-password'}
     />
   );
 };

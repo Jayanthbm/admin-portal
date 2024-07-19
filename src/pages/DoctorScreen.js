@@ -353,20 +353,22 @@ const DoctorScreen = () => {
                   )}
                 </TableCell>
                 <TableCell>
-                  <IconButton
-                    onClick={() => handleToggleSubscriptionStatus(subscription)}
-                    sx={{ pb: 1, pt: 1 }}
+                  <Tooltip
+                    title={subscription.enabled === 0 ? 'Enable' : 'Disable'}
                   >
-                    <Tooltip
-                      title={subscription.enabled === 0 ? 'Enable' : 'Disable'}
+                    <IconButton
+                      onClick={() =>
+                        handleToggleSubscriptionStatus(subscription)
+                      }
+                      sx={{ pb: 1, pt: 1 }}
                     >
                       {subscription.enabled === 0 ? (
                         <CheckIcon color="success" />
                       ) : (
                         <BlockIcon color="warning" />
                       )}
-                    </Tooltip>
-                  </IconButton>
+                    </IconButton>
+                  </Tooltip>
                   <IconButton onClick={() => handleEditOpen(subscription)}>
                     <Tooltip title="Edit">
                       <EditIcon color="primary" />

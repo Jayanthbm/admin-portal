@@ -300,7 +300,7 @@ const AdminsScreen = () => {
               }}
             />
           ) : (
-            <>
+            <Box component="form">
               <EmailInput
                 value={item.email}
                 onChange={(e) =>
@@ -310,6 +310,7 @@ const AdminsScreen = () => {
                   })
                 }
                 setValidationState={setValidNewAdminEmail}
+                autoComplete="email"
               />
 
               <TextField
@@ -334,8 +335,9 @@ const AdminsScreen = () => {
                   });
                 }}
                 setValidationState={setValidNewAdminPassword}
+                autoComplete={'new-password'}
               />
-            </>
+            </Box>
           )}
         </NewAdditonModal>
 
