@@ -25,7 +25,7 @@ const LeftMenu = () => {
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: PATHS.DASHBOARD },
     { text: 'Doctors', icon: <LocalHospitalIcon />, path: PATHS.DOCTORS },
-    { text: 'Specialities', icon: <CategoryIcon />, path: PATHS.SPECIALITIES },
+    { text: 'Specialties', icon: <CategoryIcon />, path: PATHS.SPECIALTIES },
     {
       text: 'User Config',
       icon: <SettingsIcon />,

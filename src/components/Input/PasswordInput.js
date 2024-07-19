@@ -9,6 +9,7 @@ const PasswordInput = ({
   minLength,
   setValidationState,
   disabled = false,
+  autoComplete,
 }) => {
   const [error, setError] = useState(false);
   const [helperText, setHelperText] = useState('');
@@ -17,7 +18,7 @@ const PasswordInput = ({
   minLength = minLength || 6;
   useEffect(() => {
     if (focused) {
-      if (value.length < minLength) {
+      if (value?.length < minLength) {
         setError(true);
         setHelperText(`Minimum ${minLength} characters`);
         setValidationState(false);
@@ -44,6 +45,7 @@ const PasswordInput = ({
         setFocused(true);
       }}
       disabled={disabled}
+      autoComplete={autoComplete ? autoComplete : 'current-password'}
     />
   );
 };

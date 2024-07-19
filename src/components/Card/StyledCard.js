@@ -15,6 +15,15 @@ export const StyledCard = styled(Card)(({ theme }) => ({
   },
 }));
 
+export const StyledCard1 = styled(Card)(({ theme }) => ({
+  margin: theme.spacing(2),
+  padding: theme.spacing(2),
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[3],
+  transition: 'transform 0.2s',
+}));
+
 export const StyledCardHeader = styled(CardHeader)(({ _theme }) => ({
   paddingBottom: 0,
 }));

@@ -1,6 +1,6 @@
 // src/constants.js
 
-export const BASE_URL = 'http://localhost:4000/api';
+export const BASE_URL = 'https://d979-103-186-41-217.ngrok-free.app/api';
 
 export const TOKEN_KEY = 'accessToken';
 export const REFRESH_KEY = 'refreshToken';
@@ -13,11 +13,11 @@ export const API_ENDPOINTS = {
   ADDADMIN: '/admin/add',
   UPDATEADMIN: '/admin/update',
   DELETEADMIN: '/admin/delete',
-  ALLSPECIALITIES: '/common/specialties',
-  SPECIALITY: '/admin/specialty',
+  ALLSPECIALTIES: '/common/specialties',
+  SPECIALTY: '/admin/specialty',
   DOCTORS: '/admin/doctors',
   DOCTOR: '/admin/doctor',
-  USER_RECORD_CONFIG: '/admin/record-config',
+  USER_RECORD_CONFIG: '/admin/formfields',
   SUBSCRIPTIONS: '/admin/subscriptions',
   SUBSCRIPTION: '/admin/subscription',
 };
@@ -29,7 +29,7 @@ export const PATHS = {
   LOGIN: `${PATHS_BASE_PATH}login`,
   DASHBOARD: `${PATHS_BASE_PATH}dashboard`,
   DOCTORS: `${PATHS_BASE_PATH}doctors`,
-  SPECIALITIES: `${PATHS_BASE_PATH}specialities`,
+  SPECIALTIES: `${PATHS_BASE_PATH}specialties`,
   USER_RECORD_CONFIG: `${PATHS_BASE_PATH}user-record-config`,
   ADMINS: `${PATHS_BASE_PATH}admins`,
   LOGOUT: `${PATHS_BASE_PATH}logout`,

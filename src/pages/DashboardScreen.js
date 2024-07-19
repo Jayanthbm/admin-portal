@@ -1,18 +1,16 @@
 // src/pages/DashboardScreen.js
 
 import { Box } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import DashboardCard from '../components/Card/DashboardCard';
 import PageTitle from '../components/Layout/PageTitle';
 import { API_ENDPOINTS, PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
 import { getItems } from '../helpers/api.handler';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 const DashboardScreen = () => {
   const [loading, setLoading] = useState(true);
-  const { isLoggedIn } = useContext(AuthContext);
-  const navigate = useAuthNavigation(isLoggedIn, PATHS.DASHBOARD);
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
 
   const fetchItems = useCallback(async (force) => {
@@ -64,15 +62,15 @@ const DashboardScreen = () => {
           isLoading={loading}
         />
         <DashboardCard
-          title={'Specialities'}
-          value={data && data?.specialities.totalSpecialities}
-          onNavigate={() => navigate(PATHS.SPECIALITIES)}
+          title={'Specialties'}
+          value={data && data?.specialties.totalspecialties}
+          onNavigate={() => navigate(PATHS.SPECIALTIES)}
           isLoading={loading}
         />
         <DashboardCard
-          title={'Sub Specialities'}
-          value={data && data?.specialities.totalSubSpecialities}
-          onNavigate={() => navigate(PATHS.SPECIALITIES)}
+          title={'Sub Specialties'}
+          value={data && data?.specialties.totalSubspecialties}
+          onNavigate={() => navigate(PATHS.SPECIALTIES)}
           isLoading={loading}
         />
         <DashboardCard

@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import DoctorCard from '../components/Card/DoctorCard';
 import CustomLink from '../components/CustomLink';
@@ -25,7 +26,7 @@ import PageTitle from '../components/Layout/PageTitle';
 import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
 import { API_ENDPOINTS, PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
+import { DOCTOR_SCREEN_CONTENT } from '../content';
 import { useSnackbar } from '../context/snackbar.context';
 import ViewContext from '../context/view.context';
 import {
@@ -34,14 +35,15 @@ import {
   getItems,
   updateItem,
 } from '../helpers/api.handler';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 const DoctorsScreen = () => {
   const [loading, setLoading] = useState(false);
-  const { isLoggedIn } = useContext(AuthContext);
   const { view } = useContext(ViewContext);
-  const navigate = useAuthNavigation(isLoggedIn, PATHS.DOCTORS);
-  const showSnackbar = useSnackbar();
+  const navigate = useNavigate();
 
+  const showSnackbar = useSnackbar();
+  const location = useLocation();
+  const state = location.state;
+  const reload = state?.reload || false;
   const [data, setData] = useState([]);
 
   const [open, setOpen] = useState(false);
@@ -72,8 +74,8 @@ const DoctorsScreen = () => {
   }, []);
 
   useEffect(() => {
-    fetchItems();
-  }, [fetchItems]);
+    fetchItems(reload);
+  }, [fetchItems, reload]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -150,14 +152,14 @@ const DoctorsScreen = () => {
   };
 
   const handleToggleStatus = async (doctor) => {
-    const status = doctor.status === 0 ? true : false;
+    const enabled = doctor.enabled === 0 ? true : false;
 
     return await updateItem({
       url: `${API_ENDPOINTS.DOCTOR}/${doctor.id}`,
       data: {
         name: doctor.name,
-        status: status,
-        customMessage: status === true ? 'Doctor Enabled' : 'Doctor Disabled',
+        enabled: enabled,
+        customMessage: enabled === true ? 'Doctor Enabled' : 'Doctor Disabled',
       },
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
@@ -240,13 +242,13 @@ const DoctorsScreen = () => {
                     <TableCell>{item.email}</TableCell>
                     <TableCell>
                       <CustomLink
-                        title={item.speciality}
+                        title={item.specialty}
                         onClick={() =>
                           navigate(
-                            PATHS.SPECIALITIES + `/${item.speciality_id}`,
+                            PATHS.SPECIALTIES + `/${item.specialty_id}`,
                             {
                               state: {
-                                name: item.speciality,
+                                name: item.specialty,
                               },
                             }
                           )
@@ -258,27 +260,27 @@ const DoctorsScreen = () => {
                     <TableCell>{item.medical_registration_number}</TableCell>
                     <TableCell>{item.unique_id}</TableCell>
                     <TableCell>
-                      {item.status === 1 ? (
+                      {item.enabled === 1 ? (
                         <Chip color="success" label="Yes" />
                       ) : (
                         <Chip color="error" label="No" />
                       )}
                     </TableCell>
                     <TableCell>
-                      <IconButton
-                        onClick={() => handleToggleStatus(item)}
-                        sx={{ pb: 1, pt: 1 }}
+                      <Tooltip
+                        title={item.enabled === 0 ? 'Enable' : 'Disable'}
                       >
-                        <Tooltip
-                          title={item.status === 0 ? 'Enable' : 'Disable'}
+                        <IconButton
+                          onClick={() => handleToggleStatus(item)}
+                          sx={{ pb: 1, pt: 1 }}
                         >
-                          {item.status === 0 ? (
+                          {item.enabled === 0 ? (
                             <CheckIcon color="success" />
                           ) : (
                             <BlockIcon color="warning" />
                           )}
-                        </Tooltip>
-                      </IconButton>
+                        </IconButton>
+                      </Tooltip>
                       <IconButton
                         onClick={() => {
                           handleEditOpen(item);
@@ -346,7 +348,7 @@ const DoctorsScreen = () => {
       <DeleteModal
         open={confirmDelete.open}
         handleClose={() => setConfirmDelete({ open: false, id: null })}
-        subTitle="Are you sure you want to delete this doctor?"
+        subTitle={DOCTOR_SCREEN_CONTENT.DELETE}
         onOk={handleDelete}
         onCancel={() => setConfirmDelete({ open: false, id: null })}
         isLoading={loading}

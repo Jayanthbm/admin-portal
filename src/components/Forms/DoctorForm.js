@@ -1,6 +1,6 @@
 // src/components/Forms/DoctorForm.js
 
-import { InputLabel, MenuItem, Select } from '@mui/material';
+import { Box, InputLabel, MenuItem, Select } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { API_ENDPOINTS } from '../../constants';
@@ -18,14 +18,12 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
   const [mobile, setMobile] = useState(item.mobile || '');
   const [medical_registration_number, setMedical_registration_number] =
     useState(item.medical_registration_number || '');
-  const [speciality_id, setSpeciality_id] = useState(
-    item.speciality_id || null
-  );
+  const [specialty_id, setSpecialty_id] = useState(item.specialty_id || '-1');
   const [options, setOptions] = useState([]);
 
   const fetchOptions = useCallback(async () => {
     await getItems({
-      url: API_ENDPOINTS.ALLSPECIALITIES,
+      url: API_ENDPOINTS.ALLSPECIALTIES,
       loadingFunction: () => {},
       snackBarFunction: null,
       dataSetterState: setOptions,
@@ -38,6 +36,7 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
   useEffect(() => {
     fetchOptions();
   }, [id, fetchOptions]);
+
   useEffect(() => {
     setItem({
       ...item,
@@ -46,8 +45,8 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
       name,
       mobile,
       medical_registration_number,
-      speciality_id,
-      status: item.status === 1 ? true : false,
+      specialty_id,
+      enabled: item.enabled === 1 ? true : false,
     });
     if (mode === 'edit') {
       isValid(name?.length > 0);
@@ -59,7 +58,7 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
           medical_registration_number?.length > 0 &&
           mobile?.length > 0 &&
           mobile?.length === 10 &&
-          speciality_id
+          specialty_id !== '-1'
       );
     }
   }, [
@@ -68,7 +67,7 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
     name,
     mobile,
     medical_registration_number,
-    speciality_id,
+    specialty_id,
     id,
     setItem,
     mode,
@@ -79,69 +78,82 @@ const DoctorForm = ({ mode, item, setItem, isValid }) => {
   ]);
 
   return (
-    <>
-      <CustomTextInput
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        id="name"
-        label="Doctor Name"
-        setValidationState={() => {}}
-        inputType="text"
-      />
-      <EmailInput
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        id="email"
-        label="Email"
-        setValidationState={setIsValidEmail}
-        disabled={mode === 'edit'}
-      />
-      <PasswordInput
-        value={mode === 'edit' ? '***********' : password}
-        onChange={(e) => setPassword(e.target.value)}
-        id="password"
-        label="Password"
-        setValidationState={setIsValidPassword}
-        disabled={mode === 'edit'}
-      />
+    <Box component="form">
+      {mode === 'add' ? (
+        <>
+          <CustomTextInput
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            id="name"
+            label="Doctor Name"
+            setValidationState={() => {}}
+            inputType="text"
+          />
+          <EmailInput
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            id="email"
+            label="Email"
+            setValidationState={setIsValidEmail}
+            autoComplete="email"
+          />
+          <PasswordInput
+            value={mode === 'edit' ? '***********' : password}
+            onChange={(e) => setPassword(e.target.value)}
+            id="password"
+            label="Password"
+            setValidationState={setIsValidPassword}
+            autoComplete="new-password"
+          />
 
-      <CustomTextInput
-        value={mobile}
-        onChange={(e) => setMobile(e.target.value)}
-        id="mobile"
-        label="Doctor Phone"
-        setValidationState={() => {}}
-        inputType="mobile"
-        disabled={mode === 'edit'}
-      />
-      <CustomTextInput
-        value={medical_registration_number}
-        onChange={(e) => setMedical_registration_number(e.target.value)}
-        id="medical_registration_number"
-        label="Medical Registration Number"
-        setValidationState={() => {}}
-        inputType="text"
-        disabled={mode === 'edit'}
-      />
-      <InputLabel id="doctor-specialty-label">Specialty</InputLabel>
-      <Select
-        labelId="doctor-specialty-label"
-        id="doctor-specialty"
-        value={speciality_id}
-        label="Specialty"
-        onChange={(e) => setSpeciality_id(e.target.value)}
-        sx={{
-          width: '100%',
-        }}
-        disabled={mode === 'edit'}
-      >
-        {options.map((option) => (
-          <MenuItem key={option.id} value={option.id}>
-            {option.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </>
+          <CustomTextInput
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            id="mobile"
+            label="Doctor Phone"
+            setValidationState={() => {}}
+            inputType="mobile"
+          />
+          <CustomTextInput
+            value={medical_registration_number}
+            onChange={(e) => setMedical_registration_number(e.target.value)}
+            id="medical_registration_number"
+            label="Medical Registration Number"
+            setValidationState={() => {}}
+            inputType="text"
+          />
+          <InputLabel id="doctor-specialty-label">Specialty</InputLabel>
+          <Select
+            labelId="doctor-specialty-label"
+            id="doctor-specialty"
+            value={specialty_id}
+            label="Specialty"
+            onChange={(e) => setSpecialty_id(e.target.value)}
+            sx={{
+              width: '100%',
+            }}
+          >
+            <MenuItem value={'-1'}>None</MenuItem>
+            {options.map((option) => (
+              <MenuItem key={option.id} value={option.id}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </>
+      ) : (
+        <>
+          <CustomTextInput
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            id="name"
+            label="Doctor Name"
+            setValidationState={() => {}}
+            inputType="text"
+          />
+        </>
+      )}
+    </Box>
   );
 };
 

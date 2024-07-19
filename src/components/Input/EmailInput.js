@@ -12,6 +12,7 @@ const EmailInput = ({
   label,
   setValidationState,
   disabled = false,
+  autoComplete,
 }) => {
   const [error, setError] = useState(false);
   const [helperText, setHelperText] = useState('');
@@ -50,6 +51,7 @@ const EmailInput = ({
         setFocused(true);
       }}
       disabled={disabled}
+      autoComplete={autoComplete ? autoComplete : 'email'}
     />
   );
 };

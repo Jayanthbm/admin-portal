@@ -5,7 +5,6 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
 import {
   Box,
   Chip,
@@ -17,39 +16,42 @@ import {
 } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import AdminCard from '../components/Card/AdminCard';
 import CustomTable from '../components/CustomTable';
 import EmailInput from '../components/Input/EmailInput';
 import PasswordInput from '../components/Input/PasswordInput';
 import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
 import MyPageLayout from '../components/Layout/MyPageLayout';
 import PageTitle from '../components/Layout/PageTitle';
-import MyModal from '../components/Modal/MyModal';
-import { API_ENDPOINTS, PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
+import DeleteModal from '../components/Modal/DeleteModal';
+import NewAdditonModal from '../components/Modal/NewAdditonModal';
+import { API_ENDPOINTS } from '../constants';
 import { useSnackbar } from '../context/snackbar.context';
+import ViewContext from '../context/view.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
 } from '../helpers/api.handler';
-import { getItemById } from '../helpers/util.helper';
-import useAuthNavigation from '../hooks/useAuthNavigation';
 const AdminsScreen = () => {
   const [loading, setLoading] = useState(false);
-  const { isLoggedIn } = useContext(AuthContext);
-  useAuthNavigation(isLoggedIn, PATHS.ADMINS);
+  const { view } = useContext(ViewContext);
   const showSnackbar = useSnackbar();
+
+  const [data, setData] = useState([]);
+
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(null);
-  const [data, setData] = useState([]);
   const [confirmDelete, setConfirmDelete] = useState({ open: false, id: null });
 
-  const [newAdminEmail, setNewAdminEmail] = useState('');
-  const [newAdminName, setNewAdminName] = useState('');
-  const [newAdminPassword, setNewAdminPassword] = useState('');
+  const [item, setItem] = useState({
+    email: '',
+    password: '',
+  });
   const [validNewAdminEmail, setValidNewAdminEmail] = useState(false);
   const [validNewAdminPassword, setValidNewAdminPassword] = useState(false);
+  const [editedItem, setEditedItem] = useState({});
 
   const fetchItems = useCallback(async (force) => {
     await getItems({
@@ -66,53 +68,44 @@ const AdminsScreen = () => {
     fetchItems();
   }, [fetchItems]);
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+    setEditMode(false);
+  };
+
+  const handleEditOpen = (item) => {
+    setEditedItem(item);
+    setEditMode(true);
+    setOpen(true);
+  };
+
   const handleClose = () => {
     setOpen(false);
-    setEditMode(null);
-    setNewAdminEmail('');
-    setNewAdminName('');
-    setNewAdminPassword('');
-    setValidNewAdminEmail(false);
-    setValidNewAdminPassword(false);
+    setEditMode(false);
+    setConfirmDelete({ open: false, id: null });
+    setItem({});
+    setEditedItem({});
   };
 
   const handleAdd = async () => {
     return await addItem({
       url: API_ENDPOINTS.ADDADMIN,
-      data: {
-        email: newAdminEmail,
-        name: newAdminName,
-        password: newAdminPassword,
-      },
+      data: item,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
       reloadData: () => {
         fetchItems(true);
-      },
-      commonFunction: () => {
         handleClose();
       },
+      commonFunction: () => {},
     });
   };
 
-  const handleEditChange = (id, name) => {
-    setData(
-      data.map((admin) => (admin.id === id ? { ...admin, name } : admin))
-    );
-  };
-
-  const handleUpdate = async (id, enabled) => {
-    const item = getItemById(data, id);
-    if (typeof enabled !== 'boolean') {
-      enabled = enabled === 1 ? true : false;
-    }
-    return updateItem({
-      url: `${API_ENDPOINTS.UPDATEADMIN}/${item.id}`,
-      data: {
-        name: item.name,
-        enabled: enabled,
-      },
+  const handleUpdate = async () => {
+    editedItem.enabled = editedItem.enabled === 1 ? true : false;
+    return await updateItem({
+      url: `${API_ENDPOINTS.UPDATEADMIN}/${editedItem.id}`,
+      data: editedItem,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
       reloadData: () => {
@@ -130,9 +123,8 @@ const AdminsScreen = () => {
   };
 
   const handleDelete = async () => {
-    const { id } = confirmDelete;
     return await deleteItem({
-      url: `${API_ENDPOINTS.DELETEADMIN}/${id}`,
+      url: `${API_ENDPOINTS.DELETEADMIN}/${confirmDelete.id}`,
       loadingFunction: setLoading,
       snackBarFunction: showSnackbar,
       reloadData: () => {
@@ -140,6 +132,27 @@ const AdminsScreen = () => {
       },
       commonFunction: () => {
         setConfirmDelete({ open: false, id: null });
+      },
+    });
+  };
+
+  const handleToggleStatus = async (item) => {
+    const enabled = item.enabled === 0 ? true : false;
+
+    return await updateItem({
+      url: `${API_ENDPOINTS.UPDATEADMIN}/${item.id}`,
+      data: {
+        name: item.name,
+        enabled: enabled,
+        customMessage: enabled === true ? 'Admin Enabled' : 'Admin Disabled',
+      },
+      loadingFunction: setLoading,
+      snackBarFunction: showSnackbar,
+      reloadData: () => {
+        fetchItems(true);
+      },
+      commonFunction: () => {
+        handleClose();
       },
     });
   };
@@ -167,10 +180,11 @@ const AdminsScreen = () => {
         <MyPageLayout
           isLoading={loading}
           noPageButtonTitle="Add Admin"
-          noPageButton={handleOpen}
           noPageTitle="No Admins"
+          noPageButton={handleOpen}
           data={data}
           showSkeleton={true}
+          showViewSetting={true}
           addButton={handleOpen}
           addButtonTitle={'Add Admin'}
           addButtonDisabled={loading}
@@ -183,123 +197,153 @@ const AdminsScreen = () => {
               flexWrap: 'wrap',
             }}
           >
-            <CustomTable
-              heading={['Name', 'Email', 'Created At', 'Status', 'Actions']}
-            >
-              {data.map((item, index) => (
-                <TableRow
-                  key={index}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell>
-                    {editMode === item.id ? (
-                      <TextField
-                        value={item.name}
-                        onChange={(e) =>
-                          handleEditChange(item.id, e.target.value)
-                        }
-                        size="small"
-                      />
-                    ) : (
-                      item.name
-                    )}
-                  </TableCell>
-                  <TableCell>{item.email}</TableCell>
-                  <TableCell>{item.created_at}</TableCell>
-                  <TableCell>
-                    {item.enabled === 0 ? (
-                      <Chip color="error" label="Disabled" />
-                    ) : (
-                      <Chip color="success" label="Active" />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title={item.enabled === 0 ? 'Enable' : 'Disable'}>
+            {view === 'table' ? (
+              <CustomTable
+                heading={['Name', 'Email', 'Created At', 'Status', 'Actions']}
+              >
+                {data.map((item, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{item.email}</TableCell>
+                    <TableCell>{item.created_at}</TableCell>
+                    <TableCell>
+                      {item.enabled === 0 ? (
+                        <Chip color="error" label="Disabled" />
+                      ) : (
+                        <Chip color="success" label="Active" />
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <IconButton
-                        color={item.enabled === 0 ? 'success' : 'warning'}
-                        sx={{ borderRadius: '50%' }}
-                        onClick={() => handleUpdate(item.id, !item.enabled)}
+                        onClick={() => handleToggleStatus(item)}
+                        sx={{ pb: 1, pt: 1 }}
                       >
-                        {item.enabled === 0 ? <CheckIcon /> : <BlockIcon />}
+                        <Tooltip
+                          title={item.enabled === 0 ? 'Enable' : 'Disable'}
+                        >
+                          {item.enabled === 0 ? (
+                            <CheckIcon color="success" />
+                          ) : (
+                            <BlockIcon color="warning" />
+                          )}
+                        </Tooltip>
                       </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete">
                       <IconButton
-                        color="error"
-                        sx={{ borderRadius: '50%' }}
-                        onClick={() => confirmDeleteModal(item.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit">
-                      <IconButton
-                        color="primary"
-                        sx={{ borderRadius: '50%' }}
                         onClick={() => {
-                          if (editMode === item.id) {
-                            setEditMode(null);
-                            handleUpdate(item.id, item.enabled);
-                          } else {
-                            setEditMode(item.id);
-                          }
+                          handleEditOpen(item);
                         }}
+                        sx={{ pb: 1, pt: 1 }}
                       >
-                        {editMode === item.id ? <CheckIcon /> : <EditIcon />}
+                        <Tooltip title="Edit">
+                          <EditIcon color="primary" />
+                        </Tooltip>
                       </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </CustomTable>
+                      <IconButton
+                        onClick={() => confirmDeleteModal(item.id)}
+                        sx={{ pb: 1, pt: 1 }}
+                      >
+                        <Tooltip title="Delete">
+                          <DeleteIcon color="error" />
+                        </Tooltip>
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </CustomTable>
+            ) : (
+              data.map((item, index) => (
+                <AdminCard
+                  key={index}
+                  onEdit={handleEditOpen}
+                  onDelete={confirmDeleteModal}
+                  onToggleStatus={handleToggleStatus}
+                  item={item}
+                />
+              ))
+            )}
           </Box>
         </MyPageLayout>
 
-        <MyModal
+        <NewAdditonModal
           open={open}
           handleClose={handleClose}
-          title="Add Admin"
-          subTitle={'Enter admin details'}
-          okButtonText="Add Admin"
-          cancelButtonText="Cancel"
-          onOk={handleAdd}
+          title={editMode ? 'Edit Admin' : 'Add Admin'}
+          subTitle={'Fill Admin details'}
+          okButtonText={editMode ? 'Update' : 'Add'}
+          onOk={editMode ? handleUpdate : handleAdd}
           onCancel={handleClose}
           isLoading={loading}
-          okButtonIcon={<SaveIcon />}
-          okButtondisabled={!validNewAdminEmail || !validNewAdminPassword}
+          okButtondisabled={
+            editMode
+              ? editedItem?.name?.length < 1
+              : !validNewAdminEmail || !validNewAdminPassword
+          }
         >
-          <EmailInput
-            value={newAdminEmail}
-            onChange={(e) => setNewAdminEmail(e.target.value)}
-            setValidationState={setValidNewAdminEmail}
-          />
+          {editMode ? (
+            <TextField
+              label="Name"
+              fullWidth
+              margin="normal"
+              value={editedItem.name}
+              onChange={(e) => {
+                setEditedItem({
+                  ...editedItem,
+                  name: e.target.value,
+                });
+              }}
+            />
+          ) : (
+            <Box component="form">
+              <EmailInput
+                value={item.email}
+                onChange={(e) =>
+                  setItem({
+                    ...item,
+                    email: e.target.value,
+                  })
+                }
+                setValidationState={setValidNewAdminEmail}
+                autoComplete="email"
+              />
 
-          <TextField
-            label="Name"
-            fullWidth
-            margin="normal"
-            value={newAdminName}
-            onChange={(e) => setNewAdminName(e.target.value)}
-          />
-          <PasswordInput
-            value={newAdminPassword}
-            minLength={6}
-            onChange={(e) => setNewAdminPassword(e.target.value)}
-            setValidationState={setValidNewAdminPassword}
-          />
-        </MyModal>
+              <TextField
+                label="Name"
+                fullWidth
+                margin="normal"
+                value={item.name}
+                onChange={(e) => {
+                  setItem({
+                    ...item,
+                    name: e.target.value,
+                  });
+                }}
+              />
+              <PasswordInput
+                value={item.password}
+                minLength={6}
+                onChange={(e) => {
+                  setItem({
+                    ...item,
+                    password: e.target.value,
+                  });
+                }}
+                setValidationState={setValidNewAdminPassword}
+                autoComplete={'new-password'}
+              />
+            </Box>
+          )}
+        </NewAdditonModal>
 
-        <MyModal
+        <DeleteModal
           open={confirmDelete.open}
           handleClose={() => setConfirmDelete({ open: false, id: null })}
-          title="Confirm Deletion"
           subTitle="Are you sure you want to delete this admin?"
-          okButtonText="Delete"
-          cancelButtonText="Cancel"
           onOk={handleDelete}
           onCancel={() => setConfirmDelete({ open: false, id: null })}
           isLoading={loading}
-          okButtonColor="error"
         />
       </Box>
     </>

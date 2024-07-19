@@ -7,12 +7,34 @@ import React, { useContext } from 'react';
 
 import ViewContext from '../../context/view.context';
 import AddButton from '../Button/AddButton';
+import NoDataCard from '../Card/NoDataCard';
 import CustomSkeleton from './CustomSkeleton';
-import NoDataCard from './NoDataCard';
 
+const ViewSetting = ({ view, setView }) => {
+  return (
+    <ToggleButtonGroup
+      value={view}
+      exclusive
+      onChange={(e, value) => setView(value)}
+      aria-label="view alignment"
+    >
+      <Tooltip title="Grid View">
+        <ToggleButton value="card" aria-label="card layout" size="small">
+          <GridViewIcon />
+        </ToggleButton>
+      </Tooltip>
+      <Tooltip title="List View">
+        <ToggleButton value="table" aria-label="table layout" size="small">
+          <TableRowsIcon />
+        </ToggleButton>
+      </Tooltip>
+    </ToggleButtonGroup>
+  );
+};
 const MyPageLayout = ({
   isLoading,
   children,
+  showNoDataCard = true,
   data,
   showSkeleton = false,
   noPageTitle,
@@ -26,65 +48,45 @@ const MyPageLayout = ({
   const { view, setView } = useContext(ViewContext);
   return (
     <>
-      {isLoading && showSkeleton ? (
-        <CustomSkeleton />
-      ) : data?.length > 0 ? (
-        <>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              mt: 2,
-              mb: 5,
-            }}
-          >
-            {showViewSetting ? (
-              <ToggleButtonGroup
-                value={view}
-                exclusive
-                onChange={(e, value) => setView(value)}
-                aria-label="view alignment"
-              >
-                <Tooltip title="Grid View">
-                  <ToggleButton
-                    value="card"
-                    aria-label="card layout"
-                    size="small"
-                  >
-                    <GridViewIcon />
-                  </ToggleButton>
-                </Tooltip>
-                <Tooltip title="List View">
-                  <ToggleButton
-                    value="table"
-                    aria-label="table layout"
-                    size="small"
-                  >
-                    <TableRowsIcon />
-                  </ToggleButton>
-                </Tooltip>
-              </ToggleButtonGroup>
-            ) : (
-              <div></div>
+      {isLoading && showSkeleton && <CustomSkeleton />}
+      <>
+        {showNoDataCard && data?.length === 0 && !isLoading ? (
+          <NoDataCard
+            title={noPageTitle}
+            onAdd={noPageButton}
+            buttonTitle={noPageButtonTitle}
+          />
+        ) : (
+          <>
+            {!isLoading && (
+              <>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mt: 2,
+                    mb: 5,
+                  }}
+                >
+                  {showViewSetting ? (
+                    <ViewSetting view={view} setView={setView} />
+                  ) : (
+                    <div></div>
+                  )}
+                  {addButton && (
+                    <AddButton
+                      onClick={addButton}
+                      title={addButtonTitle}
+                      disabled={addButtonDisabled}
+                    />
+                  )}
+                </Box>
+                {children}
+              </>
             )}
-
-            {addButton && (
-              <AddButton
-                onClick={addButton}
-                title={addButtonTitle}
-                disabled={addButtonDisabled}
-              />
-            )}
-          </Box>
-          {children}
-        </>
-      ) : (
-        <NoDataCard
-          title={noPageTitle}
-          onAdd={noPageButton}
-          buttonTitle={noPageButtonTitle}
-        />
-      )}
+          </>
+        )}
+      </>
     </>
   );
 };
