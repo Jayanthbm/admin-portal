@@ -89,14 +89,14 @@ const UserRecordConfigScreen = () => {
       fetchSubSpecialties();
       setActiveStep(1);
     }
-  }, [speacltyId]);
+  }, [speacltyId, fetchSubSpecialties, subSpecialtyId]);
 
   useEffect(() => {
     if (subSpecialtyId && subSpecialtyId !== -1) {
       fetchItems(true);
       setActiveStep(2);
     }
-  }, [subSpecialtyId]);
+  }, [subSpecialtyId, fetchItems]);
 
   const steps = [
     'Select Speaclty',
@@ -108,16 +108,16 @@ const UserRecordConfigScreen = () => {
   const newItem = (index) => {
     let current_data = data;
     let newItem = {
+      display_order: data.length + 1,
+      is_required: false,
       field_type: null,
       field_name: '',
-      is_required: true,
+      field_label: '',
+      default_value: '',
       min_value: 0,
       max_value: 99999999,
       interval_value: 10,
       options: [],
-      max_size: 0,
-      format: [],
-      display_order: data.length + 1,
     };
     if (index === -1) {
       current_data.unshift(newItem);

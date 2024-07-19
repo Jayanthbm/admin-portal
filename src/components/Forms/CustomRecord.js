@@ -1,17 +1,26 @@
 // src/components/Forms/CustomRecord.js
 
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Card,
   Divider,
+  FormControlLabel,
   IconButton,
   MenuItem,
-  Select,
   TextField,
+  Tooltip,
+  Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import IOSSwitch from '../IosSwitch';
 const CustomRecord = ({
   sub_specialty_id,
   item,
@@ -23,27 +32,33 @@ const CustomRecord = ({
 }) => {
   const FIELD_TYPES = [
     'text',
+    'freetext',
     'number',
-    'date',
+    'slider',
     'select',
     'radio',
     'checkbox',
-    'slider',
+    'rating',
     'image_upload',
+    'date',
   ];
-  const IMAGE_FORMATS = ['jpg', 'png', 'jpeg'];
-  const [fieldType, setFieldType] = useState(item.field_type || 'text');
-  const [fieldName, setFieldName] = useState(item.field_name || '');
-  const [minValue, setMinValue] = useState(item.min_value || 0);
-  const [maxValue, setMaxValue] = useState(item.max_value || 10000);
-  const [intervalValue, setIntervalValue] = useState(item.interval_value || 10);
-  const [maxSize, setMaxSize] = useState(item.max_size || 0);
-  const [format, setFormat] = useState(item.format || []);
-  const [selectOptions, setSelectOptions] = useState(item.options || []);
   const [displayOrder, setDisplayOrder] = useState(
     item.display_order || index + 1
   );
-
+  const [required, setRequired] = useState(
+    item?.is_required === 1 ? true : false || false
+  );
+  const [fieldType, setFieldType] = useState(item.field_type || 'text');
+  const [fieldName, setFieldName] = useState(item.field_name || '');
+  const [fieldLabel, setFieldLabel] = useState(item.field_label || '');
+  const [defaultValue, setDefaultValue] = useState(item.default_value || '');
+  const [minValue, setMinValue] = useState(item.min_value || 0);
+  const [maxValue, setMaxValue] = useState(item.max_value || 10000);
+  const [intervalValue, setIntervalValue] = useState(item.interval_value || 10);
+  const [selectOptions, setSelectOptions] = useState(item.options || []);
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const handleDelete = () => {
     if (item.id) {
       return onDelete(item.id);
@@ -56,52 +71,219 @@ const CustomRecord = ({
     if (item.id) {
       return onUpdate({
         ...item,
-        sub_specialty_id: sub_specialty_id,
+        display_order: displayOrder,
+        is_required: required,
         field_type: fieldType,
         field_name: fieldName,
+        field_label: fieldLabel,
+        default_value: defaultValue,
         min_value: minValue,
         max_value: maxValue,
         interval_value: intervalValue,
-        max_size: maxSize,
-        format: format,
         options: selectOptions,
-        display_order: displayOrder,
       });
     } else {
       return onAdd({
         sub_specialty_id: sub_specialty_id,
+        display_order: displayOrder,
+        is_required: required,
         field_type: fieldType,
         field_name: fieldName,
+        field_label: fieldLabel,
+        default_value: defaultValue,
         min_value: minValue,
         max_value: maxValue,
         interval_value: intervalValue,
-        max_size: maxSize,
-        format: format,
         options: selectOptions,
-        display_order: displayOrder,
       });
     }
   };
+
+  useEffect(() => {
+    function init() {
+      function setOptions() {
+        if (fieldType === item.field_type && item.options?.length > 0) {
+          setSelectOptions(item.options);
+        } else {
+          setSelectOptions([
+            {
+              label: '',
+              value: '',
+            },
+          ]);
+        }
+        return;
+      }
+
+      function setValues() {
+        if (fieldType === item.field_type) {
+          setMinValue(item.min_value);
+          setMaxValue(item.max_value);
+          setIntervalValue(item.interval_value);
+        } else {
+          setMinValue(0);
+          let maxValue =
+            fieldType === 'slider' ? 100 : fieldType === 'rating' ? 5 : 1000;
+          setMaxValue(maxValue);
+          let intervalValue = fieldType === 'slider' ? 10 : 0;
+          setIntervalValue(intervalValue);
+        }
+        return;
+      }
+      switch (fieldType) {
+        case 'text': {
+          break;
+        }
+        case 'freetext': {
+          break;
+        }
+        case 'number': {
+          setValues();
+          break;
+        }
+        case 'slider': {
+          setValues();
+          break;
+        }
+        case 'rating': {
+          setValues();
+          break;
+        }
+        case 'select': {
+          setOptions();
+          break;
+        }
+        case 'radio': {
+          setOptions();
+          break;
+        }
+        case 'checkbox': {
+          setOptions();
+          break;
+        }
+        case 'image_upload': {
+          break;
+        }
+        case 'date': {
+          break;
+        }
+      }
+
+      setLoaded(true);
+      setSubmitButtonDisabled(false);
+    }
+    init();
+  }, [
+    fieldType,
+    item.id,
+    item.field_type,
+    item.options,
+    item.min_value,
+    item.max_value,
+    item.interval_value,
+  ]);
+  useEffect(() => {
+    function checkConditions() {
+      if (isNaN(displayOrder)) {
+        return true;
+      }
+      if (fieldName?.trim() === '' || fieldLabel?.trim() === '') {
+        return true;
+      }
+      if (isNaN(minValue) || isNaN(maxValue) || isNaN(intervalValue)) {
+        return true;
+      }
+      if (fieldType === 'number' || fieldType === 'rating') {
+        if (
+          minValue < 0 ||
+          maxValue < 0 ||
+          minValue > maxValue ||
+          isNaN(defaultValue) ||
+          defaultValue > maxValue
+        ) {
+          return true;
+        }
+      }
+      if (fieldType === 'slider') {
+        if (
+          minValue < 0 ||
+          maxValue < 0 ||
+          minValue > maxValue ||
+          intervalValue <= 0 ||
+          intervalValue > maxValue ||
+          isNaN(defaultValue) ||
+          defaultValue > maxValue
+        ) {
+          return true;
+        }
+      }
+      if (
+        fieldType === 'select' ||
+        fieldType === 'radio' ||
+        fieldType === 'checkbox'
+      ) {
+        if (selectOptions.length === 0) {
+          return true;
+        } else {
+          for (let i = 0; i < selectOptions.length; i++) {
+            let item = selectOptions[i];
+            if (item.label?.trim() === '' || item.value?.trim() === '') {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+    if (loaded === true) {
+      const result = checkConditions();
+      console.log('RESULT', result);
+      setSubmitButtonDisabled(result);
+    }
+  }, [
+    loaded,
+    displayOrder,
+    fieldType,
+    fieldName,
+    fieldLabel,
+    defaultValue,
+    minValue,
+    maxValue,
+    intervalValue,
+    selectOptions,
+  ]);
+
   return (
     <>
       <Box sx={{ width: '100%' }}>
         <Card variant="outlined" sx={{ width: '100%', p: 2, mb: 1 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', ml: 2 }}>
             <Box>
               <TextField
                 label="Display Order"
                 value={displayOrder}
                 onChange={(e) => {
-                  if (e.target.value > 0) {
-                    setDisplayOrder(e.target.value);
-                  } else {
-                    setDisplayOrder(1);
-                  }
+                  setDisplayOrder(e.target.value);
                 }}
                 type="number"
                 sx={{
                   width: '100px',
                 }}
+                size="small"
+                required={true}
+              />
+            </Box>
+            <Box>
+              <FormControlLabel
+                control={
+                  <IOSSwitch
+                    sx={{ m: 1 }}
+                    checked={required}
+                    onChange={(e) => setRequired(e.target.checked)}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                  />
+                }
+                label="Is Required"
               />
             </Box>
           </Box>
@@ -125,28 +307,74 @@ const CustomRecord = ({
                 value={fieldName}
                 onChange={(e) => setFieldName(e.target.value)}
                 placeholder="Enter field name"
+                helperText="Identifier for the field,unique value"
+                disabled={item.id ? true : false}
+                size="small"
+                required={true}
               />
             </Box>
-            <Box sx={{ ml: 1, mb: 2, mt: 1 }}>
-              <Select
-                labelId="field-type-label"
+            <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
+              <TextField
+                id="field-label"
+                label="Field Label"
+                value={fieldLabel}
+                onChange={(e) => setFieldLabel(e.target.value)}
+                placeholder="Enter field label"
+                helperText="Display name for the field"
+                size="small"
+                required={true}
+              />
+            </Box>
+
+            <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
+              <TextField
                 id="field-type"
+                select
+                label="Field Types"
                 value={fieldType}
-                label="Field "
                 onChange={(e) => {
+                  setLoaded(false);
                   setFieldType(e.target.value);
+                  if (
+                    e.target.value === 'select' ||
+                    e.target.value === 'radio' ||
+                    e.target.value === 'checkbox'
+                  ) {
+                    setExpanded(true);
+                  }
                 }}
-                sx={{ width: '100%' }}
-                placeholder="Enter field type"
+                helperText="Input field type"
+                size="small"
+                required={true}
               >
                 {FIELD_TYPES.map((option, index) => (
                   <MenuItem key={index} value={option}>
                     {option.toUpperCase()}
                   </MenuItem>
                 ))}
-              </Select>
+              </TextField>
             </Box>
-            {fieldType === 'number' || fieldType === 'slider' ? (
+            <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
+              <TextField
+                id="default-value"
+                label="Default Value"
+                value={defaultValue}
+                onChange={(e) => setDefaultValue(e.target.value)}
+                placeholder="Enter default value"
+                helperText="Default value for the field"
+                size="small"
+                type={
+                  fieldType === 'number' ||
+                  fieldType === 'rating' ||
+                  fieldType === 'slider'
+                    ? 'number'
+                    : 'text'
+                }
+              />
+            </Box>
+            {fieldType === 'number' ||
+            fieldType === 'slider' ||
+            fieldType === 'rating' ? (
               <>
                 <Box sx={{ ml: 1, mb: 2, mt: 1 }}>
                   <TextField
@@ -155,6 +383,9 @@ const CustomRecord = ({
                     value={minValue}
                     onChange={(e) => setMinValue(e.target.value)}
                     placeholder="Enter min value"
+                    helperText="Minimum value for the field"
+                    size="small"
+                    type="number"
                   />
                 </Box>
                 <Box sx={{ ml: 1, mb: 2, mt: 1 }}>
@@ -164,6 +395,10 @@ const CustomRecord = ({
                     value={maxValue}
                     onChange={(e) => setMaxValue(e.target.value)}
                     placeholder="Enter max value"
+                    helperText="Maximum value for the field"
+                    size="small"
+                    type="number"
+                    required={true}
                   />
                 </Box>
                 {fieldType === 'slider' ? (
@@ -174,40 +409,13 @@ const CustomRecord = ({
                       value={intervalValue}
                       onChange={(e) => setIntervalValue(e.target.value)}
                       placeholder="Enter interval value"
+                      helperText="Interval value for the field"
+                      size="small"
+                      type="number"
+                      required={true}
                     />
                   </Box>
                 ) : null}
-              </>
-            ) : null}
-            {fieldType === 'image_upload' ? (
-              <>
-                <Box sx={{ ml: 1, mb: 2, mt: 1 }}>
-                  <TextField
-                    id="max-size"
-                    label="Max Size"
-                    value={maxSize}
-                    onChange={(e) => setMaxSize(e.target.value)}
-                    placeholder="Enter max size"
-                  />
-                </Box>
-                <Box sx={{ ml: 1, mb: 2, mt: 1 }}>
-                  <Select
-                    labelId="format-label"
-                    id="format"
-                    multiple
-                    value={format}
-                    label="Format"
-                    onChange={(e) => setFormat(e.target.value)}
-                    sx={{ width: '100%' }}
-                    placeholder="Enter format"
-                  >
-                    {IMAGE_FORMATS.map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option.toUpperCase()}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Box>
               </>
             ) : null}
             {fieldType === 'select' ||
@@ -215,25 +423,25 @@ const CustomRecord = ({
             fieldType === 'checkbox' ? (
               <>
                 <Box sx={{ ml: 1, mb: 2, mt: 1 }}>
-                  <>
-                    <TextField
-                      id="Added Options"
-                      select
-                      label="Added Options"
-                      value={'-1'}
-                      defaultValue="-1"
-                      onChange={() => {}}
-                    >
-                      <MenuItem key={'-1'} value={'-1'}>
-                        Added Options
+                  <TextField
+                    id="Added Options"
+                    select
+                    label="Added Options"
+                    value={'-1'}
+                    defaultValue="-1"
+                    onChange={() => {}}
+                    helperText="Added Options for the field"
+                    size="small"
+                  >
+                    <MenuItem key={'-1'} value={'-1'}>
+                      {selectOptions.length} Options Added
+                    </MenuItem>
+                    {selectOptions.map((item, index) => (
+                      <MenuItem key={index} value={item.value}>
+                        {item.label}
                       </MenuItem>
-                      {selectOptions.map((item, index) => (
-                        <MenuItem key={index} value={item.value}>
-                          {item.label}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </>
+                    ))}
+                  </TextField>
                 </Box>
               </>
             ) : null}
@@ -241,79 +449,103 @@ const CustomRecord = ({
           {fieldType === 'select' ||
           fieldType === 'radio' ||
           fieldType === 'checkbox' ? (
-            <Box sx={{ ml: 1, mb: 2, mt: 1 }}>
+            <Box sx={{ ml: 2, mt: 0 }}>
               <>
-                <Button
-                  variant="contained"
-                  sx={{ ml: 1, mb: 2, mt: 1 }}
-                  color="success"
-                  onClick={() => {
-                    const newOptions = [...selectOptions];
-                    newOptions.push({ value: '', label: '' });
-                    setSelectOptions(newOptions);
-                  }}
-                  size="small"
+                <Accordion
+                  slotProps={{ transition: { unmountOnExit: true } }}
+                  expanded={expanded}
+                  onChange={() => setExpanded(!expanded)}
                 >
-                  Add New Option
-                </Button>
-                {selectOptions.map((item, index) => (
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'flex-start',
-                      alignContent: 'center',
-                      flexWrap: 'wrap',
-                      alignItems: 'flex-start',
-                      pt: 2,
-                      pb: 2,
-                      ml: 2,
-                    }}
-                    key={index}
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel2-content"
+                    id="panel2-header"
                   >
-                    <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
-                      <TextField
-                        id={`label-${index}`}
-                        label={`Label ${index + 1}`}
-                        value={item.label}
-                        onChange={(e) => {
-                          const newOptions = [...selectOptions];
-                          newOptions[index].label = e.target.value;
-                          setSelectOptions(newOptions);
-                        }}
-                        size="small"
-                        placeholder="Enter label"
-                        helperText="Label Shown on UI"
-                      />
-                    </Box>
-                    <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
-                      <TextField
-                        id={`value-${index}`}
-                        label={`value ${index + 1}`}
-                        value={item.value}
-                        onChange={(e) => {
-                          const newOptions = [...selectOptions];
-                          newOptions[index].value = e.target.value;
-                          setSelectOptions(newOptions);
-                        }}
-                        size="small"
-                        placeholder="Enter Value"
-                        helperText="Value Stored in Database"
-                      />
-                    </Box>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ mt: 'auto', mb: 'auto' }}
+                    >
+                      Added Options ({selectOptions.length})
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
                     <IconButton
-                      aria-label="delete"
-                      size="large"
+                      aria-label="add-option"
+                      size="medium"
                       onClick={() => {
                         const newOptions = [...selectOptions];
-                        newOptions.splice(index, 1);
+                        newOptions.push({ value: '', label: '' });
                         setSelectOptions(newOptions);
                       }}
                     >
-                      <DeleteIcon fontSize="inherit" color="error" />
+                      <Tooltip title="Add New Option to Field">
+                        <AddCircleIcon fontSize="inherit" color="success" />
+                      </Tooltip>
                     </IconButton>
-                  </Box>
-                ))}
+                    {selectOptions.map((item, index) => (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'flex-start',
+                          alignContent: 'center',
+                          flexWrap: 'wrap',
+                          alignItems: 'flex-start',
+                          pt: 2,
+                          pb: 2,
+                          ml: 2,
+                        }}
+                        key={index}
+                      >
+                        <Box sx={{ mr: 1 }}>
+                          <TextField
+                            id={`label-${index}`}
+                            label={`Label ${index + 1}`}
+                            value={item.label}
+                            onChange={(e) => {
+                              const newOptions = [...selectOptions];
+                              newOptions[index].label = e.target.value;
+                              setSelectOptions(newOptions);
+                            }}
+                            size="small"
+                            placeholder="Enter label"
+                            helperText="Label Shown on UI"
+                            required={true}
+                          />
+                        </Box>
+                        <Box sx={{ mr: 1 }}>
+                          <TextField
+                            id={`value-${index}`}
+                            label={`Value ${index + 1}`}
+                            value={item.value}
+                            onChange={(e) => {
+                              const newOptions = [...selectOptions];
+                              newOptions[index].value = e.target.value;
+                              setSelectOptions(newOptions);
+                            }}
+                            size="small"
+                            placeholder="Enter Value"
+                            helperText="Value Stored in Database"
+                            required={true}
+                          />
+                        </Box>
+                        <IconButton
+                          aria-label="delete"
+                          size="large"
+                          onClick={() => {
+                            const newOptions = [...selectOptions];
+                            newOptions.splice(index, 1);
+                            setSelectOptions(newOptions);
+                          }}
+                        >
+                          <Tooltip title="Delete Option">
+                            <DeleteIcon fontSize="inherit" color="error" />
+                          </Tooltip>
+                        </IconButton>
+                      </Box>
+                    ))}
+                  </AccordionDetails>
+                </Accordion>
               </>
             </Box>
           ) : null}
@@ -341,6 +573,7 @@ const CustomRecord = ({
               color={item.id ? 'primary' : 'success'}
               onClick={handleSubmit}
               size="small"
+              disabled={submitButtonDisabled}
             >
               {item.id ? 'Update' : 'Add'}
             </Button>
