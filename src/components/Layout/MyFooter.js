@@ -9,7 +9,7 @@ const MyFooter = ({ mode }) => {
   return (
     <Box
       className="footer"
-      sx={{ p: 6, backgroundColor: mode === 'dark' ? '#121212' : '#f1f1f1' }}
+      sx={{ backgroundColor: mode === 'dark' ? '#121212' : '#f1f1f1' }}
     >
       <center>© {currentYear} Your Company</center>
     </Box>
