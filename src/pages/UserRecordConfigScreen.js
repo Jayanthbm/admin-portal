@@ -284,6 +284,11 @@ const UserRecordConfigScreen = () => {
           <MyPageLayout
             isLoading={loading}
             showSkeleton={data?.length > 0 ? false : true}
+            data={data}
+            showNoDataCard={data?.length === 0}
+            noPageTitle="No Items"
+            noPageButton={newItem}
+            noPageButtonTitle="Add Item"
           >
             <Typography variant="h6" textAlign={'center'}>
               Items Need to be Refreshed Manually
