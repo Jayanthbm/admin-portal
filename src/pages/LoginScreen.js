@@ -6,8 +6,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -19,8 +17,6 @@ import AuthContext from '../context/auth.context';
 import { useSnackbar } from '../context/snackbar.context';
 import { post } from '../helpers/api.helper';
 import { setToken } from '../helpers/auth.helper';
-
-const defaultTheme = createTheme();
 
 const LoginScreen = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
@@ -62,9 +58,8 @@ const LoginScreen = () => {
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
+    <>
+      <Container component="main" maxWidth="xs" sx={{ mt: 20 }}>
         <Box
           sx={{
             marginTop: 8,
@@ -101,6 +96,7 @@ const LoginScreen = () => {
               type="submit"
               fullWidth
               variant="contained"
+              color="success"
               loading={loading}
               loadingPosition="start"
               sx={{ mt: 3, mb: 2 }}
@@ -113,7 +109,7 @@ const LoginScreen = () => {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
+    </>
   );
 };
 
