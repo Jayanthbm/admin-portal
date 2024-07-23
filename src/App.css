@@ -3,22 +3,24 @@
 .body-container {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .left-menu {
   margin-top: 90px;
   flex-shrink: 0;
   position: fixed;
-  top: 20px;
+  top: 30px;
 }
 
 .main-content {
   margin-left: 240px;
   display: block;
   width: 100%;
+  margin-top: 65px;
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 899px) {
   .left-menu {
     display: none !important;
   }
@@ -34,10 +36,6 @@
   position: fixed;
   bottom: 0;
   width: 100%;
-  background-color: #f1f1f1;
-  /* Change this to your preferred color */
-  color: #000;
-  /* Change this to your preferred text color */
   padding: 10px 0;
   text-align: center;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);

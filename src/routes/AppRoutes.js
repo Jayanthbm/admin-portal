@@ -36,89 +36,76 @@ const Logout = () => {
 const AppRoutes = () => {
   const { isLoggedIn } = useContext(AuthContext);
   return (
-    <div
-      className="body-container"
-      style={{
-        justifyContent: isLoggedIn ? 'flex-start' : 'space-around',
-        marginRight: isLoggedIn ? '0px' : '240px',
-      }}
-    >
-      <div className="main-content">
-        <Routes>
-          <Route
-            path={PATHS.ROOT}
-            element={<Checker isLoggedIn={isLoggedIn} />}
-          />
-          <Route path={PATHS.LOGIN} element={<LoginScreen />} />
-          <Route
-            path={PATHS.DASHBOARD}
-            element={
-              <ProtectedRoute>
-                <DashboardScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={PATHS.DOCTORS}
-            element={
-              <ProtectedRoute>
-                <DoctorsScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={PATHS.DOCTORS + '/:id'}
-            element={
-              <ProtectedRoute>
-                <DoctorScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={PATHS.SPECIALTIES}
-            element={
-              <ProtectedRoute>
-                <SpecialtiesScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={PATHS.SPECIALTIES + '/:id'}
-            element={
-              <ProtectedRoute>
-                <SubSpecialtyScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={PATHS.USER_RECORD_CONFIG}
-            element={
-              <ProtectedRoute>
-                <UserRecordConfigScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={PATHS.ADMINS}
-            element={
-              <ProtectedRoute>
-                <AdminsScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path={PATHS.SUBSCRIPTIONS}
-            element={
-              <ProtectedRoute>
-                <SubscriptionsScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="*" element={<Checker />} />
-        </Routes>
-      </div>
-    </div>
+    <Routes>
+      <Route path={PATHS.ROOT} element={<Checker isLoggedIn={isLoggedIn} />} />
+      <Route path={PATHS.LOGIN} element={<LoginScreen />} />
+      <Route
+        path={PATHS.DASHBOARD}
+        element={
+          <ProtectedRoute>
+            <DashboardScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={PATHS.DOCTORS}
+        element={
+          <ProtectedRoute>
+            <DoctorsScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={PATHS.DOCTORS + '/:id'}
+        element={
+          <ProtectedRoute>
+            <DoctorScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={PATHS.SPECIALTIES}
+        element={
+          <ProtectedRoute>
+            <SpecialtiesScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={PATHS.SPECIALTIES + '/:id'}
+        element={
+          <ProtectedRoute>
+            <SubSpecialtyScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={PATHS.USER_RECORD_CONFIG}
+        element={
+          <ProtectedRoute>
+            <UserRecordConfigScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={PATHS.ADMINS}
+        element={
+          <ProtectedRoute>
+            <AdminsScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={PATHS.SUBSCRIPTIONS}
+        element={
+          <ProtectedRoute>
+            <SubscriptionsScreen />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/logout" element={<Logout />} />
+      <Route path="*" element={<Checker />} />
+    </Routes>
   );
 };
 

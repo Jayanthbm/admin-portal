@@ -18,7 +18,9 @@ export const ProtectedRoute = ({ children }) => {
       <div className="left-menu">
         <LeftMenu />
       </div>
-      {children}
+      <div className="body-container">
+        <div className="main-content">{children}</div>
+      </div>
     </>
   );
 };
