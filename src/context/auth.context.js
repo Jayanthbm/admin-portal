@@ -23,6 +23,8 @@ export const AuthProvider = ({ children }) => {
       if (token && isValidToken(token)) {
         setIsLoggedIn(true);
       } else {
+        removeToken(TOKEN_KEY);
+        removeToken(REFRESH_KEY);
         setIsLoggedIn(false);
       }
     }
