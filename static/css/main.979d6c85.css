@@ -1,2 +1,0 @@
-body{font-family:Roboto,sans-serif!important}.body-container{display:flex;flex-direction:row;flex-wrap:wrap}.left-menu{flex-shrink:0;margin-top:90px;position:fixed;top:30px}.main-content{display:block;margin-left:240px;margin-top:65px;width:100%}@media screen and (max-width:899px){.left-menu{display:none!important}.main-content{margin-left:0}.body-container{margin-right:0!important}}.footer{bottom:0;box-shadow:0 -2px 5px #0000001a;padding:10px 0;position:fixed;text-align:center;width:100%}
-/*# sourceMappingURL=main.979d6c85.css.map*/
