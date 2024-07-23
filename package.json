@@ -27,7 +27,7 @@
     "eject": "react-scripts eject",
     "gh": "git checkout gh-dev && git merge origin/dev --commit && git push",
     "predeploy": "npm run build",
-    "deploy": "gh && gh-pages -d build && git checkout dev && s3deploy",
+    "deploy": "gh-pages -d build",
     "s3deploy": "npm run predeploy && cd build && aws s3 sync . s3://myadminportal/",
     "prettify": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix"
