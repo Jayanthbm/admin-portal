@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/admin-portal/static/css/main.85cd12a8.css",
-    "main.js": "/admin-portal/static/js/main.43bac8e7.js",
+    "main.css": "/admin-portal/static/css/main.979d6c85.css",
+    "main.js": "/admin-portal/static/js/main.e1097c95.js",
     "index.html": "/admin-portal/index.html",
     "static/media/no-data-icon.svg": "/admin-portal/static/media/no-data-icon.6c7f95875596c8a691a3b0fef97b9007.svg",
-    "main.85cd12a8.css.map": "/admin-portal/static/css/main.85cd12a8.css.map",
-    "main.43bac8e7.js.map": "/admin-portal/static/js/main.43bac8e7.js.map"
+    "main.979d6c85.css.map": "/admin-portal/static/css/main.979d6c85.css.map",
+    "main.e1097c95.js.map": "/admin-portal/static/js/main.e1097c95.js.map"
   },
   "entrypoints": [
-    "static/css/main.85cd12a8.css",
-    "static/js/main.43bac8e7.js"
+    "static/css/main.979d6c85.css",
+    "static/js/main.e1097c95.js"
   ]
 }
