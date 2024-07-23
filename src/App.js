@@ -4,7 +4,7 @@ import './App.css';
 
 import { ThemeProvider } from '@emotion/react';
 import { Box, createTheme, CssBaseline } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import AppAppBar from './components/AppAppBar';
 import MyFooter from './components/Layout/MyFooter';
@@ -15,8 +15,14 @@ const App = () => {
   const [mode, setMode] = useState('light');
   const theme = createTheme(myTheme(mode));
 
+  useEffect(() => {
+    setMode(localStorage.getItem('theme') || 'light');
+  }, []);
   const toggleColorMode = () => {
-    setMode((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    setMode((prev) => {
+      localStorage.setItem('theme', prev === 'light' ? 'dark' : 'light');
+      return prev === 'light' ? 'dark' : 'light';
+    });
   };
   return (
     <>
