@@ -568,7 +568,6 @@ export default function myTheme(mode) {
               minHeight: 40,
               height: '100%',
               borderRadius: '10px',
-
               '&:hover': {
                 borderColor: brand[300],
               },
@@ -583,6 +582,81 @@ export default function myTheme(mode) {
                 '&:hover': {
                   borderColor: brand[300],
                 },
+              },
+            }),
+          }),
+        },
+      },
+      MuiTable: {
+        styleOverrides: {
+          root: ({ _theme }) => ({
+            borderCollapse: 'collapse',
+            width: '100%',
+            // Additional styles can be added here
+          }),
+        },
+      },
+      MuiTableHead: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            backgroundColor: theme.palette.background.paper,
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            '& th': {
+              fontWeight: 'bold',
+              color: theme.palette.text.primary,
+            },
+            ...(theme.palette.mode === 'dark' && {
+              backgroundColor: theme.palette.background.default,
+              '& th': {
+                color: theme.palette.text.primary,
+              },
+            }),
+          }),
+        },
+      },
+      MuiTableBody: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            '& tr:nth-of-type(odd)': {
+              backgroundColor: theme.palette.background.default,
+            },
+            '& tr:nth-of-type(even)': {
+              backgroundColor: theme.palette.background.paper,
+            },
+            ...(theme.palette.mode === 'dark' && {
+              '& tr:nth-of-type(odd)': {
+                backgroundColor: theme.palette.background.paper,
+              },
+              '& tr:nth-of-type(even)': {
+                backgroundColor: theme.palette.background.default,
+              },
+            }),
+          }),
+        },
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            padding: theme.spacing(1),
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            ...(theme.palette.mode === 'dark' && {
+              borderBottom: `1px solid ${theme.palette.divider}`,
+              color: theme.palette.text.primary,
+            }),
+          }),
+        },
+      },
+      MuiTableSortLabel: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            color: theme.palette.text.secondary,
+            '&:hover': {
+              color: theme.palette.text.primary,
+            },
+            ...(theme.palette.mode === 'dark' && {
+              color: theme.palette.text.secondary,
+              '&:hover': {
+                color: theme.palette.text.primary,
               },
             }),
           }),
