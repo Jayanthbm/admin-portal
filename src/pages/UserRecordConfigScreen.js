@@ -105,15 +105,21 @@ const UserRecordConfigScreen = () => {
     let current_data = data;
     let newItem = {
       display_order: data.length + 1,
-      is_required: false,
-      field_type: null,
       field_name: '',
       field_label: '',
+      field_type: null,
+      unit_type: 'none',
       default_value: '',
       min_value: 0,
       max_value: 99999999,
       interval_value: 10,
       options: [],
+      validation_pattern: '',
+      help_text: '',
+      is_required: 0,
+      is_visible: 1,
+      allowed_file_types: '',
+      max_files: 1,
     };
     if (index === -1) {
       current_data.unshift(newItem);
