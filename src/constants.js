@@ -1,6 +1,6 @@
 // src/constants.js
 
-export const BASE_URL = 'http://localhost:4000/api';
+export const BASE_URL = 'https://842a-103-186-41-217.ngrok-free.app/api';
 
 export const TOKEN_KEY = 'accessToken';
 export const REFRESH_KEY = 'refreshToken';

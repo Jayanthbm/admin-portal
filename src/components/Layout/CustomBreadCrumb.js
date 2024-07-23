@@ -14,7 +14,12 @@ const CustomBreadCrumb = ({ paths }) => {
       <Breadcrumbs aria-label="breadcrumb">
         <Link
           underline="hover"
-          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            cursor: 'pointer',
+            fontSize: 20,
+          }}
           color="inherit"
           onClick={() => navigate(PATHS.DASHBOARD)}
         >
@@ -29,6 +34,7 @@ const CustomBreadCrumb = ({ paths }) => {
               display: 'flex',
               alignItems: 'center',
               cursor: path?.navigation ? 'pointer' : 'default',
+              fontSize: 20,
             }}
             color="inherit"
             onClick={() => navigate(path?.navigation)}

@@ -100,28 +100,29 @@ const MyPageLayout = ({
             noPageButtonTitle={noPageButtonTitle}
           />
           {data && data.length > 0 && (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                mt: 2,
-                mb: 5,
-              }}
-            >
-              <ViewSetting
-                view={view}
-                setView={setView}
-                showViewSetting={showViewSetting}
-              />
-              <ShowAddButton
-                addButton={addButton}
-                addButtonTitle={addButtonTitle}
-                addButtonDisabled={addButtonDisabled}
-              />
-            </Box>
+            <>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  mt: 2,
+                  mb: 5,
+                }}
+              >
+                <ViewSetting
+                  view={view}
+                  setView={setView}
+                  showViewSetting={showViewSetting}
+                />
+                <ShowAddButton
+                  addButton={addButton}
+                  addButtonTitle={addButtonTitle}
+                  addButtonDisabled={addButtonDisabled}
+                />
+              </Box>
+              {children}
+            </>
           )}
-
-          {children}
         </>
       )}
     </>
