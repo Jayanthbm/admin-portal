@@ -1,15 +1,15 @@
 // src/routes/ProtectedRoute.js
 
-import React, { useContext } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 import LeftMenu from '../components/Layout/leftMenu';
 import LoadingScreen from '../components/LoadingScreen';
 import { PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
+import useAuth from '../hooks/useAuth';
 
 export const ProtectedRoute = ({ children }) => {
-  const { isLoggedIn, isLoading } = useContext(AuthContext);
+  const { isLoggedIn, isLoading } = useAuth();
 
   if (isLoading) {
     return <LoadingScreen />;

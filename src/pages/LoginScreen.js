@@ -7,19 +7,19 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import EmailInput from '../components/Input/EmailInput';
 import PasswordInput from '../components/Input/PasswordInput';
 import { API_ENDPOINTS, PATHS, REFRESH_KEY, TOKEN_KEY } from '../constants';
-import AuthContext from '../context/auth.context';
-import { useSnackbar } from '../context/snackbar.context';
 import { post } from '../helpers/api.helper';
 import { setToken } from '../helpers/auth.helper';
+import useAuth from '../hooks/useAuth';
+import useSnackBar from '../hooks/useSnackBar';
 
 const LoginScreen = () => {
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
     if (isLoggedIn) {
@@ -27,7 +27,7 @@ const LoginScreen = () => {
     }
   }, [isLoggedIn, navigate]);
 
-  const showSnackbar = useSnackbar();
+  const showSnackbar = useSnackBar();
 
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');

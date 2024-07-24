@@ -19,16 +19,16 @@ import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
 import MyPageLayout from '../components/Layout/MyPageLayout';
 import PageTitle from '../components/Layout/PageTitle';
 import { API_ENDPOINTS } from '../constants';
-import { useSnackbar } from '../context/snackbar.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
 } from '../helpers/api.handler';
+import useSnackBar from '../hooks/useSnackBar';
 const UserRecordConfigScreen = () => {
   const [loading, setLoading] = useState(true);
-  const showSnackbar = useSnackbar();
+  const showSnackbar = useSnackBar();
   const location = useLocation();
   const state = location?.state;
   const [data, setData] = useState([]);

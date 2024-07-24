@@ -3,9 +3,9 @@
 import GridViewIcon from '@mui/icons-material/GridView';
 import TableRowsIcon from '@mui/icons-material/TableRows';
 import { Box, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
-import React, { useContext } from 'react';
+import React from 'react';
 
-import ViewContext from '../../context/view.context';
+import useView from '../../hooks/useView';
 import AddButton from '../Button/AddButton';
 import NoDataCard from '../Card/NoDataCard';
 import CustomSkeleton from './CustomSkeleton';
@@ -85,7 +85,7 @@ const MyPageLayout = ({
   addButtonDisabled,
   showViewSetting,
 }) => {
-  const { view, setView } = useContext(ViewContext);
+  const { view, setView } = useView();
   return (
     <>
       {isLoading ? (

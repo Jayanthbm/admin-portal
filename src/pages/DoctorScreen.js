@@ -28,7 +28,6 @@ import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
 import { API_ENDPOINTS, PATHS } from '../constants';
 import { DOCTOR_SCREEN_CONTENT } from '../content';
-import { useSnackbar } from '../context/snackbar.context';
 import {
   addItem,
   deleteItem,
@@ -36,6 +35,7 @@ import {
   updateItem,
 } from '../helpers/api.handler';
 import { formatDate, getRemainingDays } from '../helpers/util.helper';
+import useSnackBar from '../hooks/useSnackBar';
 
 const DoctorScreen = () => {
   const [loading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ const DoctorScreen = () => {
   const location = useLocation();
   const state = location.state;
   const navigate = useNavigate();
-  const showSnackbar = useSnackbar();
+  const showSnackbar = useSnackBar();
 
   const [data, setData] = useState([]);
 

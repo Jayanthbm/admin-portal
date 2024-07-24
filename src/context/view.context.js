@@ -1,12 +1,8 @@
 // src/context/view.context.js
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useState } from 'react';
 
 const ViewContext = createContext();
-
-export const useView = () => {
-  return useContext(ViewContext);
-};
 
 export const ViewProvider = ({ children }) => {
   const [view, setView] = useState('card');
