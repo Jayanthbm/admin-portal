@@ -34,10 +34,9 @@ const Logout = () => {
   return <Navigate to={PATHS.ROOT} />;
 };
 const AppRoutes = () => {
-  const { isLoggedIn } = useContext(AuthContext);
   return (
     <Routes>
-      <Route path={PATHS.ROOT} element={<Checker isLoggedIn={isLoggedIn} />} />
+      <Route path={PATHS.ROOT} element={<Navigate to={PATHS.LOGIN} />} />
       <Route path={PATHS.LOGIN} element={<LoginScreen />} />
       <Route
         path={PATHS.DASHBOARD}
