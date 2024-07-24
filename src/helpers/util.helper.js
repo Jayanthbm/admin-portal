@@ -2,6 +2,14 @@
 
 export const isValidToken = (token) => {
   if (!token) {
+    console.error('Token not provided');
+    return false;
+  }
+
+  // Check if token is in valid JWT format (header.payload.signature)
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    console.error('Token is not in valid JWT format');
     return false;
   }
   return true;

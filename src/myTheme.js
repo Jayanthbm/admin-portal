@@ -134,7 +134,7 @@ const getDesignTokens = (mode) => ({
     },
   },
   typography: {
-    fontFamily: ['"Inter", "sans-serif"'].join(','),
+    fontFamily: ['"Roboto", "sans-serif"'].join(','),
     h1: {
       fontSize: 60,
       fontWeight: 600,
@@ -268,15 +268,15 @@ export default function myTheme(mode) {
       },
       MuiButtonBase: {
         defaultProps: {
-          disableTouchRipple: true,
-          disableRipple: true,
+          disableTouchRipple: false,
+          disableRipple: false,
         },
         styleOverrides: {
           root: {
             boxSizing: 'border-box',
             transition: 'all 100ms ease-in',
             '&:focus-visible': {
-              outline: `3px solid ${alpha(brand[500], 0.5)}`,
+              outline: `2px solid ${alpha(brand[500], 0.5)}`,
               outlineOffset: '2px',
             },
           },
@@ -286,8 +286,8 @@ export default function myTheme(mode) {
         styleOverrides: {
           root: ({ theme, ownerState }) => ({
             boxSizing: 'border-box',
-            boxShadow: 'none',
-            borderRadius: '10px',
+            boxShadow: 'none', // Default box shadow
+            borderRadius: '4px',
             textTransform: 'none',
             '&:active': {
               transform: 'scale(0.98)',
@@ -303,28 +303,50 @@ export default function myTheme(mode) {
                 color: brand[50],
                 background: brand[500],
                 backgroundImage: `linear-gradient(to bottom, ${brand[400]}, ${brand[600]})`,
-                boxShadow: `inset 0 1px ${alpha(brand[300], 0.4)}`,
+                boxShadow:
+                  theme.palette.mode === 'light'
+                    ? `0 4px 6px ${alpha(brand[300], 0.3)}, 0 1px 3px ${alpha(brand[300], 0.1)}`
+                    : `0 4px 6px ${alpha(brand[700], 0.3)}, 0 1px 3px ${alpha(brand[700], 0.1)}`,
                 outline: `1px solid ${brand[700]}`,
                 '&:hover': {
                   background: brand[400],
                   backgroundImage: 'none',
-                  boxShadow: `0 0 0 1px  ${alpha(brand[300], 0.5)}`,
+                  boxShadow:
+                    theme.palette.mode === 'light'
+                      ? `0 4px 6px ${alpha(brand[300], 0.3)}, 0 1px 3px ${alpha(brand[300], 0.1)}`
+                      : `0 4px 6px ${alpha(brand[700], 0.3)}, 0 1px 3px ${alpha(brand[700], 0.1)}`,
                 },
               }),
             ...(ownerState.variant === 'outlined' && {
               backgroundColor: alpha(brand[300], 0.1),
               borderColor: brand[300],
               color: brand[500],
+              boxShadow:
+                theme.palette.mode === 'light'
+                  ? `0 2px 4px ${alpha(brand[300], 0.2)}`
+                  : `0 2px 4px ${alpha(brand[700], 0.2)}`,
               '&:hover': {
                 backgroundColor: alpha(brand[300], 0.3),
                 borderColor: brand[200],
+                boxShadow:
+                  theme.palette.mode === 'light'
+                    ? `0 2px 4px ${alpha(brand[300], 0.3)}`
+                    : `0 2px 4px ${alpha(brand[700], 0.3)}`,
               },
             }),
             ...(ownerState.variant === 'text' && {
               color: brand[500],
+              boxShadow:
+                theme.palette.mode === 'light'
+                  ? `0 2px 4px ${alpha(brand[300], 0.2)}`
+                  : `0 2px 4px ${alpha(brand[700], 0.2)}`,
               '&:hover': {
                 backgroundColor: alpha(brand[300], 0.3),
                 borderColor: brand[200],
+                boxShadow:
+                  theme.palette.mode === 'light'
+                    ? `0 2px 4px ${alpha(brand[300], 0.3)}`
+                    : `0 2px 4px ${alpha(brand[700], 0.3)}`,
               },
             }),
             ...(theme.palette.mode === 'dark' && {
@@ -568,7 +590,6 @@ export default function myTheme(mode) {
               minHeight: 40,
               height: '100%',
               borderRadius: '10px',
-
               '&:hover': {
                 borderColor: brand[300],
               },
@@ -583,6 +604,81 @@ export default function myTheme(mode) {
                 '&:hover': {
                   borderColor: brand[300],
                 },
+              },
+            }),
+          }),
+        },
+      },
+      MuiTable: {
+        styleOverrides: {
+          root: ({ _theme }) => ({
+            borderCollapse: 'collapse',
+            width: '100%',
+            // Additional styles can be added here
+          }),
+        },
+      },
+      MuiTableHead: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            backgroundColor: theme.palette.background.paper,
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            '& th': {
+              fontWeight: 'bold',
+              color: theme.palette.text.primary,
+            },
+            ...(theme.palette.mode === 'dark' && {
+              backgroundColor: theme.palette.background.default,
+              '& th': {
+                color: theme.palette.text.primary,
+              },
+            }),
+          }),
+        },
+      },
+      MuiTableBody: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            '& tr:nth-of-type(odd)': {
+              backgroundColor: theme.palette.background.default,
+            },
+            '& tr:nth-of-type(even)': {
+              backgroundColor: theme.palette.background.paper,
+            },
+            ...(theme.palette.mode === 'dark' && {
+              '& tr:nth-of-type(odd)': {
+                backgroundColor: theme.palette.background.paper,
+              },
+              '& tr:nth-of-type(even)': {
+                backgroundColor: theme.palette.background.default,
+              },
+            }),
+          }),
+        },
+      },
+      MuiTableCell: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            padding: theme.spacing(1),
+            borderBottom: `1px solid ${theme.palette.divider}`,
+            ...(theme.palette.mode === 'dark' && {
+              borderBottom: `1px solid ${theme.palette.divider}`,
+              color: theme.palette.text.primary,
+            }),
+          }),
+        },
+      },
+      MuiTableSortLabel: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            color: theme.palette.text.secondary,
+            '&:hover': {
+              color: theme.palette.text.primary,
+            },
+            ...(theme.palette.mode === 'dark' && {
+              color: theme.palette.text.secondary,
+              '&:hover': {
+                color: theme.palette.text.primary,
               },
             }),
           }),

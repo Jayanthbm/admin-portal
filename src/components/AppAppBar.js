@@ -9,16 +9,16 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
+import useAuth from '../hooks/useAuth';
 import { menuItems } from './menuItems';
 import ToggleColorMode from './ToggleColorMode';
 
 function AppAppBar({ mode, toggleColorMode }) {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn } = useAuth();
   const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();

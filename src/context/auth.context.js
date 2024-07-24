@@ -10,6 +10,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleLogout = useCallback(() => {
     removeToken(TOKEN_KEY);
@@ -23,15 +24,20 @@ export const AuthProvider = ({ children }) => {
       if (token && isValidToken(token)) {
         setIsLoggedIn(true);
       } else {
+        removeToken(TOKEN_KEY);
+        removeToken(REFRESH_KEY);
         setIsLoggedIn(false);
       }
+      setIsLoading(false);
     }
 
     init();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, handleLogout }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, setIsLoggedIn, handleLogout, isLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );

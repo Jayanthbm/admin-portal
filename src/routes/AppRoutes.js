@@ -1,10 +1,10 @@
 // src/routes/AppRoutes.js
 
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { PATHS } from '../constants';
-import AuthContext from '../context/auth.context';
+import useAuth from '../hooks/useAuth';
 import AdminsScreen from '../pages/AdminsScreen';
 import DashboardScreen from '../pages/DashboardScreen';
 import DoctorScreen from '../pages/DoctorScreen';
@@ -17,7 +17,7 @@ import UserRecordConfigScreen from '../pages/UserRecordConfigScreen';
 import { ProtectedRoute } from './ProtectedRoute';
 
 const Checker = () => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn } = useAuth();
   if (!isLoggedIn) {
     return <Navigate to={PATHS.LOGIN} />;
   } else {
@@ -26,7 +26,7 @@ const Checker = () => {
 };
 
 const Logout = () => {
-  const { handleLogout } = useContext(AuthContext);
+  const { handleLogout } = useAuth();
   useEffect(() => {
     handleLogout();
   }, [handleLogout]);
@@ -34,10 +34,9 @@ const Logout = () => {
   return <Navigate to={PATHS.ROOT} />;
 };
 const AppRoutes = () => {
-  const { isLoggedIn } = useContext(AuthContext);
   return (
     <Routes>
-      <Route path={PATHS.ROOT} element={<Checker isLoggedIn={isLoggedIn} />} />
+      <Route path={PATHS.ROOT} element={<Navigate to={PATHS.LOGIN} />} />
       <Route path={PATHS.LOGIN} element={<LoginScreen />} />
       <Route
         path={PATHS.DASHBOARD}

@@ -19,16 +19,16 @@ import CustomBreadCrumb from '../components/Layout/CustomBreadCrumb';
 import MyPageLayout from '../components/Layout/MyPageLayout';
 import PageTitle from '../components/Layout/PageTitle';
 import { API_ENDPOINTS } from '../constants';
-import { useSnackbar } from '../context/snackbar.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
 } from '../helpers/api.handler';
+import useSnackBar from '../hooks/useSnackBar';
 const UserRecordConfigScreen = () => {
   const [loading, setLoading] = useState(true);
-  const showSnackbar = useSnackbar();
+  const showSnackbar = useSnackBar();
   const location = useLocation();
   const state = location?.state;
   const [data, setData] = useState([]);
@@ -105,15 +105,21 @@ const UserRecordConfigScreen = () => {
     let current_data = data;
     let newItem = {
       display_order: data.length + 1,
-      is_required: false,
-      field_type: null,
       field_name: '',
       field_label: '',
+      field_type: null,
+      unit_type: 'none',
       default_value: '',
       min_value: 0,
       max_value: 99999999,
       interval_value: 10,
       options: [],
+      validation_pattern: '',
+      help_text: '',
+      is_required: 0,
+      is_visible: 1,
+      allowed_file_types: '',
+      max_files: 1,
     };
     if (index === -1) {
       current_data.unshift(newItem);
@@ -278,6 +284,11 @@ const UserRecordConfigScreen = () => {
           <MyPageLayout
             isLoading={loading}
             showSkeleton={data?.length > 0 ? false : true}
+            data={data}
+            showNoDataCard={data?.length === 0}
+            noPageTitle="No Items"
+            noPageButton={newItem}
+            noPageButtonTitle="Add Item"
           >
             <Typography variant="h6" textAlign={'center'}>
               Items Need to be Refreshed Manually

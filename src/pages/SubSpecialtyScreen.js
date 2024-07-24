@@ -11,7 +11,7 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import SpecialityCard from '../components/Card/SpecialityCard';
@@ -23,20 +23,20 @@ import PageTitle from '../components/Layout/PageTitle';
 import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
 import { API_ENDPOINTS, PATHS } from '../constants';
-import { useSnackbar } from '../context/snackbar.context';
-import ViewContext from '../context/view.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
 } from '../helpers/api.handler';
+import useSnackBar from '../hooks/useSnackBar';
+import useView from '../hooks/useView';
 
 const SubSpecialtyScreen = () => {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-  const { view } = useContext(ViewContext);
-  const showSnackbar = useSnackbar();
+  const { view } = useView();
+  const showSnackbar = useSnackBar();
 
   const location = useLocation();
   const state = location.state;

@@ -13,7 +13,7 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import DoctorCard from '../components/Card/DoctorCard';
@@ -27,20 +27,20 @@ import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
 import { API_ENDPOINTS, PATHS } from '../constants';
 import { DOCTOR_SCREEN_CONTENT } from '../content';
-import { useSnackbar } from '../context/snackbar.context';
-import ViewContext from '../context/view.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
 } from '../helpers/api.handler';
+import useSnackBar from '../hooks/useSnackBar';
+import useView from '../hooks/useView';
 const DoctorsScreen = () => {
   const [loading, setLoading] = useState(false);
-  const { view } = useContext(ViewContext);
+  const { view } = useView();
   const navigate = useNavigate();
 
-  const showSnackbar = useSnackbar();
+  const showSnackbar = useSnackBar();
   const location = useLocation();
   const state = location.state;
   const reload = state?.reload || false;

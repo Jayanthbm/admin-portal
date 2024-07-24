@@ -14,7 +14,7 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import AdminCard from '../components/Card/AdminCard';
 import CustomTable from '../components/CustomTable';
@@ -26,18 +26,18 @@ import PageTitle from '../components/Layout/PageTitle';
 import DeleteModal from '../components/Modal/DeleteModal';
 import NewAdditonModal from '../components/Modal/NewAdditonModal';
 import { API_ENDPOINTS } from '../constants';
-import { useSnackbar } from '../context/snackbar.context';
-import ViewContext from '../context/view.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
 } from '../helpers/api.handler';
+import useSnackBar from '../hooks/useSnackBar';
+import useView from '../hooks/useView';
 const AdminsScreen = () => {
   const [loading, setLoading] = useState(false);
-  const { view } = useContext(ViewContext);
-  const showSnackbar = useSnackbar();
+  const { view } = useView();
+  const showSnackbar = useSnackBar();
 
   const [data, setData] = useState([]);
 

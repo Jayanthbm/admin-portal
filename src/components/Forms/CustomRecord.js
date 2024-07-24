@@ -39,26 +39,78 @@ const CustomRecord = ({
     'radio',
     'checkbox',
     'rating',
-    'image_upload',
+    'file_upload',
     'date',
   ];
+
+  const UNIT_TYPES = [
+    'none',
+    'degree',
+    'centimetre',
+    'millimetre',
+    'metre',
+    'days',
+    'hours',
+    'minutes',
+    'seconds',
+    'kilogram',
+    'gram',
+    'milligram',
+    'litre',
+    'millilitre',
+    'piece',
+    'dozen',
+    'pack',
+    'set',
+    'unit',
+  ];
+
+  const FILE_UPLOAD_TYPES = ['image', 'file'];
+
+  const FILE_UPLOAD_TYPES_MAP = {
+    image: 'jpg, jpeg, png',
+    file: 'pdf',
+  };
   const [displayOrder, setDisplayOrder] = useState(
     item.display_order || index + 1
   );
-  const [required, setRequired] = useState(
-    item?.is_required === 1 ? true : false || false
-  );
-  const [fieldType, setFieldType] = useState(item.field_type || 'text');
   const [fieldName, setFieldName] = useState(item.field_name || '');
   const [fieldLabel, setFieldLabel] = useState(item.field_label || '');
+
+  const [fieldType, setFieldType] = useState(item.field_type || 'text');
+
+  const [unitType, setUnitType] = useState(item.unit_type || 'none');
+
   const [defaultValue, setDefaultValue] = useState(item.default_value || '');
+
   const [minValue, setMinValue] = useState(item.min_value || 0);
   const [maxValue, setMaxValue] = useState(item.max_value || 10000);
   const [intervalValue, setIntervalValue] = useState(item.interval_value || 10);
+
   const [selectOptions, setSelectOptions] = useState(item.options || []);
+
+  const [validationPattern, setValidationPattern] = useState(
+    item.validation_pattern || ''
+  );
+
+  const [helpText, setHelpText] = useState(item.help_text || '');
+  const [required, setRequired] = useState(
+    item?.is_required === 1 ? true : false || false
+  );
+
+  const [isVisible, setIsVisible] = useState(
+    item?.is_visible === 1 ? true : false || false
+  );
+
+  const [allowedFileTypes, setAllowedFileTypes] = useState(
+    item.allowed_file_types || ''
+  );
+  const [maxFiles, setMaxFiles] = useState(item.max_files || 0);
+
   const [submitButtonDisabled, setSubmitButtonDisabled] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [loaded, setLoaded] = useState(false);
+
   const handleDelete = () => {
     if (item.id) {
       return onDelete(item.id);
@@ -72,29 +124,40 @@ const CustomRecord = ({
       return onUpdate({
         ...item,
         display_order: displayOrder,
-        is_required: required,
-        field_type: fieldType,
-        field_name: fieldName,
         field_label: fieldLabel,
+        field_type: fieldType,
+        unit_type: unitType,
         default_value: defaultValue,
-        min_value: minValue,
-        max_value: maxValue,
-        interval_value: intervalValue,
+        min_value: parseInt(minValue),
+        max_value: parseInt(maxValue),
+        interval_value: parseInt(intervalValue),
         options: selectOptions,
+        validation_pattern: validationPattern,
+        help_text: helpText,
+        is_required: required,
+        is_visible: isVisible,
+        allowed_file_types: allowedFileTypes,
+        max_files: maxFiles,
       });
     } else {
       return onAdd({
         sub_specialty_id: sub_specialty_id,
         display_order: displayOrder,
-        is_required: required,
-        field_type: fieldType,
         field_name: fieldName,
         field_label: fieldLabel,
+        field_type: fieldType,
+        unit_type: unitType,
         default_value: defaultValue,
-        min_value: minValue,
-        max_value: maxValue,
-        interval_value: intervalValue,
+        min_value: parseInt(minValue),
+        max_value: parseInt(maxValue),
+        interval_value: parseInt(intervalValue),
         options: selectOptions,
+        validation_pattern: validationPattern,
+        help_text: helpText,
+        is_required: required,
+        is_visible: isVisible,
+        allowed_file_types: allowedFileTypes,
+        max_files: maxFiles,
       });
     }
   };
@@ -161,7 +224,7 @@ const CustomRecord = ({
           setOptions();
           break;
         }
-        case 'image_upload': {
+        case 'file_upload': {
           break;
         }
         case 'date': {
@@ -171,6 +234,7 @@ const CustomRecord = ({
 
       setLoaded(true);
       setSubmitButtonDisabled(false);
+      setValidationPattern('');
     }
     init();
   }, [
@@ -182,6 +246,7 @@ const CustomRecord = ({
     item.max_value,
     item.interval_value,
   ]);
+
   useEffect(() => {
     function checkConditions() {
       if (isNaN(displayOrder)) {
@@ -195,24 +260,26 @@ const CustomRecord = ({
       }
       if (fieldType === 'number' || fieldType === 'rating') {
         if (
-          minValue < 0 ||
-          maxValue < 0 ||
-          minValue > maxValue ||
+          parseInt(minValue) < 0 ||
+          parseInt(maxValue) < 0 ||
+          parseInt(minValue) > parseInt(maxValue) ||
           isNaN(defaultValue) ||
-          defaultValue > maxValue
+          parseInt(intervalValue) > parseInt(maxValue)
         ) {
           return true;
         }
       }
       if (fieldType === 'slider') {
         if (
-          minValue < 0 ||
-          maxValue < 0 ||
-          minValue > maxValue ||
-          intervalValue <= 0 ||
-          intervalValue > maxValue ||
+          parseInt(minValue) < 0 ||
+          parseInt(maxValue) < 0 ||
+          parseInt(minValue) > parseInt(maxValue) ||
+          parseInt(maxValue) === parseInt(minValue) ||
+          parseInt(intervalValue) <= 0 ||
+          parseInt(intervalValue) > parseInt(maxValue) ||
+          parseInt(maxValue) === parseInt(intervalValue) ||
           isNaN(defaultValue) ||
-          defaultValue > maxValue
+          defaultValue > parseInt(maxValue)
         ) {
           return true;
         }
@@ -252,6 +319,15 @@ const CustomRecord = ({
     selectOptions,
   ]);
 
+  const getFileTypeOptions = (value) => {
+    if (value.includes('png')) {
+      return 'image';
+    } else if (value.includes('pdf')) {
+      return 'file';
+    }
+    return null;
+  };
+
   return (
     <>
       <Box sx={{ width: '100%' }}>
@@ -273,17 +349,32 @@ const CustomRecord = ({
               />
             </Box>
             <Box>
-              <FormControlLabel
-                control={
-                  <IOSSwitch
-                    sx={{ m: 1 }}
-                    checked={required}
-                    onChange={(e) => setRequired(e.target.checked)}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                  />
-                }
-                label="Is Required"
-              />
+              <Tooltip title="Checking this will make the field required">
+                <FormControlLabel
+                  control={
+                    <IOSSwitch
+                      sx={{ m: 1 }}
+                      checked={required}
+                      onChange={(e) => setRequired(e.target.checked)}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  }
+                  label="Is Required"
+                />
+              </Tooltip>
+              <Tooltip title="Unchecking this will make the field hidden from UI">
+                <FormControlLabel
+                  control={
+                    <IOSSwitch
+                      sx={{ m: 1 }}
+                      checked={isVisible}
+                      onChange={(e) => setIsVisible(e.target.checked)}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  }
+                  label="Is Visible"
+                />
+              </Tooltip>
             </Box>
           </Box>
           <Box
@@ -304,12 +395,19 @@ const CustomRecord = ({
                 id="field-name"
                 label="Field Name"
                 value={fieldName}
-                onChange={(e) => setFieldName(e.target.value)}
+                onChange={(e) => {
+                  setFieldName(e.target.value);
+                }}
                 placeholder="Enter field name"
                 helperText="Identifier for the field,unique value"
                 disabled={item.id ? true : false}
                 size="small"
                 required={true}
+                onBlur={() => {
+                  if (fieldLabel.trim() === '') {
+                    setFieldLabel(fieldName);
+                  }
+                }}
               />
             </Box>
             <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
@@ -322,6 +420,18 @@ const CustomRecord = ({
                 helperText="Display name for the field"
                 size="small"
                 required={true}
+              />
+            </Box>
+            <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
+              <TextField
+                id="helper-text"
+                label="Helper Text"
+                value={helpText}
+                onChange={(e) => setHelpText(e.target.value)}
+                placeholder="Enter Helper Text"
+                helperText="Helper text for the field"
+                size="small"
+                required={false}
               />
             </Box>
 
@@ -371,6 +481,67 @@ const CustomRecord = ({
                 }
               />
             </Box>
+            {fieldType === 'file_upload' ? (
+              <>
+                <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
+                  <TextField
+                    id="file-type"
+                    select
+                    label="File Type"
+                    value={getFileTypeOptions(allowedFileTypes)}
+                    onChange={(e) => {
+                      setAllowedFileTypes(
+                        FILE_UPLOAD_TYPES_MAP[e.target.value]
+                      );
+                    }}
+                    helperText="Select "
+                    size="small"
+                    required={true}
+                  >
+                    {FILE_UPLOAD_TYPES.map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option.toUpperCase()}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+                <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
+                  <TextField
+                    id="max-file"
+                    label="Max Number of Files"
+                    value={maxFiles}
+                    onChange={(e) => setMaxFiles(e.target.value)}
+                    placeholder="Enter max number of files"
+                    helperText="Maximum number of files can be uploaded"
+                    size="small"
+                    type="number"
+                    required={false}
+                  />
+                </Box>
+              </>
+            ) : (
+              <Box sx={{ mr: 1, mb: 2, mt: 1 }}>
+                <TextField
+                  id="unit-type"
+                  select
+                  label="Unit Type"
+                  value={unitType}
+                  onChange={(e) => {
+                    setUnitType(e.target.value);
+                  }}
+                  helperText="Select unit type for the field"
+                  size="small"
+                  required={true}
+                >
+                  {UNIT_TYPES.map((option, index) => (
+                    <MenuItem key={index} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
+            )}
+
             {fieldType === 'number' ||
             fieldType === 'slider' ||
             fieldType === 'rating' ? (
@@ -417,6 +588,7 @@ const CustomRecord = ({
                 ) : null}
               </>
             ) : null}
+
             {fieldType === 'select' ||
             fieldType === 'radio' ||
             fieldType === 'checkbox' ? (

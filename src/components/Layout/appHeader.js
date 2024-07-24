@@ -10,13 +10,13 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
-import AuthContext from '../../context/auth.context';
+import useAuth from '../../hooks/useAuth';
 
 const AppHeader = ({ title }) => {
   title = title || 'Admin Dashboard';
-  const { isLoggedIn, handleLogout } = useContext(AuthContext);
+  const { isLoggedIn, handleLogout } = useAuth();
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {

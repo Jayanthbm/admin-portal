@@ -12,9 +12,9 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { API_ENDPOINTS } from '../../constants';
-import { useSnackbar } from '../../context/snackbar.context';
 import { getItems } from '../../helpers/api.handler';
 import { formatDate } from '../../helpers/util.helper';
+import useSnackBar from '../../hooks/useSnackBar';
 
 const DoctorSubscriptionForm = ({
   setItem,
@@ -25,7 +25,7 @@ const DoctorSubscriptionForm = ({
   editedItem,
   setEditedItem,
 }) => {
-  const snackbar = useSnackbar();
+  const snackbar = useSnackBar();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [maxPatients, setMaxPatients] = useState('');

@@ -12,7 +12,7 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import SubscriptionCard from '../components/Card/SubscriptionCard';
 import CustomTable from '../components/CustomTable';
@@ -22,19 +22,19 @@ import MyPageLayout from '../components/Layout/MyPageLayout';
 import PageTitle from '../components/Layout/PageTitle';
 import MyModal from '../components/Modal/MyModal';
 import { API_ENDPOINTS } from '../constants';
-import { useSnackbar } from '../context/snackbar.context';
-import ViewContext from '../context/view.context';
 import {
   addItem,
   deleteItem,
   getItems,
   updateItem,
 } from '../helpers/api.handler';
+import useSnackBar from '../hooks/useSnackBar';
+import useView from '../hooks/useView';
 
 const SubscriptionsScreen = () => {
   const [loading, setLoading] = useState(true);
-  const { view } = useContext(ViewContext);
-  const showSnackbar = useSnackbar();
+  const { view } = useView();
+  const showSnackbar = useSnackBar();
   const [data, setData] = useState([]);
 
   const [open, setOpen] = useState(false);
