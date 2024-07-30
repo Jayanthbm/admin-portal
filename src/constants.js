@@ -1,6 +1,6 @@
 // src/constants.js
 
-export const BASE_URL = 'https://c01b-103-186-41-217.ngrok-free.app/api';
+export const BASE_URL = 'https://db90-103-186-41-217.ngrok-free.app/api';
 
 export const TOKEN_KEY = 'accessToken';
 export const REFRESH_KEY = 'refreshToken';
