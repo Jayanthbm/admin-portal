@@ -119,7 +119,10 @@ const getDesignTokens = (mode) => ({
     background: {
       default: '#fff',
       paper: gray[50],
-      ...(mode === 'dark' && { default: gray[900], paper: gray[800] }),
+      ...(mode === 'dark' && {
+        default: gray[900],
+        paper: gray[800],
+      }),
     },
     text: {
       primary: gray[800],
@@ -587,9 +590,9 @@ export default function myTheme(mode) {
             '& .MuiOutlinedInput-root': {
               boxSizing: 'border-box',
               minWidth: 280,
-              minHeight: 40,
+              minHeight: 50,
               height: '100%',
-              borderRadius: '10px',
+              borderRadius: '5px',
               '&:hover': {
                 borderColor: brand[300],
               },
@@ -598,9 +601,9 @@ export default function myTheme(mode) {
               '& .MuiOutlinedInput-root': {
                 boxSizing: 'border-box',
                 minWidth: 280,
-                minHeight: 40,
+                minHeight: 50,
                 height: '100%',
-                borderRadius: '10px',
+                borderRadius: '5px',
                 '&:hover': {
                   borderColor: brand[300],
                 },
